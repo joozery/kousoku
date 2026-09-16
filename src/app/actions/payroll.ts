@@ -1,0 +1,277 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import connectDB from '@/lib/mongodb';
+import { Payslip } from '@/models/Payslip';
+import { Expense } from '@/models/Expense';
+import { Employee } from '@/models/Employee';
+import { computePay } from '@/lib/payroll';
+import { getAttendanceSummary } from '@/lib/attendance';
+import { getApprovedLeaveSummary } from '@/lib/leaves';
+
+type Result = { ok: true } | { ok: false; error: string };
+
+const ROLE_LABELS: Record<string, string> = {
+  mechanic: 'ช่างยาง', alignment: 'ช่างตั้งศูนย์', cashier: 'แคชเชียร์',
+  admin_role: 'ธุรการ / บัญชี', manager: 'ผู้จัดการ',
+};
+
+// สร้าง/คำนวณรอบเงินเดือนใหม่จากการลงเวลา + การลา
+export async function generatePayroll(period: string): Promise<Result> {
+  try {
+    await connectDB();
+    const [employees, attMap, leaveMap, existing] = await Promise.all([
+      Employee.find({ status: { $ne: 'resigned' } }).lean(),
+      getAttendanceSummary(period),
+      getApprovedLeaveSummary(period),
+      Payslip.find({ period }).lean(),
+    ]);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existMap = new Map<string, any>(existing.map((p: any) => [String(p.employeeId), p]));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ops = employees.map((emp: any) => {
+      const id   = String(emp._id);
+      const prev = existMap.get(id);
+      if (prev?.status === 'paid') return null;
+
+      const att        = attMap[id]   ?? { daysPresent: 0, daysAbsent: 0, daysLeave: 0, otMinutes: 0, lateMinutes: 0, lateBilledHours: 0, otBilledHours: 0 };
+      const lv         = leaveMap[id] ?? { paidDays: 0, unpaidDays: 0, unpaidAmount: 0 };
+      const baseSalary    = Number(emp.baseSalary ?? 0);
+      const lateDeductRate = Number(emp.lateDeductRate ?? 300);
+      const otRate         = Number(emp.otRate ?? 200);
+      const bonus          = prev?.bonus       ?? 0;
+      const otherDeduct    = prev?.otherDeduct ?? 0;
+
+      const c = computePay({
+        baseSalary,
+        daysAbsent:        att.daysAbsent,
+        lateBilledHours:   att.lateBilledHours,
+        otBilledHours:     att.otBilledHours,
+        unpaidLeaveDays:   lv.unpaidDays,
+        leaveDeductAmount: lv.unpaidAmount,
+        bonus,
+        otherDeduct,
+        hasSocialSecurity: emp.hasSocialSecurity !== false,
+        sssCustomAmount:   Number(emp.sssCustomAmount ?? 0),
+        lateDeductRate,
+        otRate,
+      });
+
+      return {
+        updateOne: {
+          filter: { employeeId: id, period },
+          update: {
+            $set: {
+              employeeId:      id,
+              employeeName:    emp.name,
+              role:            ROLE_LABELS[emp.role] ?? emp.role ?? '',
+              period,
+              baseSalary,
+              lateDeductRate,
+              otRate,
+              daysWorked:      att.daysPresent,
+              daysAbsent:      att.daysAbsent,
+              daysLeavePaid:   lv.paidDays,
+              daysLeaveUnpaid: lv.unpaidDays,
+              leaveDeductAmount: lv.unpaidAmount,
+              otMinutes:       att.otMinutes,
+              lateMinutes:     att.lateMinutes,
+              bonus,
+              otherDeduct,
+              status:          'pending',
+              ...c,
+            },
+            $setOnInsert: { createdAt: new Date() },
+          },
+          upsert: true,
+        },
+      };
+    }).filter(Boolean);
+
+    if (ops.length) await Payslip.bulkWrite(ops as Parameters<typeof Payslip.bulkWrite>[0]);
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    console.error('[generatePayroll]', e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+// แก้ไขโบนัส / หักอื่นๆ แล้วคำนวณ net ใหม่ — แก้ได้แม้จ่ายแล้ว (Expense เดิมจะถูก sync)
+export async function updatePayslip(id: string, bonus: number, otherDeduct: number): Promise<Result> {
+  try {
+    await connectDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = await Payslip.findById(id).lean() as any;
+    if (!p) return { ok: false, error: 'ไม่พบรายการ' };
+
+    const [attMap, emp] = await Promise.all([
+      getAttendanceSummary(p.period),
+      Employee.findById(p.employeeId).lean() as Promise<{ hasSocialSecurity?: boolean; sssCustomAmount?: number; lateDeductRate?: number; otRate?: number } | null>,
+    ]);
+    const att            = attMap[String(p.employeeId)] ?? { lateBilledHours: 0, otBilledHours: 0 };
+    const lateDeductRate = Number(emp?.lateDeductRate ?? p.lateDeductRate ?? 300);
+    const otRate         = Number(emp?.otRate ?? p.otRate ?? 200);
+
+    const c = computePay({
+      baseSalary:        p.baseSalary ?? 0,
+      daysAbsent:        p.daysAbsent ?? 0,
+      lateBilledHours:   att.lateBilledHours,
+      otBilledHours:     att.otBilledHours,
+      unpaidLeaveDays:   p.daysLeaveUnpaid ?? 0,
+      leaveDeductAmount: p.leaveDeductAmount ?? 0,
+      bonus,
+      otherDeduct,
+      hasSocialSecurity: emp?.hasSocialSecurity !== false,
+      sssCustomAmount:   Number(emp?.sssCustomAmount ?? 0),
+      lateDeductRate,
+      otRate,
+    });
+
+    await Payslip.findByIdAndUpdate(id, { $set: { bonus, otherDeduct, lateDeductRate, otRate, ...c } });
+
+    // ถ้าจ่ายแล้วและมี expenseId → sync ยอดใหม่ลงใน Expense เดิม
+    if (p.status === 'paid' && p.expenseId) {
+      await Expense.findByIdAndUpdate(p.expenseId, {
+        $set: {
+          amount: c.netPay,
+          description: `เงินเดือน ${p.employeeName} รอบ ${p.period} (แก้ไข)`,
+          note: `โบนัส ฿${bonus.toLocaleString()} | หักอื่นๆ ฿${otherDeduct.toLocaleString()}`,
+        },
+      });
+    }
+
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    console.error('[updatePayslip]', e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+export async function markPaid(id: string, dateStr?: string): Promise<Result> {
+  try {
+    await connectDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = await Payslip.findById(id).lean() as any;
+    if (!p) return { ok: false, error: 'ไม่พบรายการ' };
+
+    const paidAt = dateStr ? new Date(dateStr) : new Date();
+
+    if (p.expenseId) {
+      // จ่ายซ้ำ (เช่น แก้ไขวันที่แล้วกดจ่ายอีกครั้ง) → sync ยอดใน Expense เดิม ไม่สร้างรายการใหม่
+      await Expense.findByIdAndUpdate(p.expenseId, {
+        $set: {
+          amount: p.netPay,
+          description: `เงินเดือน ${p.employeeName} รอบ ${p.period}`,
+          expenseDate: paidAt,
+          note: `โบนัส ฿${(p.bonus ?? 0).toLocaleString()} | หักอื่นๆ ฿${(p.otherDeduct ?? 0).toLocaleString()}`,
+        },
+      });
+      await Payslip.findByIdAndUpdate(id, { $set: { status: 'paid', paidAt } });
+      revalidatePath('/admin/payroll');
+      return { ok: true };
+    }
+
+    // จ่ายครั้งแรก → claim สถานะแบบ atomic ก่อนสร้าง Expense
+    // กันกรณีกดปุ่ม "ยืนยันการจ่าย" ซ้ำ/รัว ทำให้เกิด Expense ซ้ำ 2 รายการ
+    const claimed = await Payslip.findOneAndUpdate(
+      { _id: id, status: 'pending' },
+      { $set: { status: 'paid', paidAt } },
+      { new: false }
+    ).lean();
+
+    if (!claimed) {
+      // มีคำสั่งจ่ายอื่นที่ยิงมาพร้อมกันชนะไปแล้ว ไม่ต้องสร้าง Expense ซ้ำ
+      revalidatePath('/admin/payroll');
+      return { ok: true };
+    }
+
+    const exp = await Expense.create({
+      category: 'เงินเดือน',
+      description: `เงินเดือน ${p.employeeName} รอบ ${p.period}`,
+      amount: p.netPay,
+      expenseDate: paidAt,
+      note: `โบนัส ฿${(p.bonus ?? 0).toLocaleString()} | หักอื่นๆ ฿${(p.otherDeduct ?? 0).toLocaleString()}`,
+    });
+
+    await Payslip.findByIdAndUpdate(id, { $set: { expenseId: exp._id } });
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+export async function markAllPaid(period: string, dateStr?: string): Promise<Result> {
+  try {
+    await connectDB();
+    // ดึงเฉพาะ pending ที่ยังไม่จ่าย แล้ว markPaid ทีละคนเพื่อให้ Expense ถูกสร้างครบ
+    const pending = await Payslip.find({ period, status: 'pending' }).lean() as { _id: string }[];
+    await Promise.all(pending.map((p) => markPaid(String(p._id), dateStr)));
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ยกเลิกการจ่ายรายบุคคล
+export async function markUnpaid(id: string): Promise<Result> {
+  try {
+    await connectDB();
+    const p = await Payslip.findById(id).lean() as any;
+    if (!p) return { ok: false, error: 'ไม่พบรายการ' };
+
+    if (p.expenseId) {
+      await Expense.findByIdAndDelete(p.expenseId);
+    }
+
+    await Payslip.findByIdAndUpdate(id, {
+      $set: { status: 'pending', paidAt: null },
+      $unset: { expenseId: '' }
+    });
+    
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ยกเลิกการจ่ายทั้งหมดในรอบบิลนั้นๆ
+export async function markAllUnpaid(period: string): Promise<Result> {
+  try {
+    await connectDB();
+    const paid = await Payslip.find({ period, status: 'paid' }).lean() as { _id: string }[];
+    await Promise.all(paid.map((p) => markUnpaid(String(p._id))));
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
+// ลบ payslip (และ Expense ที่ผูกไว้ถ้ามี)
+export async function deletePayslip(id: string): Promise<Result> {
+  try {
+    await connectDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = await Payslip.findById(id).lean() as any;
+    if (!p) return { ok: false, error: 'ไม่พบรายการ' };
+
+    // ถ้าจ่ายแล้วและมี Expense ผูกอยู่ → ลบ Expense ด้วย
+    if (p.expenseId) {
+      await Expense.findByIdAndDelete(p.expenseId);
+    }
+
+    await Payslip.findByIdAndDelete(id);
+    revalidatePath('/admin/payroll');
+    return { ok: true };
+  } catch (e) {
+    console.error('[deletePayslip]', e);
+    return { ok: false, error: String(e) };
+  }
+}

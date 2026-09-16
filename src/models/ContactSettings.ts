@@ -1,0 +1,83 @@
+import mongoose, { Schema, Document, Model } from 'mongoose';
+
+export interface IContactSettings extends Document {
+  address: string;
+  phoneMain: string;
+  phoneMainLabel: string;
+  phoneSale: string;
+  phoneSaleLabel: string;
+  lineId: string;
+  lineLabel: string;
+  lineUrl: string;
+  facebookUrl: string;
+  instagramUrl: string;
+  tiktokUrl: string;
+  shopeeUrl: string;
+  thaimartUrl: string;
+  // โลโก้ที่อัปโหลดเอง (ไม่บังคับ) — ว่าง = ใช้ไอคอนมาตรฐานของแต่ละช่องทาง
+  lineIcon: string;
+  facebookIcon: string;
+  instagramIcon: string;
+  tiktokIcon: string;
+  shopeeIcon: string;
+  thaimartIcon: string;
+  // ช่องทางที่แอดมินเพิ่มเอง — ตั้งชื่อ/ลิงก์/โลโก้ได้อิสระ
+  customSocials: { name: string; url: string; icon: string }[];
+  email: string;
+  workingHours: string;
+  workingDays: string;
+  workingHours2: string;
+  workingDays2: string;
+  googleMapUrl: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroDesc: string;
+  heroImage: string;
+  updatedAt: Date;
+}
+
+const ContactSettingsSchema: Schema = new Schema({
+  address: { type: String, required: true, default: 'Kosoku (KOUSOKU THAILAND)\\nถนน... ตำบล... อำเภอ...\\nจังหวัด... 12345' },
+  phoneMain: { type: String, required: true, default: '099-999-9999' },
+  phoneMainLabel: { type: String, default: 'คุณนัท' },
+  phoneSale: { type: String, required: true, default: '088-888-8888' },
+  phoneSaleLabel: { type: String, default: 'ฝ่ายขาย' },
+  lineId: { type: String, required: true, default: '@kosoku' },
+  lineLabel: { type: String, default: 'มี @ ด้วยนะครับ' },
+  lineUrl: { type: String, default: '' },
+  facebookUrl: { type: String, default: '' },
+  instagramUrl: { type: String, default: '' },
+  tiktokUrl: { type: String, default: '' },
+  shopeeUrl: { type: String, default: '' },
+  thaimartUrl: { type: String, default: '' },
+  lineIcon: { type: String, default: '' },
+  facebookIcon: { type: String, default: '' },
+  instagramIcon: { type: String, default: '' },
+  tiktokIcon: { type: String, default: '' },
+  shopeeIcon: { type: String, default: '' },
+  thaimartIcon: { type: String, default: '' },
+  customSocials: {
+    type: [{
+      name: { type: String, default: '' },
+      url:  { type: String, default: '' },
+      icon: { type: String, default: '' },
+    }],
+    default: [],
+  },
+  email: { type: String, required: true, default: 'contact@kosoku.com' },
+  workingHours: { type: String, required: true, default: '08:00 - 18:00 น.' },
+  workingDays: { type: String, required: true, default: 'จันทร์ - อาทิตย์' },
+  workingHours2: { type: String, default: '' },
+  workingDays2: { type: String, default: '' },
+  googleMapUrl: { type: String, required: true, default: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15502.830635414603!2d100.510000!3d13.730000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQzJzQ4LjAiTiAxMDDCsDMwJzM2LjAiRQ!5e0!3m2!1sth!2sth!4v1620000000000!5m2!1sth!2sth' },
+  heroTitle: { type: String, default: 'ติดต่อเรา' },
+  heroSubtitle: { type: String, default: 'KOSOKU' },
+  heroDesc: { type: String, default: 'สอบถามข้อมูลเพิ่มเติม จองคิวเปลี่ยนยาง\\nหรือปรึกษาปัญหาเรื่องรถยนต์ เราพร้อมดูแลคุณ' },
+  heroImage: { type: String, default: '/yang.png' },
+}, {
+  timestamps: true
+});
+
+const ContactSettings: Model<IContactSettings> = mongoose.models.ContactSettings || mongoose.model<IContactSettings>('ContactSettings', ContactSettingsSchema);
+
+export default ContactSettings;

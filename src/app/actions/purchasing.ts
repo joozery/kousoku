@@ -1,0 +1,394 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import connectDB from '@/lib/mongodb';
+import { PurchaseOrder } from '@/models/PurchaseOrder';
+import { Expense } from '@/models/Expense';
+import { generatePONumber } from '@/lib/purchasing';
+
+export type POFormPayload = {
+  supplierId: string;
+  supplierSnapshot: {
+    name: string; address: string; contact: string;
+    phone: string; email: string; taxId: string;
+  };
+  poType: 'standard' | 'urgent';
+  dueDate: string;
+  items: {
+    productId?: string; productName: string; unit: string;
+    qty: number; unitPrice: number; discount: number; discountType: 'pct' | 'amt';
+    year: string; lineTotal: number;
+  }[];
+  reference?:      string;
+  paymentTerm:     string;
+  paymentDate?:    string;
+  paymentMethod:   string;
+  shippingAddress: string;
+  notes:           string;
+  specialTerms:    string;
+  subtotal:        number;
+  totalDiscount:   number;
+  vat:             number;
+  grandTotal:      number;
+  vatType:         'included' | 'excluded' | 'none';
+  isReceived?:     boolean;
+  orderDate?:      string;
+};
+
+async function savePO(data: POFormPayload, status: 'pending' | 'draft') {
+  await connectDB();
+  const poNumber = await generatePONumber();
+
+  const po = await PurchaseOrder.create({
+    poNumber,
+    poType: data.poType,
+    supplierId: data.supplierId || undefined,
+    supplierSnapshot: data.supplierSnapshot,
+    reference:  data.reference ?? '',
+    createdAt: data.orderDate ? new Date(data.orderDate) : new Date(),
+    dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+    items: data.items,
+    paymentTerm:     data.paymentTerm,
+    paymentDate:     data.paymentDate ? new Date(data.paymentDate) : undefined,
+    paymentMethod:   data.paymentMethod,
+    shippingAddress: data.shippingAddress,
+    notes:           data.notes,
+    specialTerms:    data.specialTerms,
+    subtotal:        data.subtotal,
+    totalDiscount:   data.totalDiscount,
+    vat:             data.vat,
+    grandTotal:      data.grandTotal,
+    vatType:         data.vatType,
+    status,
+  });
+
+  revalidatePath('/admin/purchasing');
+  return { poNumber, id: String(po._id) };
+}
+
+export async function createPO(
+  data: POFormPayload,
+): Promise<{ success: boolean; poNumber?: string; error?: string }> {
+  try {
+    const { poNumber, id } = await savePO(data, 'pending');
+    if (data.isReceived) {
+      await receivePO(id);
+    }
+    return { success: true, poNumber };
+  } catch (err) {
+    console.error('[createPO]', err);
+    return { success: false, error: 'ไม่สามารถสร้างใบสั่งซื้อได้ กรุณาลองใหม่' };
+  }
+}
+
+export async function saveDraftPO(
+  data: POFormPayload,
+): Promise<{ success: boolean; poNumber?: string; error?: string }> {
+  try {
+    const { poNumber } = await savePO(data, 'draft');
+    return { success: true, poNumber };
+  } catch (err) {
+    console.error('[saveDraftPO]', err);
+    return { success: false, error: 'ไม่สามารถบันทึกร่างได้ กรุณาลองใหม่' };
+  }
+}
+
+export async function updatePO(
+  id: string,
+  data: POFormPayload,
+  status: 'pending' | 'draft',
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    await connectDB();
+
+    // ใบที่รับสินค้าแล้ว/ยกเลิกแล้ว ต้องคงสถานะเดิมไว้ — ห้ามรีเซ็ตกลับเป็น "รอรับสินค้า"
+    // (เดิมการกดแก้ไขใบที่รับแล้ว ทำให้ปุ่มรับสินค้าโผล่มาอีกและกดรับซ้ำ สต๊อกบวกสองรอบ)
+    const existing = await PurchaseOrder.findById(id).select('status').lean() as { status?: string } | null;
+    if (!existing) return { success: false, error: 'ไม่พบใบสั่งซื้อ' };
+    if (existing.status === 'received' || existing.status === 'cancelled') {
+      status = existing.status as typeof status;
+    }
+
+    await PurchaseOrder.findByIdAndUpdate(id, {
+      poType: data.poType,
+      supplierId: data.supplierId || undefined,
+      supplierSnapshot: data.supplierSnapshot,
+      reference:  data.reference ?? '',
+      ...(data.orderDate && { createdAt: new Date(data.orderDate) }),
+      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+      items: data.items,
+      paymentTerm:     data.paymentTerm,
+      paymentDate:     data.paymentDate ? new Date(data.paymentDate) : undefined,
+      paymentMethod:   data.paymentMethod,
+      shippingAddress: data.shippingAddress,
+      notes:           data.notes,
+      specialTerms:    data.specialTerms,
+      subtotal:        data.subtotal,
+      totalDiscount:   data.totalDiscount,
+      vat:             data.vat,
+      grandTotal:      data.grandTotal,
+      vatType:         data.vatType,
+      status,
+    });
+    revalidatePath('/admin/purchasing');
+    return { success: true };
+  } catch (err) {
+    console.error('[updatePO]', err);
+    return { success: false, error: 'ไม่สามารถบันทึกได้' };
+  }
+}
+
+export async function receivePO(id: string): Promise<{
+  error?: string;
+  warnings?: string[];
+  // ถ้า PO อ้างอิงใบ INV (ขายก่อน–สั่งของทีหลัง) ส่งข้อมูลกลับไปให้หน้าจอถามว่าเบิกออกให้บิลเลยไหม
+  invoice?: { docNumber: string; customerName: string };
+}> {
+  try {
+    await connectDB();
+    const po = await PurchaseOrder.findById(id).lean() as { poNumber: string; status?: string; reference?: string; items: { productId?: string; productName: string; qty: number }[]; createdAt?: Date } | null;
+    if (!po) return { error: 'ไม่พบใบสั่งซื้อ' };
+    // กันรับซ้ำ — รับได้ครั้งเดียว (กดรัว/แก้ไขแล้วกดรับใหม่ จะไม่บวกสต๊อกซ้ำ)
+    if (po.status === 'received') return { error: `${po.poNumber} รับสินค้าไปแล้ว` };
+    if (po.status === 'cancelled') return { error: `${po.poNumber} ถูกยกเลิกแล้ว` };
+
+    await PurchaseOrder.findByIdAndUpdate(id, { status: 'received' });
+
+    const { Product } = await import('@/models/Product');
+    const { StockMovement } = await import('@/models/StockMovement');
+    const warnings: string[] = [];
+
+    for (const item of po.items) {
+      if (!item.productId) {
+        warnings.push(`"${item.productName}" ไม่ได้ผูก ID สินค้า — กรุณาบวกสต๊อกเองใน Warehouse`);
+        continue;
+      }
+      const product = await Product.findById(item.productId).lean() as { stock?: number; brand?: string; model?: string; size?: string } | null;
+      if (!product) {
+        warnings.push(`ไม่พบสินค้า "${item.productName}" ใน DB`);
+        continue;
+      }
+      const stockBefore = product.stock ?? 0;
+      const stockAfter  = stockBefore + item.qty;
+      const productName = `${product.brand ?? ''} ${product.model ?? ''} ${product.size ?? ''}`.trim();
+      await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.qty } });
+      await StockMovement.create({
+        productId: item.productId, productName, type: 'in',
+        qty: item.qty, stockBefore, stockAfter,
+        refNo: po.poNumber, note: `รับสินค้าจาก ${po.poNumber}`,
+        createdAt: po.createdAt || new Date(),
+      });
+    }
+
+    revalidatePath('/admin/purchasing');
+    revalidatePath('/admin/warehouse');
+
+    // เช็คว่าเลขอ้างอิงของ PO เป็นใบ INV ในระบบไหม — ถ้าใช่ ให้หน้าจอถามต่อว่าเบิกออกให้บิลเลยไหม
+    // (ยกเว้นมีการเบิกออกอ้างอิงบิลนั้นไปแล้ว เช่นใบ INV ที่ตัดสต๊อกอัตโนมัติตอนสร้าง — ไม่ถามซ้ำ)
+    let invoice: { docNumber: string; customerName: string } | undefined;
+    if (po.reference) {
+      const { FinancialDocument } = await import('@/models/FinancialDocument');
+      const refDoc = await FinancialDocument.findOne({ docNumber: po.reference })
+        .select('docNumber customerName').lean() as { docNumber: string; customerName: string } | null;
+      if (refDoc) {
+        const priorOut = await StockMovement.findOne({ refNo: refDoc.docNumber, type: 'out' }).lean();
+        if (!priorOut) invoice = { docNumber: refDoc.docNumber, customerName: refDoc.customerName ?? '' };
+      }
+    }
+
+    return { ...(warnings.length ? { warnings } : {}), ...(invoice ? { invoice } : {}) };
+  } catch (err) {
+    console.error('[receivePO]', err);
+    return { error: 'ไม่สามารถอัปเดตสถานะได้' };
+  }
+}
+
+// ลบใบสั่งซื้อถาวร — ได้ทุกสถานะ: ถอนผลกระทบสต๊อกและประวัติคลังของใบนี้ + ลบรายจ่ายที่ผูกอยู่
+export async function deletePO(id: string): Promise<{ error?: string }> {
+  try {
+    await connectDB();
+    const po = await PurchaseOrder.findById(id).lean() as { poNumber: string; expenseId?: unknown } | null;
+    if (!po) return { error: 'ไม่พบใบสั่งซื้อ' };
+
+    // ลบใบคืนสินค้าที่ผูกอยู่ด้วย (ถ้ามี)
+    const { StockReturn } = await import('@/models/StockReturn');
+    const { Product } = await import('@/models/Product');
+    const { StockMovement } = await import('@/models/StockMovement');
+
+    const ret = await StockReturn.findOne({ poId: id }).lean() as { _id: unknown; returnNumber: string; incomeId?: unknown } | null;
+    if (ret) {
+      // ถอนผลสต๊อกของใบคืน (ใบคืนทำให้สต๊อกลด -> ต้องบวกกลับ)
+      const retMoves = await StockMovement.find({ refNo: ret.returnNumber }).lean() as { _id: unknown; productId?: unknown; type: string; qty: number }[];
+      for (const m of retMoves) {
+        if (m.type === 'out' && m.productId) {
+          await Product.findByIdAndUpdate(m.productId, { $inc: { stock: m.qty } });
+        }
+        await StockMovement.findByIdAndDelete(m._id);
+      }
+      // ลบรายรับที่ได้จากการคืนเงิน
+      if (ret.incomeId) {
+        const { Income } = await import('@/models/Income');
+        await Income.findByIdAndDelete(ret.incomeId);
+      }
+      await StockReturn.findByIdAndDelete(ret._id);
+    }
+
+    // ถอนผลสต๊อกจากประวัติของใบนี้ (รับเข้า → หักคืน, คืนจากยกเลิก → บวกคืน) แล้วลบประวัติทิ้ง
+    // ประวัติเบิกออกให้บิลขาย (refNo เป็นเลข INV) ไม่ถูกแตะ — การขายยังเกิดขึ้นจริง
+    const moves = await StockMovement.find({ refNo: po.poNumber }).lean() as { _id: unknown; productId?: unknown; type: string; qty: number }[];
+    for (const m of moves) {
+      const delta = m.type === 'in' ? -m.qty : m.type === 'out' ? m.qty : 0;
+      if (delta && m.productId) await Product.findByIdAndUpdate(m.productId, { $inc: { stock: delta } });
+      await StockMovement.findByIdAndDelete(m._id);
+    }
+
+    // ลบรายจ่ายที่บันทึกไว้ตอนชำระเงินใบนี้
+    if (po.expenseId) await Expense.findByIdAndDelete(po.expenseId);
+
+    await PurchaseOrder.findByIdAndDelete(id);
+    revalidatePath('/admin/purchasing');
+    revalidatePath('/admin/warehouse');
+    return {};
+  } catch (err) {
+    console.error('[deletePO]', err);
+    return { error: 'ไม่สามารถลบใบสั่งซื้อได้' };
+  }
+}
+
+// เบิกสินค้าออกให้บิลที่ PO อ้างอิงถึง (เคสขายก่อน–ของหมด–สั่ง PO ทีหลัง)
+// เรียกหลังรับสินค้าแล้ว: ตัดสต๊อกตามรายการใน PO และลงประวัติอ้างอิงเลขใบ INV
+export async function disbursePOToInvoice(id: string): Promise<{ error?: string; warnings?: string[] }> {
+  try {
+    await connectDB();
+    const po = await PurchaseOrder.findById(id).lean() as {
+      poNumber: string; reference?: string; status: string;
+      items: { productId?: string; productName: string; qty: number }[];
+    } | null;
+    if (!po) return { error: 'ไม่พบใบสั่งซื้อ' };
+    if (po.status !== 'received') return { error: 'ต้องรับสินค้าก่อนจึงจะเบิกออกได้' };
+    if (!po.reference) return { error: 'ใบสั่งซื้อนี้ไม่มีเลขอ้างอิงบิล' };
+
+    const { Product } = await import('@/models/Product');
+    const { StockMovement } = await import('@/models/StockMovement');
+
+    // กันเบิกซ้ำ — ถ้ามีการเบิกออกอ้างอิงบิลนี้แล้ว (จาก PO นี้ หรือระบบตัดอัตโนมัติตอนออกใบ) ไม่ทำซ้ำ
+    const disburseNote = `เบิกออกให้ ${po.reference} (จาก ${po.poNumber})`;
+    const already = await StockMovement.findOne({ refNo: po.reference, type: 'out' }).lean();
+    if (already) return { error: `มีการเบิกออกอ้างอิง ${po.reference} ไปแล้ว` };
+
+    const warnings: string[] = [];
+    for (const item of po.items) {
+      if (!item.productId) {
+        warnings.push(`"${item.productName}" ไม่ได้ผูก ID สินค้า — กรุณาเบิกออกเองใน Warehouse`);
+        continue;
+      }
+      const product = await Product.findById(item.productId).lean() as { stock?: number; brand?: string; model?: string; size?: string } | null;
+      if (!product) {
+        warnings.push(`ไม่พบสินค้า "${item.productName}" ใน DB`);
+        continue;
+      }
+      const stockBefore = product.stock ?? 0;
+      // เบิกเต็มจำนวนเสมอ — สต๊อกติดลบได้ (นโยบายร้าน: ขายก่อน ของตามมากับ PO)
+      const stockAfter = stockBefore - item.qty;
+      if (stockAfter < 0) warnings.push(`"${item.productName}" สต๊อกติดลบ ${stockAfter}`);
+      const productName = `${product.brand ?? ''} ${product.model ?? ''} ${product.size ?? ''}`.trim();
+      await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.qty } });
+      await StockMovement.create({
+        productId: item.productId, productName, type: 'out',
+        qty: item.qty, stockBefore, stockAfter,
+        refNo: po.reference, note: disburseNote,
+      });
+    }
+
+    revalidatePath('/admin/purchasing');
+    revalidatePath('/admin/warehouse');
+    return warnings.length ? { warnings } : {};
+  } catch (err) {
+    console.error('[disbursePOToInvoice]', err);
+    return { error: 'ไม่สามารถเบิกสินค้าออกได้' };
+  }
+}
+
+export async function cancelPO(id: string): Promise<{ error?: string; warnings?: string[] }> {
+  try {
+    await connectDB();
+    const po = await PurchaseOrder.findById(id).lean() as { poNumber: string; status: string; items: { productId?: string; productName: string; qty: number }[] } | null;
+    if (!po) return { error: 'ไม่พบใบสั่งซื้อ' };
+
+    const wasReceived = po.status === 'received';
+    await PurchaseOrder.findByIdAndUpdate(id, { status: 'cancelled' });
+
+    const warnings: string[] = [];
+    if (wasReceived) {
+      const { Product } = await import('@/models/Product');
+      const { StockMovement } = await import('@/models/StockMovement');
+
+      for (const item of po.items) {
+        if (!item.productId) {
+          warnings.push(`"${item.productName}" ไม่ได้ผูก ID — กรุณาลบสต๊อกเองใน Warehouse`);
+          continue;
+        }
+        const product = await Product.findById(item.productId).lean() as { stock?: number; brand?: string; model?: string; size?: string } | null;
+        if (!product) {
+          warnings.push(`ไม่พบสินค้า "${item.productName}" ใน DB`);
+          continue;
+        }
+        const stockBefore = product.stock ?? 0;
+        // คืนเต็มจำนวนที่เคยรับเข้า — สต๊อกติดลบได้ เพื่อให้บัญชีเข้า-ออกตรงกันเสมอ
+        const stockAfter  = stockBefore - item.qty;
+        const productName = `${product.brand ?? ''} ${product.model ?? ''} ${product.size ?? ''}`.trim();
+        await Product.findByIdAndUpdate(item.productId, { $inc: { stock: -item.qty } });
+        await StockMovement.create({
+          productId: item.productId, productName, type: 'out',
+          qty: item.qty, stockBefore, stockAfter,
+          refNo: po.poNumber, note: `คืนสินค้าจากยกเลิก ${po.poNumber}`,
+        });
+      }
+    }
+
+    revalidatePath('/admin/purchasing');
+    revalidatePath('/admin/warehouse');
+    return warnings.length ? { warnings } : {};
+  } catch (err) {
+    console.error('[cancelPO]', err);
+    return { error: 'ไม่สามารถยกเลิกได้' };
+  }
+}
+
+export async function updatePOPayment(
+  id: string,
+  amountPaid: number,
+  paymentDateStr: string,
+): Promise<{ error?: string }> {
+  try {
+    await connectDB();
+    const po = await PurchaseOrder.findById(id);
+    if (!po) return { error: 'ไม่พบใบสั่งซื้อ' };
+
+    const paymentDate = new Date(paymentDateStr || Date.now());
+    const totalPaid = po.amountPaid + amountPaid;
+    const paymentStatus = totalPaid >= po.grandTotal ? 'paid' : 'partial';
+
+    // Record expense
+    const expense = await Expense.create({
+      category: 'PurchaseOrder',
+      description: `ชำระเงินใบสั่งซื้อ ${po.poNumber}`,
+      amount: amountPaid,
+      expenseDate: paymentDate,
+      note: `อ้างอิงใบสั่งซื้อ ${po.poNumber}`,
+    });
+
+    await PurchaseOrder.findByIdAndUpdate(id, {
+      paymentStatus,
+      amountPaid: totalPaid,
+      paymentDate,
+      expenseId: expense._id,
+    });
+
+    revalidatePath('/admin/purchasing');
+    return {};
+  } catch (err) {
+    console.error('[updatePOPayment]', err);
+    return { error: 'ไม่สามารถบันทึกการชำระเงินได้' };
+  }
+}

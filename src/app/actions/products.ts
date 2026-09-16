@@ -1,0 +1,91 @@
+'use server';
+
+import { revalidatePath } from 'next/cache';
+import connectDB from '@/lib/mongodb';
+import { Product } from '@/models/Product';
+import { rimFromSize } from '@/lib/products';
+
+import type { ProductType } from '@/models/Product';
+
+type ProductInput = {
+  productType?: ProductType;
+  brand: string;
+  model: string;
+  size?: string;
+  type: string;
+  note: string;
+  description?: string;
+  warranty?: string;
+  priceCash: number;
+  priceCredit: number;
+  priceInstallment: number;
+  costPrice: number;
+  oldPrice?: number;
+  badge?: string;
+  image?: string;
+  images?: string[];
+  category: string;
+  specs?: { load: string; speed: string };
+  stock: number;
+  year: string;
+  published?: boolean;
+};
+
+type Result = { ok: true } | { ok: false; error: string };
+
+export async function createProduct(data: ProductInput): Promise<Result> {
+  try {
+    await connectDB();
+    const isTire = !data.productType || data.productType === 'tires';
+    const pType = data.productType || 'tires';
+    const pSize = data.size ?? '';
+    
+    const exists = await Product.exists({
+      productType: pType,
+      brand: data.brand,
+      model: data.model,
+      size: pSize
+    });
+    
+    if (exists) {
+      return { ok: false, error: `มีสินค้า ${data.brand} ${data.model} ${pSize} อยู่ในระบบแล้ว กรุณาไปแก้ไขสต๊อกแทน` };
+    }
+
+    const rimSize = isTire ? rimFromSize(pSize) : 0;
+    await Product.create({ ...data, productType: pType, size: pSize, rimSize });
+    revalidatePath('/admin/products');
+    if (isTire) revalidatePath('/tires');
+    return { ok: true };
+  } catch (e) {
+    console.error('[createProduct]', e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+export async function updateProduct(id: string, data: ProductInput): Promise<Result> {
+  try {
+    await connectDB();
+    const isTire = !data.productType || data.productType === 'tires';
+    const rimSize = isTire ? rimFromSize(data.size ?? '') : 0;
+    await Product.findByIdAndUpdate(id, { ...data, size: data.size ?? '', rimSize });
+    revalidatePath('/admin/products');
+    if (isTire) { revalidatePath('/tires'); revalidatePath(`/tires/${id}`); }
+    return { ok: true };
+  } catch (e) {
+    console.error('[updateProduct]', e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+export async function deleteProduct(id: string): Promise<Result> {
+  try {
+    await connectDB();
+    await Product.findByIdAndDelete(id);
+    revalidatePath('/admin/products');
+    revalidatePath('/tires');
+    return { ok: true };
+  } catch (e) {
+    console.error('[deleteProduct]', e);
+    return { ok: false, error: String(e) };
+  }
+}
