@@ -1,6 +1,12 @@
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = 'mongodb+srv://raredropdevwooyou_db_user:cmVdfLcTHCwrk3bq@thenutyang.eqmmvdf.mongodb.net/kosoku?appName=kosoku';
+process.loadEnvFile(new URL('../.env.local', import.meta.url));
+
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error('❌ ไม่พบ MONGODB_URI ใน .env.local');
+  process.exit(1);
+}
 
 async function hashPassword(password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -13,7 +19,15 @@ async function hashPassword(password) {
   return `${toHex(salt)}:${toHex(new Uint8Array(bits))}`;
 }
 
-const NEW_PASSWORD = 'Thenut@2024';
+function generatePassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%^&*';
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, b => chars[b % chars.length]).join('');
+}
+
+// ส่งรหัสผ่านใหม่เป็น argument ได้ เช่น: node scripts/create-admin.mjs 'MyNewPass123!'
+// ไม่ระบุ = สุ่มรหัสผ่านที่ปลอดภัยให้อัตโนมัติ
+const NEW_PASSWORD = process.argv[2] || generatePassword();
 
 const client = new MongoClient(MONGODB_URI);
 await client.connect();

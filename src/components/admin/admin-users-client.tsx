@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState, useTransition, useState, useEffect } from 'react';
+import { useActionState, useTransition, useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { createAdminUser, deleteAdminUser, toggleAdminUserActive, updateAdminUser, changeAdminPassword } from '@/app/actions/admin-users';
-import { Trash2, UserPlus, Shield, ShieldCheck, Search, Edit2, Lock, ToggleLeft, ToggleRight, X, Check, Clock } from 'lucide-react';
+import { Trash2, UserPlus, Shield, ShieldCheck, Search, Edit2, Lock, ToggleLeft, ToggleRight, X, Check, Clock, Users, UserCheck, MoreVertical } from 'lucide-react';
 
 interface AdminUserRow {
   id: string;
@@ -165,19 +166,122 @@ function CreateModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ─── Row Actions Menu ───────────────────────────────────────────
+function RowActions({
+  user, isSelf, onEdit, onPassword, onToggle, onDelete,
+}: {
+  user: AdminUserRow;
+  isSelf: boolean;
+  onEdit: () => void;
+  onPassword: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, right: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClick(e: MouseEvent) {
+      const target = e.target as Node;
+      if (btnRef.current?.contains(target) || menuRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+    function handleReposition() {
+      if (!btnRef.current) return;
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+    document.addEventListener('mousedown', handleClick);
+    window.addEventListener('scroll', handleReposition, true);
+    window.addEventListener('resize', handleReposition);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      window.removeEventListener('scroll', handleReposition, true);
+      window.removeEventListener('resize', handleReposition);
+    };
+  }, [open]);
+
+  const handleOpen = () => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+    setOpen(o => !o);
+  };
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={handleOpen}
+        title="จัดการ"
+        className={`p-1.5 rounded-lg transition-colors ${open ? 'bg-slate-100 text-slate-700' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}`}
+      >
+        <MoreVertical size={16} />
+      </button>
+
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: pos.top, right: pos.right }}
+          className="w-48 bg-white rounded-xl border border-slate-100 shadow-lg py-1.5 z-50 text-left"
+        >
+          <button onClick={() => { setOpen(false); onEdit(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+            <Edit2 size={14} className="text-slate-400" /> แก้ไขข้อมูล
+          </button>
+          <button onClick={() => { setOpen(false); onPassword(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+            <Lock size={14} className="text-slate-400" /> เปลี่ยนรหัสผ่าน
+          </button>
+          {!isSelf && (
+            <button onClick={() => { setOpen(false); onToggle(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+              {user.isActive ? <ToggleRight size={14} className="text-slate-400" /> : <ToggleLeft size={14} className="text-slate-400" />}
+              {user.isActive ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}
+            </button>
+          )}
+          {!isSelf && (
+            <>
+              <div className="my-1.5 border-t border-slate-100" />
+              <button onClick={() => { setOpen(false); onDelete(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                <Trash2 size={14} /> ลบบัญชี
+              </button>
+            </>
+          )}
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────
 export function AdminUsersClient({ users, currentUsername }: Props) {
   const [, startTransition] = useTransition();
   const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'super' | 'admin'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [showCreate, setShowCreate] = useState(false);
   const [editUser, setEditUser] = useState<AdminUserRow | null>(null);
   const [passwordUser, setPasswordUser] = useState<AdminUserRow | null>(null);
 
-  const filtered = users.filter(u =>
-    u.displayName.toLowerCase().includes(search.toLowerCase()) ||
-    u.username.toLowerCase().includes(search.toLowerCase()) ||
-    u.email?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = users.filter(u => {
+    const matchesSearch =
+      u.displayName.toLowerCase().includes(search.toLowerCase()) ||
+      u.username.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase());
+    const matchesRole = roleFilter === 'all' || u.role === roleFilter;
+    const matchesStatus = statusFilter === 'all' || (statusFilter === 'active' ? u.isActive : !u.isActive);
+    return matchesSearch && matchesRole && matchesStatus;
+  });
+
+  const stats = [
+    { label: 'ทั้งหมด', value: users.length, icon: Users, iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
+    { label: 'Super Admin', value: users.filter(u => u.role === 'super').length, icon: ShieldCheck, iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+    { label: 'Admin', value: users.filter(u => u.role === 'admin').length, icon: Shield, iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+    { label: 'ใช้งานอยู่', value: users.filter(u => u.isActive).length, icon: UserCheck, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+  ];
 
   function handleDelete(id: string, name: string) {
     if (!confirm(`ยืนยันการลบบัญชี "${name}"?`)) return;
@@ -204,34 +308,52 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
       <div className="space-y-6">
         {/* Header Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'ทั้งหมด', value: users.length, color: 'bg-slate-50 text-slate-700' },
-            { label: 'Super Admin', value: users.filter(u => u.role === 'super').length, color: 'bg-amber-50 text-amber-700' },
-            { label: 'Admin', value: users.filter(u => u.role === 'admin').length, color: 'bg-blue-50 text-blue-700' },
-            { label: 'ใช้งานอยู่', value: users.filter(u => u.isActive).length, color: 'bg-green-50 text-green-700' },
-          ].map(s => (
-            <div key={s.label} className={`${s.color} rounded-2xl p-4 border border-slate-100`}>
-              <p className="text-2xl font-black">{s.value}</p>
-              <p className="text-xs font-medium mt-0.5 opacity-70">{s.label}</p>
+          {stats.map(s => (
+            <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.iconBg} ${s.iconColor}`}>
+                <s.icon size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-black text-slate-800 leading-tight">{s.value}</p>
+                <p className="text-xs font-medium text-slate-400">{s.label}</p>
+              </div>
             </div>
           ))}
         </div>
 
         {/* User List */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center gap-3 justify-between">
-            <h2 className="font-bold text-slate-800">บัญชีผู้ดูแลระบบ ({users.length})</h2>
-            <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="ค้นหาชื่อ, username, email..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-green-400 w-64"
-              />
-            </div>
+          <div className="px-5 py-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center gap-3 justify-between">
+            <h2 className="font-bold text-slate-800">บัญชีผู้ดูแลระบบ ({filtered.length})</h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative">
+                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="ค้นหาชื่อ, username, email..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100 w-full sm:w-56"
+                />
+              </div>
+              <select
+                value={roleFilter}
+                onChange={e => setRoleFilter(e.target.value as typeof roleFilter)}
+                className="border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:border-green-400 bg-white"
+              >
+                <option value="all">ทุกบทบาท</option>
+                <option value="super">Super Admin</option>
+                <option value="admin">Admin</option>
+              </select>
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}
+                className="border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:border-green-400 bg-white"
+              >
+                <option value="all">ทุกสถานะ</option>
+                <option value="active">ใช้งาน</option>
+                <option value="inactive">ปิดใช้งาน</option>
+              </select>
               <button
                 onClick={() => setShowCreate(true)}
                 className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-colors whitespace-nowrap"
@@ -258,13 +380,19 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
                   <tr><td colSpan={6} className="text-center py-10 text-slate-400 text-sm">ไม่พบผู้ใช้งาน</td></tr>
                 )}
                 {filtered.map(user => (
-                  <tr key={user.id} className={`hover:bg-slate-50 transition-colors ${!user.isActive ? 'opacity-50' : ''}`}>
+                  <tr key={user.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                          {user.displayName[0]?.toUpperCase()}
+                        <div className="relative shrink-0">
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm ${user.isActive ? 'bg-gradient-to-br from-green-400 to-green-600' : 'bg-slate-300'}`}>
+                            {user.displayName[0]?.toUpperCase()}
+                          </div>
+                          <span
+                            title={user.isActive ? 'ใช้งาน' : 'ปิดใช้งาน'}
+                            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-white ${user.isActive ? 'bg-green-500' : 'bg-slate-300'}`}
+                          />
                         </div>
-                        <div>
+                        <div className={user.isActive ? '' : 'opacity-60'}>
                           <p className="font-semibold text-slate-800 flex items-center gap-1.5">
                             {user.displayName}
                             {user.username === currentUsername && (
@@ -297,29 +425,15 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
                         {user.isActive ? 'ใช้งาน' : 'ปิดใช้งาน'}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-1 justify-end">
-                        {/* Edit */}
-                        <button onClick={() => setEditUser(user)} title="แก้ไข" className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                          <Edit2 size={15} />
-                        </button>
-                        {/* Change password */}
-                        <button onClick={() => setPasswordUser(user)} title="เปลี่ยนรหัสผ่าน" className="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors">
-                          <Lock size={15} />
-                        </button>
-                        {/* Toggle active */}
-                        {user.username !== currentUsername && (
-                          <button onClick={() => handleToggle(user.id)} title={user.isActive ? 'ปิดใช้งาน' : 'เปิดใช้งาน'} className={`p-1.5 rounded-lg transition-colors ${user.isActive ? 'text-slate-400 hover:text-orange-500 hover:bg-orange-50' : 'text-slate-400 hover:text-green-600 hover:bg-green-50'}`}>
-                            {user.isActive ? <ToggleRight size={15} /> : <ToggleLeft size={15} />}
-                          </button>
-                        )}
-                        {/* Delete */}
-                        {user.username !== currentUsername && (
-                          <button onClick={() => handleDelete(user.id, user.displayName)} title="ลบบัญชี" className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                            <Trash2 size={15} />
-                          </button>
-                        )}
-                      </div>
+                    <td className="px-5 py-3.5 text-right">
+                      <RowActions
+                        user={user}
+                        isSelf={user.username === currentUsername}
+                        onEdit={() => setEditUser(user)}
+                        onPassword={() => setPasswordUser(user)}
+                        onToggle={() => handleToggle(user.id)}
+                        onDelete={() => handleDelete(user.id, user.displayName)}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -327,8 +441,6 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
             </table>
           </div>
         </div>
-
-
       </div>
     </>
   );
