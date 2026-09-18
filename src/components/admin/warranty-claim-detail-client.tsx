@@ -333,7 +333,7 @@ export function WarrantyClaimDetailClient({ claim }: { claim: ClaimRow }) {
           <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
             {[
               ['วันที่ผลออก', fmtDate(claim.resultDate)],
-              ['ผลที่ได้รับ', claim.resultType === 'replacement' ? 'ได้ยาง/อะไหล่ทดแทน' : 'ได้เงินทดแทน'],
+              ['ผลที่ได้รับ', claim.resultType === 'replacement' ? 'ได้สินค้า/อะไหล่ทดแทน' : 'ได้เงินทดแทน'],
             ].map(([k, v]) => (
               <div key={k}>
                 <div className="text-xs text-slate-500 mb-0.5">{k}</div>
@@ -383,7 +383,7 @@ export function WarrantyClaimDetailClient({ claim }: { claim: ClaimRow }) {
                 </label>
                 <div className="flex gap-3">
                   {[
-                    { value: 'replacement', label: 'ยาง/อะไหล่ทดแทน' },
+                    { value: 'replacement', label: 'สินค้า/อะไหล่ทดแทน' },
                     { value: 'money', label: 'เงินทดแทน' },
                   ].map((o) => (
                     <label key={o.value} className="flex items-center gap-2 cursor-pointer">
@@ -395,10 +395,10 @@ export function WarrantyClaimDetailClient({ claim }: { claim: ClaimRow }) {
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-medium text-slate-700 mb-1">
-                  รายการที่ได้รับทดแทน (กรณียาง/อะไหล่)
+                  รายการที่ได้รับทดแทน (กรณีสินค้า/อะไหล่)
                 </label>
                 <input
-                  name="replacementDescription" placeholder="เช่น ยาง Bridgestone 205/55R16 1 เส้น"
+                  name="replacementDescription" placeholder="เช่น สินค้าทดแทน รุ่น A จำนวน 1 ชิ้น"
                   className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                 />
               </div>
@@ -421,7 +421,7 @@ export function WarrantyClaimDetailClient({ claim }: { claim: ClaimRow }) {
                   <div>
                     <label className="block text-xs font-medium text-slate-700 mb-1">หมายเหตุการคืน</label>
                     <input
-                      name="customerResolutionNotes" placeholder="เช่น คืนยางทดแทนให้ลูกค้าแล้ว"
+                      name="customerResolutionNotes" placeholder="เช่น คืนสินค้าทดแทนให้ลูกค้าแล้ว"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100"
                     />
                   </div>

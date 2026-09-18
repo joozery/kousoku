@@ -146,7 +146,7 @@ export function HomepageSettingsClient({ settings }: { settings: HomepageSetting
         {/* Title & Desc */}
         <div className="space-y-2">
           <label className="text-xs font-semibold text-slate-600">หัวข้อวิดีโอ (ไม่บังคับ)</label>
-          <input value={form.videoTitle} onChange={e => setForm(f => ({ ...f, videoTitle: e.target.value }))} className={inputCls} placeholder="เช่น ดูวิธีเปลี่ยนยางกับเรา" />
+          <input value={form.videoTitle} onChange={e => setForm(f => ({ ...f, videoTitle: e.target.value }))} className={inputCls} placeholder="เช่น ดูวิธีติดตั้งสินค้ากับเรา" />
         </div>
         <div className="space-y-2">
           <label className="text-xs font-semibold text-slate-600">คำอธิบาย (ไม่บังคับ)</label>

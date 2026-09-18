@@ -85,7 +85,7 @@ function normalizeDoc(d: any): PORow {
     items: (d.items ?? []).map((i: any) => ({
       productId:   i.productId ? String(i.productId) : undefined,
       productName: i.productName ?? '',
-      unit:        i.unit        ?? 'เส้น',
+      unit:        i.unit        ?? 'ชิ้น',
       qty:         i.qty         ?? 0,
       unitPrice:   i.unitPrice   ?? 0,
       discount:    i.discount    ?? 0,

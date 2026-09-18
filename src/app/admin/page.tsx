@@ -45,11 +45,11 @@ interface DashboardData {
 
 const PIE_COLORS = ['#16a34a','#2563eb','#d97706','#7c3aed','#0891b2'];
 const CATEGORY_LABELS: Record<string, string> = {
-  touring: 'ยางทัวริ่ง',
-  sport: 'ยางสปอร์ต',
-  eco: 'ยางประหยัด',
-  suv: 'ยาง SUV',
-  allseason: 'ยาง All-Season',
+  touring: 'สินค้าทั่วไป',
+  sport: 'สินค้าสมรรถนะสูง',
+  eco: 'สินค้าประหยัดพลังงาน',
+  suv: 'สินค้าอเนกประสงค์',
+  allseason: 'สินค้าใช้งานทุกฤดู',
 };
 
 function fmt(n: number) {
@@ -351,7 +351,7 @@ export default function AdminDashboard() {
                     <p className="text-[10px] text-slate-400">{CATEGORY_LABELS[p.category] ?? p.category}</p>
                   </div>
                   <span className={`text-xs font-black shrink-0 ${p.stock === 0 ? 'text-red-500' : 'text-amber-500'}`}>
-                    {p.stock === 0 ? 'หมด' : `${p.stock} เส้น`}
+                    {p.stock === 0 ? 'หมด' : `${p.stock} ชิ้น`}
                   </span>
                 </div>
               ))}

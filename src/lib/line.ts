@@ -35,7 +35,7 @@ export async function pushMessage(to: string, messages: object[]) {
 }
 
 export function buildQuoteFlexMessage(booking: IBooking) {
-  const totalPrice = booking.tirePrice * booking.quantity;
+  const totalPrice = booking.productPrice * booking.quantity;
   const needsDeposit = booking.depositStatus !== 'not_required';
   const depositPaid = booking.depositStatus === 'verified';
   const remaining = depositPaid ? totalPrice - booking.depositAmount : totalPrice;
@@ -49,7 +49,7 @@ export function buildQuoteFlexMessage(booking: IBooking) {
 
   return {
     type: 'flex',
-    altText: `ใบเสนอราคา ${booking.ref} — ${booking.tireName}`,
+    altText: `ใบเสนอราคา ${booking.ref} — ${booking.productName}`,
     contents: {
       type: 'bubble',
       size: 'giga',
@@ -124,14 +124,14 @@ export function buildQuoteFlexMessage(booking: IBooking) {
               },
               {
                 type: 'text',
-                text: booking.tireName,
+                text: booking.productName,
                 size: 'sm',
                 weight: 'bold',
                 color: '#222222',
                 wrap: true,
               },
-              infoRow('จำนวน', `${booking.quantity} เส้น`),
-              infoRow('ราคาต่อเส้น', `฿${booking.tirePrice.toLocaleString()}`),
+              infoRow('จำนวน', `${booking.quantity} ชิ้น`),
+              infoRow('ราคาต่อชิ้น', `฿${booking.productPrice.toLocaleString()}`),
             ],
           },
           separator(),
@@ -230,7 +230,7 @@ export function buildQuoteFlexMessage(booking: IBooking) {
 
 export function buildQuoteFlexMessageMulti(bookings: IBooking[]) {
   const primary = bookings[0];
-  const itemTotals = bookings.map((b) => b.tirePrice * b.quantity);
+  const itemTotals = bookings.map((b) => b.productPrice * b.quantity);
   const totalPrice = itemTotals.reduce((sum, n) => sum + n, 0);
   const depositTotal = bookings.reduce((sum, b) => sum + (b.depositStatus !== 'not_required' ? b.depositAmount : 0), 0);
   const remainingTotal = bookings.reduce((sum, b, i) => {
@@ -294,8 +294,8 @@ export function buildQuoteFlexMessageMulti(bookings: IBooking[]) {
                   layout: 'vertical',
                   spacing: 'xs',
                   contents: [
-                    { type: 'text', text: b.tireName, size: 'sm', weight: 'bold', color: '#222222', wrap: true },
-                    infoRow('จำนวน', `${b.quantity} เส้น`),
+                    { type: 'text', text: b.productName, size: 'sm', weight: 'bold', color: '#222222', wrap: true },
+                    infoRow('จำนวน', `${b.quantity} ชิ้น`),
                     infoRow('ราคารวม', `฿${itemTotals[i].toLocaleString()}`),
                   ],
                 },
@@ -400,14 +400,14 @@ export function buildConfirmMessage(booking: IBooking) {
   });
   return {
     type: 'text',
-    text: `✅ ยืนยันการจองแล้วค่ะ!\n\nหมายเลข: ${booking.ref}\nสินค้า: ${booking.tireName}\nจำนวน: ${booking.quantity} เส้น\nวันนัดหมาย: ${appointmentFormatted}\n\nกรุณานำรถมาตามวันนัดหมายได้เลยค่ะ 🔧\nร้านเปิด จ.-อา. 08:00–18:00 น.`,
+    text: `✅ ยืนยันการจองแล้วค่ะ!\n\nหมายเลข: ${booking.ref}\nสินค้า: ${booking.productName}\nจำนวน: ${booking.quantity} ชิ้น\nวันนัดหมาย: ${appointmentFormatted}\n\nกรุณานำรถมาตามวันนัดหมายได้เลยค่ะ 🔧\nร้านเปิด จ.-อา. 08:00–18:00 น.`,
   };
 }
 
 export function buildReadyMessage(booking: IBooking) {
   return {
     type: 'text',
-    text: `🔧 สินค้าพร้อมแล้วค่ะ!\n\nหมายเลข: ${booking.ref}\nสินค้า: ${booking.tireName}\n\nสามารถนำรถมาเข้ารับการติดตั้งได้เลยนะคะ\nร้านเปิด จ.-อา. 08:00–18:00 น.\n\nขอบคุณที่ใช้บริการ Kosoku ค่ะ 🙏`,
+    text: `🔧 สินค้าพร้อมแล้วค่ะ!\n\nหมายเลข: ${booking.ref}\nสินค้า: ${booking.productName}\n\nสามารถนำรถมาเข้ารับการติดตั้งได้เลยนะคะ\nร้านเปิด จ.-อา. 08:00–18:00 น.\n\nขอบคุณที่ใช้บริการ Kosoku ค่ะ 🙏`,
   };
 }
 

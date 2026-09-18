@@ -19,8 +19,8 @@ There is no test suite. Requires `.env.local` (MONGODB_URI, SESSION_SECRET, LINE
 
 ## What this is
 
-Management system + storefront for a Thai tire shop ("เดอะนัทยาง"). Two surfaces:
-- **Public storefront** — `src/app/(public)`: tire catalog, other product categories via the `[...slug]` catch-all, booking, cart, news/promotions, and a customer account area that authenticates with LINE Login.
+Management system + storefront for a general product and service business. Two surfaces:
+- **Public storefront** — `src/app/(public)`: product catalog, other product categories via the `[...slug]` catch-all, booking, cart, news/promotions, and a customer account area that authenticates with LINE Login.
 - **Admin ERP** — `src/app/admin`: products/warehouse/purchasing, bookings, customers, finance & financial documents, payroll/attendance/shifts/leave, warranty claims, settings.
 
 UI text, comments, and domain terms are largely **Thai** — follow that convention in user-facing strings.

@@ -9,7 +9,7 @@ const employeeSchema = new Schema({
   nickname:     { type: String, default: '' },
   phone:        { type: String, default: '' },
   idCard:       { type: String, default: '' },
-  role:         { type: String, required: true, default: 'ช่างยาง' },
+  role:         { type: String, required: true, default: 'ช่างเทคนิค' },
   employeeType: { type: String, enum: ['fulltime', 'parttime'], default: 'fulltime' },
   status:       { type: String, enum: ['active', 'on_leave', 'resigned'], default: 'active' },
   // เงินเดือน / ค่าจ้าง

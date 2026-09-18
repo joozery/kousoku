@@ -211,7 +211,7 @@ export function BrandsClient({
                   value={name}
                   onChange={e => setName(e.target.value.toUpperCase())}
                   className="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all font-bold tracking-wider placeholder:font-medium placeholder:text-slate-300 uppercase"
-                  placeholder="เช่น MICHELIN, BRIDGESTONE"
+                  placeholder="เช่น แบรนด์ A"
                 />
               </div>
 

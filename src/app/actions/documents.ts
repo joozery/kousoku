@@ -286,7 +286,7 @@ type BookingForDoc = {
   carBrand?: string; carModel?: string; carYear?: string;
   licensePlate?: string; mileageBefore?: number | null; mileageAfter?: number | null;
   address?: string; taxId?: string;
-  tireName: string; tirePrice: number; quantity: number;
+  productName: string; productPrice: number; quantity: number;
   status?: string; createdAt?: Date; note?: string;
   depositAmount?: number; depositStatus?: string;
 };
@@ -310,7 +310,7 @@ function formatCarInfo(b: BookingForDoc): string {
 
 function buildDocFromBooking(b: BookingForDoc, type: DocType, docNumber: string) {
   const qty        = b.quantity ?? 1;
-  const unitPrice   = b.tirePrice ?? 0;
+  const unitPrice   = b.productPrice ?? 0;
   const subtotal    = qty * unitPrice;
   // ราคาที่ลูกค้าจองคือราคารวม VAT แล้ว (VAT ใน) — ถอด 7/107 ไม่บวกเพิ่ม
   const vatAmount   = subtotal - subtotal / 1.07;
@@ -330,7 +330,7 @@ function buildDocFromBooking(b: BookingForDoc, type: DocType, docNumber: string)
     customerAddress: b.address ?? '',
     customerTaxId:   b.taxId ?? '',
     items: [{
-      description: b.tireName ?? '',
+      description: b.productName ?? '',
       qty,
       unitPrice,
       discount:  0,
@@ -368,8 +368,8 @@ export async function createQuoteFromBooking(booking: BookingForDoc): Promise<vo
 function buildMultiDocFromBookings(bookings: BookingForDoc[], type: DocType, docNumber: string) {
   const items = bookings.map((b) => {
     const qty       = b.quantity ?? 1;
-    const unitPrice = b.tirePrice ?? 0;
-    return { description: b.tireName ?? '', qty, unitPrice, discount: 0, lineTotal: qty * unitPrice };
+    const unitPrice = b.productPrice ?? 0;
+    return { description: b.productName ?? '', qty, unitPrice, discount: 0, lineTotal: qty * unitPrice };
   });
   const subtotal   = items.reduce((sum, i) => sum + i.lineTotal, 0);
   // ราคาที่ลูกค้าจองคือราคารวม VAT แล้ว (VAT ใน) — ถอด 7/107 ไม่บวกเพิ่ม

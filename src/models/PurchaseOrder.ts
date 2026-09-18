@@ -3,7 +3,7 @@ import { Schema, model, models } from 'mongoose';
 const lineItemSchema = new Schema({
   productId:   { type: Schema.Types.ObjectId, ref: 'Product', default: null },
   productName: { type: String, required: true },
-  unit:        { type: String, default: 'เส้น' },
+  unit:        { type: String, default: 'ชิ้น' },
   qty:         { type: Number, required: true, min: 1 },
   unitPrice:   { type: Number, required: true, min: 0 },
   // discountType 'pct' → discount คือ % (0–100), 'amt' → ยอดเงินบาท

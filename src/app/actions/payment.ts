@@ -19,7 +19,7 @@ export async function uploadDepositSlip(_prev: ActionResult | null, formData: Fo
     if (!file) return { error: 'ไม่พบไฟล์สลิป' };
 
     await connectDB();
-    // ตะกร้าอาจมีหลายรุ่นยาง (หลาย Booking) ใต้ orderRef เดียว — รวมยอดมัดจำของทุกรายการที่ต้องมัดจำ ชำระทีเดียวจบ
+    // ตะกร้าอาจมีหลายรายการสินค้า (หลาย Booking) ใต้ orderRef เดียว — รวมยอดมัดจำของทุกรายการที่ต้องมัดจำ ชำระทีเดียวจบ
     const bookings = await Booking.find({ orderRef, depositStatus: { $ne: 'not_required' } });
     if (bookings.length === 0) return { error: 'ไม่พบการจองนี้ หรือไม่มียอดมัดจำที่ต้องชำระ' };
 
@@ -68,7 +68,7 @@ export async function uploadBalanceSlip(_prev: ActionResult | null, formData: Fo
     if (bookings.every((b) => b.balanceStatus === 'paid')) return { error: 'ชำระยอดคงเหลือครบแล้ว' };
 
     const remaining = bookings.reduce((sum, b) => {
-      const totalAmount = b.tirePrice * b.quantity;
+      const totalAmount = b.productPrice * b.quantity;
       const itemRemaining = b.depositStatus === 'verified' ? totalAmount - b.depositAmount : totalAmount;
       return sum + itemRemaining;
     }, 0);
@@ -84,7 +84,7 @@ export async function uploadBalanceSlip(_prev: ActionResult | null, formData: Fo
     const fileBuffer = Buffer.from(await file.arrayBuffer());
     const { verified, reason } = await verifySlip(fileBuffer, file.name, file.type, remaining);
 
-    // ยอดที่ Slip2Go ตรวจสอบคือยอดรวมทั้งกลุ่ม (ถ้าตะกร้ามีหลายรุ่นยาง) — ไม่ต้องเซ็ต balanceReceivedAmount ต่อรายการ
+    // ยอดที่ Slip2Go ตรวจสอบคือยอดรวมทั้งกลุ่ม (ถ้าตะกร้ามีหลายรายการสินค้า) — ไม่ต้องเซ็ต balanceReceivedAmount ต่อรายการ
     // ปล่อยเป็น null เพื่อให้ finance.ts ใช้ยอดที่ต้องชำระของแต่ละรายการแทน (เคสนี้โอนตรงผ่านสลิป ไม่มีค่าธรรมเนียมหัก)
     await Booking.updateMany(
       { orderRef },
@@ -165,7 +165,7 @@ export async function markBalancePaid(ref: string, method: 'cash' | 'transfer' |
     const booking = await Booking.findOne({ ref });
     if (!booking) return { error: 'ไม่พบการจองนี้' };
 
-    const totalAmount = booking.tirePrice * booking.quantity;
+    const totalAmount = booking.productPrice * booking.quantity;
     const remaining = booking.depositStatus === 'verified' ? totalAmount - booking.depositAmount : totalAmount;
     const received  = receivedAmount ?? remaining;
 

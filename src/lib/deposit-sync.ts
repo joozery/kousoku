@@ -20,7 +20,7 @@ export async function syncVerifiedDeposit(booking: any): Promise<void> {
 
   const docNumber = await generateDocNumber('booking_note');
   const qty = booking.quantity ?? 1;
-  const subtotal = qty * (booking.tirePrice ?? 0);
+  const subtotal = qty * (booking.productPrice ?? 0);
   // ราคาที่ลูกค้าจองคือราคารวม VAT แล้ว (VAT ใน) — ถอด 7/107 ไม่บวกเพิ่ม
   const vatAmount = subtotal - subtotal / 1.07;
   await FinancialDocument.create({
@@ -34,7 +34,7 @@ export async function syncVerifiedDeposit(booking: any): Promise<void> {
     customerCar: [booking.carBrand, booking.carModel, booking.licensePlate ? `ทะเบียน ${booking.licensePlate}` : ''].filter(Boolean).join(' '),
     customerAddress: booking.address ?? '',
     customerTaxId: booking.taxId ?? '',
-    items: [{ description: booking.tireName ?? '', qty, unitPrice: booking.tirePrice ?? 0, discount: 0, lineTotal: subtotal }],
+    items: [{ description: booking.productName ?? '', qty, unitPrice: booking.productPrice ?? 0, discount: 0, lineTotal: subtotal }],
     subtotal,
     discountTotal: 0,
     vatRate: 7,

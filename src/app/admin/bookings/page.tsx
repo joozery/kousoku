@@ -64,8 +64,8 @@ export default async function AdminBookingsPage({
     return {
       _id: b._id.toString(),
       ref: b.ref,
-      tireName: b.tireName,
-      tirePrice: b.tirePrice,
+      productName: b.productName,
+      productPrice: b.productPrice,
       quantity: b.quantity,
       name: b.name,
       customerType: b.customerType ?? 'individual',

@@ -69,7 +69,7 @@ export function DocumentsClient({
   const [viewDoc, setViewDoc] = useState<DocRow | null>(null);
   const [toast,   setToast]   = useState<{ msg: string; ok: boolean } | null>(null);
 
-  // inline cost editing (ต้นทุนกรอกเองได้ — ราคายางเปลี่ยนได้)
+  // inline cost editing (ต้นทุนกรอกเองได้ — ราคาสินค้าเปลี่ยนได้)
   const [editingCostId, setEditingCostId] = useState<string | null>(null);
   const [costDraft,     setCostDraft]     = useState('');
 

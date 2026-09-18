@@ -9,12 +9,7 @@ export type ProductTypeRow = {
 };
 
 const DEFAULTS: Omit<ProductTypeRow, 'id'>[] = [
-  { key: 'tires',       label: 'ยาง',           icon: 'CircleDot', unit: 'เส้น', order: 0 },
-  { key: 'wheels',      label: 'ล้อแม็ก',        icon: 'Disc3',     unit: 'วง',   order: 1 },
-  { key: 'accessories', label: 'ของแต่ง',        icon: 'Wrench',    unit: 'ชิ้น', order: 2 },
-  { key: 'brakes',      label: 'เบรค',           icon: 'Disc',      unit: 'ชิ้น', order: 3 },
-  { key: 'shock',       label: 'โช๊ค',           icon: 'Zap',       unit: 'ต้น',  order: 4 },
-  { key: 'oil',         label: 'น้ำมันเครื่อง',  icon: 'Droplets',  unit: 'ขวด',  order: 5 },
+  { key: 'general',       label: 'สินค้าทั่วไป',    icon: 'Package', unit: 'ชิ้น', order: 0 },
 ];
 
 export async function getProductTypes(): Promise<ProductTypeRow[]> {

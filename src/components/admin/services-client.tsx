@@ -197,7 +197,7 @@ export default function ServicesClient() {
                     value={formData.title} 
                     onChange={e => setFormData({...formData, title: e.target.value})}
                     className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-green-500"
-                    placeholder="เช่น รับประกันยาง"
+                    placeholder="เช่น รับประกันสินค้า"
                   />
                 </div>
                 <div>

@@ -30,7 +30,7 @@ function normalize(d: any): StockReturnRow {
     reason:       d.reason ?? '',
     items:        (d.items ?? []).map((i: any) => ({
       productName: i.productName ?? '',
-      unit:        i.unit ?? 'เส้น',
+      unit:        i.unit ?? 'ชิ้น',
       qty:         i.qty ?? 0,
       unitPrice:   i.unitPrice ?? 0,
       lineTotal:   i.lineTotal ?? 0,

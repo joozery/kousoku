@@ -191,7 +191,7 @@ export default function PromotionsClient() {
                   value={formData.title} 
                   onChange={e => setFormData({...formData, title: e.target.value})}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-green-500"
-                  placeholder="เช่น เทิร์นยางเก่า ลดสูงสุด 2,000.-"
+                  placeholder="เช่น เทิร์นสินค้าเก่า ลดสูงสุด 2,000.-"
                 />
               </div>
 
@@ -202,7 +202,7 @@ export default function PromotionsClient() {
                   value={formData.subtitle} 
                   onChange={e => setFormData({...formData, subtitle: e.target.value})}
                   className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-green-500"
-                  placeholder="เช่น เพียงนำยางเก่า 4 เส้นมาเทิร์นเมื่อซื้อยางใหม่"
+                  placeholder="เช่น นำสินค้าเก่ามาแลกรับส่วนลดเมื่อซื้อสินค้าใหม่"
                 />
               </div>
 

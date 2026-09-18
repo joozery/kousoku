@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { setServers } from 'node:dns';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -19,6 +20,14 @@ if (!cached) {
 async function connectDB(): Promise<typeof mongoose> {
   const MONGODB_URI = process.env.MONGODB_URI;
   if (!MONGODB_URI) throw new Error('MONGODB_URI is not defined in .env.local');
+
+  // Some Windows DNS resolvers reject MongoDB Atlas SRV lookups. Allow an
+  // override while defaulting to public resolvers that support SRV records.
+  const dnsServers = (process.env.MONGODB_DNS_SERVERS ?? '1.1.1.1,8.8.8.8')
+    .split(',')
+    .map((server) => server.trim())
+    .filter(Boolean);
+  setServers(dnsServers);
 
   if (cached!.conn && mongoose.connection.readyState === 1) {
     return cached!.conn;

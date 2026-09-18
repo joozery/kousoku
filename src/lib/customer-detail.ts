@@ -44,9 +44,9 @@ export type CustomerBooking = {
   carModel: string;
   carYear: string;
   licensePlate: string;
-  tireSize: string;
+  productSpec: string;
   quantity: number;
-  tirePrice: number;
+  productPrice: number;
   status: string;
   createdAt: string;
 };
@@ -161,7 +161,7 @@ export async function getCustomerDetail(id: string): Promise<CustomerDetailResul
       ? Booking.find({ phone: phoneFilter })
           .sort({ createdAt: -1 })
           .limit(50)
-          .select('carBrand carModel carYear licensePlate tireSize quantity tirePrice status createdAt')
+          .select('carBrand carModel carYear licensePlate productSpec quantity productPrice status createdAt')
           .lean()
       : Promise.resolve([]),
   ]);
@@ -185,9 +185,9 @@ export async function getCustomerDetail(id: string): Promise<CustomerDetailResul
     carModel:     String(b.carModel     ?? ''),
     carYear:      String(b.carYear      ?? ''),
     licensePlate: String(b.licensePlate ?? ''),
-    tireSize:     String(b.tireSize     ?? ''),
+    productSpec:     String(b.productSpec     ?? ''),
     quantity:     Number(b.quantity     ?? 0),
-    tirePrice:    Number(b.tirePrice    ?? 0),
+    productPrice:    Number(b.productPrice    ?? 0),
     status:       String(b.status       ?? ''),
     createdAt:    b.createdAt instanceof Date ? b.createdAt.toISOString() : String(b.createdAt ?? ''),
   }));
@@ -226,7 +226,7 @@ export async function getCustomerDetail(id: string): Promise<CustomerDetailResul
       (d.type === 'invoice' || (d.type === 'payment_note' && !(d.relatedDocId && paidBillingIds.has(d.relatedDocId))))
     )
     .reduce((s, d) => s + d.grandTotal, 0);
-  const bookingSpent = bookings.reduce((s, b) => s + b.tirePrice * b.quantity, 0);
+  const bookingSpent = bookings.reduce((s, b) => s + b.productPrice * b.quantity, 0);
   const totalSpent   = docSpent + bookingSpent;
   const totalDocs    = docs.length;
   const totalBookings = bookings.length;

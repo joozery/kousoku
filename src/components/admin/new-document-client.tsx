@@ -361,7 +361,7 @@ export function NewDocumentClient({
   const [productPickerLineKey, setProductPickerLineKey] = useState<number | null>(null);
   const [manualCostPrice, setManualCostPrice] = useState<number | null>(prefill?.costPrice ?? null);
 
-  // รวมสินค้า (ยาง) + บริการ/ค่าแรง เป็นรายการเดียวให้เลือกจากช่องค้นหาเดียวกัน
+  // รวมสินค้า + บริการ/ค่าแรง เป็นรายการเดียวให้เลือกจากช่องค้นหาเดียวกัน
   const [serviceItemsState, setServiceItemsState] = useState<ServiceItemRow[]>(serviceItems);
   type PickerEntry = { kind: 'product'; data: ProductRow } | { kind: 'service'; data: ServiceItemRow };
   const pickerEntries = useMemo<PickerEntry[]>(() => [
@@ -1073,7 +1073,7 @@ export function NewDocumentClient({
             <thead>
               <tr className="bg-slate-50 text-xs text-slate-400 font-semibold border-b border-slate-100">
                 <th className="text-left px-4 py-3 w-8">#</th>
-                <th className="text-left px-3 py-3">รายการ / รุ่นยาง *</th>
+                <th className="text-left px-3 py-3">รายการ / รายการสินค้า *</th>
                 <th className="text-center px-3 py-3 w-24">จำนวน *</th>
                 <th className="text-right px-3 py-3 w-32">ราคา/หน่วย (฿) *</th>
                 <th className="text-right px-3 py-3 w-28">ส่วนลด</th>
@@ -1093,13 +1093,13 @@ export function NewDocumentClient({
                         <input
                           value={line.description}
                           onChange={e => updateLine(line.key, 'description', e.target.value)}
-                          placeholder="พิมพ์ชื่อรายการ หรือกดค้นหา (ยาง/สินค้า หรือ บริการ)"
+                          placeholder="พิมพ์ชื่อรายการ หรือกดค้นหา (สินค้า หรือ บริการ)"
                           className="flex-1 px-2.5 py-2 rounded-lg border border-slate-200 text-xs focus:outline-none focus:border-green-400 placeholder:text-slate-300"
                         />
                         <button
                           type="button" onClick={() => setProductPickerLineKey(line.key)}
                           className="shrink-0 w-8 h-8 rounded-lg border border-slate-200 text-slate-400 hover:border-green-300 hover:text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors"
-                          title="ค้นหาสินค้า/ยาง หรือบริการ"
+                          title="ค้นหาสินค้า หรือบริการ"
                         >
                           <Search size={13} />
                         </button>
@@ -1374,8 +1374,8 @@ export function NewDocumentClient({
 
       {productPickerLineKey !== null && (
         <PickerModal
-          title="เลือกสินค้า / ยาง / บริการ"
-          placeholder="ค้นหายี่ห้อ รุ่น ขนาดยาง หรือชื่อบริการ..."
+          title="เลือกสินค้า / บริการ"
+          placeholder="ค้นหายี่ห้อ รุ่น ขนาด / สเปก หรือชื่อบริการ..."
           items={pickerEntries}
           filterFn={(entry, q) => entry.kind === 'product'
             ? `${entry.data.brand} ${entry.data.model} ${entry.data.size}`.toLowerCase().includes(q)

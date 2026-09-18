@@ -12,7 +12,7 @@ import { getApprovedLeaveSummary } from '@/lib/leaves';
 type Result = { ok: true } | { ok: false; error: string };
 
 const ROLE_LABELS: Record<string, string> = {
-  mechanic: 'ช่างยาง', alignment: 'ช่างตั้งศูนย์', cashier: 'แคชเชียร์',
+  mechanic: 'ช่างเทคนิค', alignment: 'ช่างตั้งศูนย์', cashier: 'แคชเชียร์',
   admin_role: 'ธุรการ / บัญชี', manager: 'ผู้จัดการ',
 };
 

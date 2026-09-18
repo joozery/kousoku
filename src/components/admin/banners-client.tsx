@@ -192,7 +192,7 @@ export function BannersClient({ banners }: { banners: BannerRow[] }) {
                         value={form.buttonLink ?? ''}
                         onChange={e => setForm(f => ({ ...f, buttonLink: e.target.value }))}
                         className={inputCls}
-                        placeholder="/tires"
+                        placeholder="/products"
                       />
                     </div>
                     <div className="space-y-1.5 md:col-span-2">

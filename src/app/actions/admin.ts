@@ -59,9 +59,9 @@ export async function markReady(ref: string): Promise<ActionResult> {
     if (booking.status !== 'completed') {
       await Booking.updateOne({ ref }, { status: 'completed' });
 
-      // ตัดสต๊อกจริงเมื่องานเสร็จ/ติดตั้งยางแล้ว — ข้ามถ้า tireId ไม่ใช่ Product จริง (เช่น booking จาก LINE chatbot ที่ยังใช้ id เก่า)
-      if (isValidObjectId(booking.tireId)) {
-        const result = await disburseStock(booking.tireId, booking.quantity, booking.ref, `ตัดสต๊อกจากการจอง ${booking.ref}`);
+      // ตัดสต๊อกจริงเมื่องานเสร็จ/ส่งมอบสินค้าแล้ว — ข้ามถ้า productId ไม่ใช่ Product จริง (เช่น booking จาก LINE chatbot ที่ยังใช้ id เก่า)
+      if (isValidObjectId(booking.productId)) {
+        const result = await disburseStock(booking.productId, booking.quantity, booking.ref, `ตัดสต๊อกจากการจอง ${booking.ref}`);
         if (result.error) console.error(`[markReady] disburseStock failed for ${ref}: ${result.error}`);
       }
     }
@@ -196,8 +196,8 @@ export async function cancelBooking(ref: string): Promise<ActionResult> {
     await Booking.updateOne({ ref }, { status: 'cancelled' });
 
     // ถ้างานเสร็จไปแล้ว (ตัดสต๊อกไปแล้ว) แล้วมายกเลิกทีหลัง ต้องคืนสต๊อก
-    if (wasCompleted && isValidObjectId(booking.tireId)) {
-      const result = await receiveStock(booking.tireId, booking.quantity, booking.ref, `คืนสต๊อกจากการยกเลิกการจอง ${booking.ref}`);
+    if (wasCompleted && isValidObjectId(booking.productId)) {
+      const result = await receiveStock(booking.productId, booking.quantity, booking.ref, `คืนสต๊อกจากการยกเลิกการจอง ${booking.ref}`);
       if (result.error) console.error(`[cancelBooking] receiveStock failed for ${ref}: ${result.error}`);
     }
 
@@ -218,8 +218,8 @@ export async function deleteBooking(ref: string): Promise<ActionResult> {
     const booking = await getBooking(ref);
 
     // ถ้างานเสร็จ (ตัดสต๊อกไปแล้ว) ต้องคืนสต๊อกก่อนลบ
-    if (booking.status === 'completed' && isValidObjectId(booking.tireId)) {
-      const result = await receiveStock(booking.tireId, booking.quantity, booking.ref, `คืนสต๊อกจากการลบการจอง ${booking.ref}`);
+    if (booking.status === 'completed' && isValidObjectId(booking.productId)) {
+      const result = await receiveStock(booking.productId, booking.quantity, booking.ref, `คืนสต๊อกจากการลบการจอง ${booking.ref}`);
       if (result.error) console.error(`[deleteBooking] receiveStock failed for ${ref}: ${result.error}`);
     }
 

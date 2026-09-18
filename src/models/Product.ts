@@ -7,7 +7,6 @@ export interface IProduct {
   brand: string;
   model: string;
   size: string;
-  rimSize: number;
   type: string;
   note: string;
   description: string; // รายละเอียดสินค้า — แสดงบนหน้ารายละเอียด
@@ -21,7 +20,6 @@ export interface IProduct {
   image: string;
   images: string[]; // รูปเพิ่มเติม (แกลเลอรี) — image คือรูปหลัก
   category: string;
-  specs: { load: string; speed: string; type: string };
   stock: number;
   year: string;
   published: boolean;
@@ -29,11 +27,10 @@ export interface IProduct {
 }
 
 const ProductSchema = new Schema<IProduct>({
-  productType:      { type: String, default: 'tires' },
+  productType:      { type: String, default: 'general' },
   brand:            { type: String, required: true },
   model:            { type: String, required: true },
   size:             { type: String, default: '' },
-  rimSize:          { type: Number, default: 0 },
   type:             { type: String, default: '' },
   note:             { type: String, default: '' },
   description:      { type: String, default: '' },
@@ -46,12 +43,7 @@ const ProductSchema = new Schema<IProduct>({
   badge:            { type: String },
   image:            { type: String, default: '/yang.png' },
   images:           { type: [String], default: [] },
-  category:         { type: String, default: 'touring' },
-  specs: {
-    load:  { type: String, default: '' },
-    speed: { type: String, default: '' },
-    type:  { type: String, default: '' },
-  },
+  category:         { type: String, default: 'general' },
   stock:     { type: Number, required: true, default: 0 },
   year:      { type: String, default: '26' },
   published: { type: Boolean, default: true },

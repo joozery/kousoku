@@ -105,7 +105,7 @@ export function NewWarrantyClaimClient() {
                     <input
                       required value={it.productName}
                       onChange={(e) => updateItem(i, 'productName', e.target.value)}
-                      placeholder="เช่น ยางรถยนต์ Bridgestone"
+                      placeholder="เช่น สินค้ารุ่น A"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white"
                     />
                   </div>
@@ -114,7 +114,7 @@ export function NewWarrantyClaimClient() {
                     <input
                       value={it.brand}
                       onChange={(e) => updateItem(i, 'brand', e.target.value)}
-                      placeholder="Bridgestone"
+                      placeholder="แบรนด์ A"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white"
                     />
                   </div>
@@ -123,7 +123,7 @@ export function NewWarrantyClaimClient() {
                     <input
                       value={it.size}
                       onChange={(e) => updateItem(i, 'size', e.target.value)}
-                      placeholder="205/55R16"
+                      placeholder="ขนาดหรือสเปกสินค้า"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white"
                     />
                   </div>
@@ -140,7 +140,7 @@ export function NewWarrantyClaimClient() {
                     <input
                       value={it.reason}
                       onChange={(e) => updateItem(i, 'reason', e.target.value)}
-                      placeholder="เช่น ยางแตก/บวม"
+                      placeholder="เช่น สินค้าชำรุดหรือใช้งานไม่ได้"
                       className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-green-400 focus:ring-2 focus:ring-green-100 bg-white"
                     />
                   </div>

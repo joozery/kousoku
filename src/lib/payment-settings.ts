@@ -15,11 +15,11 @@ export async function getBookingByRef(ref: string) {
   const depositStatus = (doc.depositStatus as 'pending' | 'submitted' | 'verified' | 'not_required') ?? 'pending';
   const depositAmount = (doc.depositAmount as number) ?? 1000;
   const balanceStatus = (doc.balanceStatus as 'unpaid' | 'paid') ?? 'unpaid';
-  const totalAmount = (doc.tirePrice as number) * (doc.quantity as number);
+  const totalAmount = (doc.productPrice as number) * (doc.quantity as number);
   return {
     ref: doc.ref as string,
-    tireName: doc.tireName as string,
-    tirePrice: doc.tirePrice as number,
+    productName: doc.productName as string,
+    productPrice: doc.productPrice as number,
     quantity: doc.quantity as number,
     totalAmount,
     depositAmount,
@@ -34,7 +34,7 @@ export async function getBookingByRef(ref: string) {
 
 export type OrderBooking = {
   orderRef: string;
-  items: { ref: string; tireName: string; quantity: number; tirePrice: number; totalAmount: number }[];
+  items: { ref: string; productName: string; quantity: number; productPrice: number; totalAmount: number }[];
   totalAmount: number;
   depositAmount: number;
   depositStatus: 'pending' | 'submitted' | 'verified' | 'not_required';
@@ -46,7 +46,7 @@ export type OrderBooking = {
   balanceSlipUrl: string;
 };
 
-// รวมทุก Booking (ต่อรุ่นยาง) ในตะกร้าเดียวกันเป็น "ออเดอร์เดียว" — ยอดมัดจำ/ยอดคงเหลือรวม ชำระทีเดียวจบ
+// รวมทุก Booking (ต่อรายการสินค้า) ในตะกร้าเดียวกันเป็น "ออเดอร์เดียว" — ยอดมัดจำ/ยอดคงเหลือรวม ชำระทีเดียวจบ
 export async function getBookingsByOrderRef(orderRef: string): Promise<OrderBooking | null> {
   await connectDB();
   const { Booking } = await import('@/models/Booking');
@@ -54,14 +54,14 @@ export async function getBookingsByOrderRef(orderRef: string): Promise<OrderBook
   if (docs.length === 0) return null;
 
   const items = docs.map((d) => {
-    const tirePrice = d.tirePrice as number;
+    const productPrice = d.productPrice as number;
     const quantity = d.quantity as number;
     return {
       ref: d.ref as string,
-      tireName: d.tireName as string,
+      productName: d.productName as string,
       quantity,
-      tirePrice,
-      totalAmount: tirePrice * quantity,
+      productPrice,
+      totalAmount: productPrice * quantity,
     };
   });
   const totalAmount = items.reduce((sum, i) => sum + i.totalAmount, 0);
@@ -105,7 +105,7 @@ export type PaymentReviewRow = {
   ref: string;
   name: string;
   phone: string;
-  tireName: string;
+  productName: string;
   totalAmount: number;
   depositAmount: number;
   depositSlipUrl: string;
@@ -133,7 +133,7 @@ export async function getBookingsForPaymentReview(limit = 50): Promise<PaymentRe
 
   return docs
     .map((d) => {
-      const totalAmount = (d.tirePrice as number) * (d.quantity as number);
+      const totalAmount = (d.productPrice as number) * (d.quantity as number);
       const depositAmount = (d.depositAmount as number) ?? 1000;
       const depositStatus = (d.depositStatus as 'pending' | 'submitted' | 'verified' | 'not_required') ?? 'pending';
       const balanceStatus = (d.balanceStatus as 'unpaid' | 'paid') ?? 'unpaid';
@@ -142,7 +142,7 @@ export async function getBookingsForPaymentReview(limit = 50): Promise<PaymentRe
         ref: d.ref as string,
         name: d.name as string,
         phone: d.phone as string,
-        tireName: d.tireName as string,
+        productName: d.productName as string,
         totalAmount,
         depositAmount,
         depositSlipUrl: (d.depositSlipUrl as string) ?? '',

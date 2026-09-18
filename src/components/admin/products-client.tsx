@@ -6,7 +6,7 @@ import {
   Search, Plus, Edit2, Trash2, X, Package,
   ChevronUp, ChevronDown, ChevronsUpDown, Tag, Layers,
   ChevronLeft, ChevronRight as ChevronRightIcon,
-  Upload, ImageIcon, CircleDot, Disc3, Wrench, Disc, Zap, Droplets,
+  Upload, ImageIcon, CircleDot, Wrench, Disc, Zap, Droplets,
   Car, Battery, Filter, Gauge, Shield, Box, Settings,
 } from 'lucide-react';
 import { createProduct, updateProduct, deleteProduct } from '@/app/actions/products';
@@ -21,13 +21,12 @@ import type { ProductTypeRow } from '@/app/actions/productTypes';
 type SortDir = 'asc' | 'desc';
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  CircleDot, Disc3, Wrench, Disc, Zap, Droplets,
+  CircleDot, Wrench, Disc, Zap, Droplets,
   Package, Car, Battery, Filter, Gauge, Shield, Box, Settings,
 };
 
 const ICON_OPTIONS = [
-  { name: 'CircleDot', label: 'ยาง' },
-  { name: 'Disc3',     label: 'ล้อ' },
+  { name: 'CircleDot', label: 'สินค้า' },
   { name: 'Wrench',    label: 'เครื่องมือ' },
   { name: 'Disc',      label: 'จาน' },
   { name: 'Zap',       label: 'โช๊ค' },
@@ -52,12 +51,11 @@ function calcDerivedPrices(cash: number) {
 const EMPTY_FORM = {
   brand: '', model: '', size: '', type: '', note: '',
   description: '', warranty: '',
-  specLoad: '', specSpeed: '',
   priceCash: 0, priceCredit: 0, priceInstallment: 0, costPrice: 0,
   oldPrice: undefined as number | undefined,
   badge: '', image: '/yang.png',
   images: [] as string[],
-  category: 'touring',
+  category: 'general',
   stock: 0, year: '26',
 };
 
@@ -121,7 +119,7 @@ export function ProductsClient({
   const [ptError, setPtError]             = useState('');
   const [ptPending, setPtPending]         = useState(false);
 
-  const isTire = activeType === 'tires';
+  const isGeneralProduct = activeType === 'general';
   const tabInfo = productTypes.find(t => t.key === activeType) ?? productTypes[0] ?? { label: 'สินค้า', unit: 'ชิ้น', icon: 'Package' };
 
   /* ─── filters ─── */
@@ -172,13 +170,12 @@ export function ProductsClient({
       brand: p.brand, model: p.model, size: p.size ?? '',
       type: p.type, note: p.note,
       description: p.description ?? '', warranty: p.warranty ?? '',
-      specLoad: p.specs?.load ?? '', specSpeed: p.specs?.speed ?? '',
       priceCash: p.priceCash, priceCredit: p.priceCredit,
       priceInstallment: p.priceInstallment, costPrice: p.costPrice ?? 0,
       oldPrice: p.oldPrice, badge: p.badge ?? '',
       image: p.image || '/yang.png',
       images: p.images ?? [],
-      category: p.category ?? 'touring',
+      category: p.category ?? 'general',
       stock: p.stock, year: p.year,
     });
     setError('');
@@ -228,14 +225,11 @@ export function ProductsClient({
 
   function handleSave() {
     if (!form.brand || !form.model) return;
-    if (isTire && !form.size) return;
-    const { specLoad, specSpeed, ...rest } = form;
     const data = {
-      ...rest,
+      ...form,
       productType: activeType,
       oldPrice: form.oldPrice || undefined,
       badge: form.badge || undefined,
-      specs: { load: specLoad.trim(), speed: specSpeed.trim() },
     };
     startTransition(async () => {
       const res = modal === 'add'
@@ -316,7 +310,7 @@ export function ProductsClient({
           <p className="text-xs text-slate-400 mt-0.5">จัดการสินค้าทุกหมวดหมู่</p>
         </div>
         <div className="flex items-center gap-2">
-          {isTire && (
+          {isGeneralProduct && (
             <button onClick={() => { setCatModalOpen(true); setCatError(''); }}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50 transition-colors shadow-sm">
               <Tag size={13} /> หมวดหมู่
@@ -389,8 +383,8 @@ export function ProductsClient({
 
       {/* Table Card */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        {/* Size tabs — tire only */}
-        {isTire && allSizes.length > 0 && (
+        {/* Size tabs — general products only */}
+        {isGeneralProduct && allSizes.length > 0 && (
           <div className="flex items-center gap-0 overflow-x-auto border-b border-slate-100" style={{ scrollbarWidth: 'none' }}>
             <button onClick={() => { setSizeTab('all'); setBrandFilter(''); setPage(1); }}
               className={`shrink-0 px-4 py-2.5 text-xs font-semibold border-b-2 transition-all whitespace-nowrap ${sizeTab === 'all' ? 'border-slate-900 text-slate-900 bg-slate-50' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
@@ -405,8 +399,8 @@ export function ProductsClient({
           </div>
         )}
 
-        {/* Category filter pills — tire only */}
-        {isTire && categories.length > 0 && (
+        {/* Category filter pills — general products only */}
+        {isGeneralProduct && categories.length > 0 && (
           <div className="flex items-center gap-2 flex-wrap px-4 py-2.5 border-b border-slate-100 bg-white">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">หมวดหมู่:</span>
             <button onClick={() => { setCategoryFilter(''); setPage(1); }}
@@ -425,7 +419,7 @@ export function ProductsClient({
 
         {/* Search + Brand filter */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-          {isTire && (
+          {isGeneralProduct && (
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0">ยี่ห้อ:</span>
               <div className="relative">
@@ -453,7 +447,7 @@ export function ProductsClient({
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100">
                 <th className="px-4 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider w-10">#</th>
-                {isTire && (
+                {isGeneralProduct && (
                   <th className="px-4 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-slate-100" onClick={() => toggleSort('size')}>
                     ขนาด <SortIcon col="size" sortKey={sortKey} sortDir={sortDir} />
                   </th>
@@ -464,7 +458,7 @@ export function ProductsClient({
                 <th className="px-4 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:bg-slate-100" onClick={() => toggleSort('model')}>
                   ชื่อ/รุ่น <SortIcon col="model" sortKey={sortKey} sortDir={sortDir} />
                 </th>
-                {!isTire && (
+                {!isGeneralProduct && (
                   <th className="px-4 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">ขนาด/สเปค</th>
                 )}
                 <th className="px-4 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">ประเภท</th>
@@ -492,7 +486,7 @@ export function ProductsClient({
                 return (
                   <tr key={p.id} className="hover:bg-slate-50/70 transition-colors group">
                     <td className="px-4 py-3 text-[11px] text-slate-300">{(page - 1) * PAGE_SIZE + idx + 1}</td>
-                    {isTire && (
+                    {isGeneralProduct && (
                       <td className="px-4 py-3">
                         <span className="font-mono text-[13px] font-semibold text-slate-900 bg-slate-100/80 border border-slate-200/50 px-2 py-1 rounded-md">{p.size}</span>
                       </td>
@@ -513,7 +507,7 @@ export function ProductsClient({
                         {p.badge && <span className="text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-bold">{p.badge}</span>}
                       </div>
                     </td>
-                    {!isTire && (
+                    {!isGeneralProduct && (
                       <td className="px-4 py-3 text-[12px] text-slate-500">{p.size || '—'}</td>
                     )}
                     <td className="px-4 py-3 text-center">
@@ -639,21 +633,21 @@ export function ProductsClient({
                 </Field>
 
                 {/* Model */}
-                <Field label={isTire ? 'รุ่น / ลาย *' : 'ชื่อ/รุ่นสินค้า *'}>
+                <Field label="ชื่อ/รุ่นสินค้า *">
                   <input value={form.model} onChange={e => setForm(f => ({ ...f, model: e.target.value.toUpperCase() }))}
-                    className={inputCls} placeholder={isTire ? 'XM2+' : 'ชื่อสินค้า'} />
+                    className={inputCls} placeholder="ชื่อสินค้า" />
                 </Field>
 
                 {/* Size */}
-                <Field label={isTire ? 'ขนาดยาง *' : 'ขนาด / สเปค'}>
+                <Field label="ขนาด / สเปก">
                   <input value={form.size} onChange={e => setForm(f => ({ ...f, size: e.target.value }))}
                     className={inputCls}
-                    placeholder={isTire ? '195/65R15' : activeType === 'wheels' ? '18 นิ้ว' : activeType === 'oil' ? '5W-30 1L' : ''} />
+                    placeholder={activeType === 'oil' ? '5W-30 1L' : 'ระบุขนาดหรือสเปก (ถ้ามี)'} />
                 </Field>
 
-                {/* Category (tire only) */}
-                {isTire ? (
-                  <Field label="หมวดหมู่ยาง">
+                {/* Category (general products only) */}
+                {isGeneralProduct ? (
+                  <Field label="หมวดหมู่สินค้า">
                     <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className={inputCls}>
                       {categories.map(cat => <option key={cat.key} value={cat.key}>{cat.label}</option>)}
                     </select>
@@ -661,26 +655,16 @@ export function ProductsClient({
                 ) : (
                   <Field label="ประเภท">
                     <input value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className={inputCls}
-                      placeholder={activeType === 'wheels' ? 'Sport, Classic...' : activeType === 'oil' ? 'Synthetic, Semi...' : ''} />
+                      placeholder={activeType === 'oil' ? 'Synthetic, Semi...' : 'ระบุประเภทสินค้า (ถ้ามี)'} />
                   </Field>
                 )}
 
-                {isTire && (
-                  <Field label="ประเภทยาง">
+                {isGeneralProduct && (
+                  <Field label="ประเภทสินค้า">
                     <input value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className={inputCls} placeholder="EV, Non EV..." />
                   </Field>
                 )}
 
-                {isTire && (
-                  <Field label="ดัชนีโหลด (ไม่บังคับ)">
-                    <input value={form.specLoad} onChange={e => setForm(f => ({ ...f, specLoad: e.target.value }))} className={inputCls} placeholder="เช่น 91, 95XL" />
-                  </Field>
-                )}
-                {isTire && (
-                  <Field label="ดัชนีความเร็ว (ไม่บังคับ)">
-                    <input value={form.specSpeed} onChange={e => setForm(f => ({ ...f, specSpeed: e.target.value }))} className={inputCls} placeholder="เช่น V, W, H" />
-                  </Field>
-                )}
 
                 <Field label="ปีผลิต (2 หลัก)">
                   <input value={form.year} onChange={e => setForm(f => ({ ...f, year: e.target.value }))} className={inputCls} placeholder="26" maxLength={2} />
@@ -798,7 +782,7 @@ export function ProductsClient({
 
             <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
               <button onClick={closeModal} className="px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50">ยกเลิก</button>
-              <button onClick={handleSave} disabled={!form.brand || !form.model || (isTire && !form.size) || isPending}
+              <button onClick={handleSave} disabled={!form.brand || !form.model || isPending}
                 className="px-5 py-2 text-xs font-semibold bg-slate-900 text-white rounded-lg hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">
                 {isPending ? 'กำลังบันทึก...' : modal === 'add' ? `เพิ่ม${tabInfo.label}` : 'บันทึก'}
               </button>
@@ -906,7 +890,7 @@ export function ProductsClient({
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <Tag size={15} className="text-slate-600" />
-                <h2 className="font-bold text-slate-900 text-sm">จัดการหมวดหมู่ยาง</h2>
+                <h2 className="font-bold text-slate-900 text-sm">จัดการหมวดหมู่สินค้า</h2>
               </div>
               <button onClick={() => setCatModalOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400"><X size={15} /></button>
             </div>
@@ -947,7 +931,7 @@ export function ProductsClient({
                     <input
                       value={newCatKey}
                       onChange={e => setNewCatKey(e.target.value)}
-                      placeholder="ev_tire"
+                      placeholder="general_goods"
                       className={inputCls}
                       onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
                     />
@@ -957,7 +941,7 @@ export function ProductsClient({
                     <input
                       value={newCatLabel}
                       onChange={e => setNewCatLabel(e.target.value)}
-                      placeholder="ยาง EV"
+                      placeholder="สินค้าพรีเมียม"
                       className={inputCls}
                       onKeyDown={e => e.key === 'Enter' && handleAddCategory()}
                     />

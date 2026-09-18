@@ -43,7 +43,7 @@ type POLean = { _id: unknown; grandTotal: number; amountPaid?: number; paymentDa
 type PayslipLean = { _id: unknown; netPay: number; employeeName: string; period: string; paidAt?: Date | null; createdAt: Date };
 type ExpenseLean = { _id: unknown; amount: number; category: string; description: string; expenseDate: Date };
 type BookingLean = {
-  _id: unknown; ref: string; name: string; tirePrice: number; quantity: number;
+  _id: unknown; ref: string; name: string; productPrice: number; quantity: number;
   depositAmount: number; depositStatus: string; depositPaidAt?: Date | null;
   balanceStatus: string; balancePaidAt?: Date | null; balanceReceivedAmount?: number | null;
 };

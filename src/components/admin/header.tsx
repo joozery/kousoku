@@ -94,7 +94,7 @@ export function AdminHeader({ toggleSidebar, adminUser }: HeaderProps) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-slate-800 truncate">รายการจองใหม่เข้า</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5 truncate">มีลูกค้าระบุข้อมูลจองยางเข้ามาใหม่</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5 truncate">มีลูกค้าระบุข้อมูลสั่งซื้อสินค้าเข้ามาใหม่</p>
                     <p className="text-[9px] text-slate-400 mt-1">2 ชั่วโมงที่แล้ว</p>
                   </div>
                 </Link>

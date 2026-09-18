@@ -3,8 +3,6 @@
 import { revalidatePath } from 'next/cache';
 import connectDB from '@/lib/mongodb';
 import { Product } from '@/models/Product';
-import { rimFromSize } from '@/lib/products';
-
 import type { ProductType } from '@/models/Product';
 
 type ProductInput = {
@@ -25,7 +23,6 @@ type ProductInput = {
   image?: string;
   images?: string[];
   category: string;
-  specs?: { load: string; speed: string };
   stock: number;
   year: string;
   published?: boolean;
@@ -36,8 +33,7 @@ type Result = { ok: true } | { ok: false; error: string };
 export async function createProduct(data: ProductInput): Promise<Result> {
   try {
     await connectDB();
-    const isTire = !data.productType || data.productType === 'tires';
-    const pType = data.productType || 'tires';
+    const pType = data.productType || 'general';
     const pSize = data.size ?? '';
     
     const exists = await Product.exists({
@@ -51,10 +47,8 @@ export async function createProduct(data: ProductInput): Promise<Result> {
       return { ok: false, error: `มีสินค้า ${data.brand} ${data.model} ${pSize} อยู่ในระบบแล้ว กรุณาไปแก้ไขสต๊อกแทน` };
     }
 
-    const rimSize = isTire ? rimFromSize(pSize) : 0;
-    await Product.create({ ...data, productType: pType, size: pSize, rimSize });
+    await Product.create({ ...data, productType: pType, size: pSize });
     revalidatePath('/admin/products');
-    if (isTire) revalidatePath('/tires');
     return { ok: true };
   } catch (e) {
     console.error('[createProduct]', e);
@@ -65,11 +59,8 @@ export async function createProduct(data: ProductInput): Promise<Result> {
 export async function updateProduct(id: string, data: ProductInput): Promise<Result> {
   try {
     await connectDB();
-    const isTire = !data.productType || data.productType === 'tires';
-    const rimSize = isTire ? rimFromSize(data.size ?? '') : 0;
-    await Product.findByIdAndUpdate(id, { ...data, size: data.size ?? '', rimSize });
+    await Product.findByIdAndUpdate(id, { ...data, size: data.size ?? '' });
     revalidatePath('/admin/products');
-    if (isTire) { revalidatePath('/tires'); revalidatePath(`/tires/${id}`); }
     return { ok: true };
   } catch (e) {
     console.error('[updateProduct]', e);
@@ -82,7 +73,6 @@ export async function deleteProduct(id: string): Promise<Result> {
     await connectDB();
     await Product.findByIdAndDelete(id);
     revalidatePath('/admin/products');
-    revalidatePath('/tires');
     return { ok: true };
   } catch (e) {
     console.error('[deleteProduct]', e);

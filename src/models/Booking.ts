@@ -3,9 +3,9 @@ import mongoose, { Schema, model, models } from 'mongoose';
 export interface IBooking {
   ref: string;
   orderRef: string;
-  tireId: string;
-  tireName: string;
-  tirePrice: number;
+  productId: string;
+  productName: string;
+  productPrice: number;
   quantity: number;
   name: string;
   customerType: 'individual' | 'corporate';
@@ -43,9 +43,9 @@ export interface IBooking {
 const BookingSchema = new Schema<IBooking>({
   ref:             { type: String, required: true, unique: true },
   orderRef:        { type: String, required: true, index: true },
-  tireId:          { type: String, required: true },
-  tireName:        { type: String, required: true },
-  tirePrice:       { type: Number, required: true },
+  productId:          { type: String, required: true },
+  productName:        { type: String, required: true },
+  productPrice:       { type: Number, required: true },
   quantity:        { type: Number, required: true, default: 4 },
   name:            { type: String, required: true },
   customerType:    { type: String, enum: ['individual', 'corporate'], default: 'individual' },

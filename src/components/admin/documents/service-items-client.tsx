@@ -11,7 +11,7 @@ import type { ServiceItemRow } from '@/lib/service-items';
 
 const EMPTY_FORM: ServiceItemInput = { name: '', price: 0, unit: 'ครั้ง', note: '' };
 
-const UNIT_PRESETS = ['ครั้ง', 'คัน', 'เส้น', 'ชั่วโมง', 'ชุด', 'งาน'];
+const UNIT_PRESETS = ['ครั้ง', 'ชิ้น', 'คัน', 'ชั่วโมง', 'ชุด', 'งาน'];
 
 const CARD_COLORS = [
   { gradient: 'from-green-50 to-emerald-50/80',   icon: 'bg-green-100 text-green-600',   price: 'text-green-700', border: 'border-green-100' },
@@ -116,7 +116,7 @@ function ServicePanel({
               <input
                 value={form.unit}
                 onChange={(e) => set('unit', e.target.value)}
-                placeholder="ครั้ง / เส้น / คัน"
+                placeholder="ครั้ง / ชิ้น / คัน"
                 className={inputCls}
               />
               {/* Unit presets */}

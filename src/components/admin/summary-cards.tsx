@@ -40,8 +40,8 @@ export function SummaryCards() {
     },
     {
       title: "สินค้าขายดีวันนี้",
-      value: "ยาง 185/55R16",
-      trend: "ขายแล้ว 18 เส้น",
+      value: "สินค้าตัวอย่าง A",
+      trend: "ขายแล้ว 18 ชิ้น",
       trendUp: false,
       icon: <Circle size={18} />,
       iconClass: "text-slate-600",

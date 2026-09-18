@@ -10,7 +10,7 @@ export interface IBrand {
 const BrandSchema = new Schema<IBrand>({
   name:        { type: String, required: true },
   logo:        { type: String, default: '' },
-  productType: { type: String, default: 'tires' },
+  productType: { type: String, default: 'general' },
   createdAt:   { type: Date, default: Date.now },
 });
 

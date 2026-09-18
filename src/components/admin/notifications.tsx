@@ -3,8 +3,8 @@ import { AlertCircle, Calendar, DollarSign, Droplet, UserMinus } from 'lucide-re
 export function Notifications() {
   const notifications = [
     {
-      title: "สต๊อกยาง 205/55R16 ใกล้หมด",
-      desc: "เหลือ 4 เส้น",
+      title: "สต๊อกสินค้าตัวอย่างใกล้หมด",
+      desc: "เหลือ 4 ชิ้น",
       time: "5 นาทีที่แล้ว",
       icon: <AlertCircle size={15} className="text-amber-600" />,
       bg: "bg-amber-50"

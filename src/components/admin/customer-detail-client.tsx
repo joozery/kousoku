@@ -318,12 +318,12 @@ export function CustomerDetailClient({ data, carBrands = [], carModels = [] }: {
                         </span>
                       </div>
                       <p className="text-xs text-slate-400 mt-0.5">
-                        {b.tireSize && <span className="mr-2">{b.tireSize} × {b.quantity} เส้น</span>}
+                        {b.productSpec && <span className="mr-2">{b.productSpec} × {b.quantity} ชิ้น</span>}
                         <span>{fmtDate(b.createdAt)}</span>
                       </p>
                     </div>
                     <p className="text-sm font-bold text-slate-800 shrink-0">
-                      ฿{fmt(b.tirePrice * b.quantity)}
+                      ฿{fmt(b.productPrice * b.quantity)}
                     </p>
                   </div>
                 ))}

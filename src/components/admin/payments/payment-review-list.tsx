@@ -118,7 +118,7 @@ function PaymentRow({ row, highlighted }: { row: PaymentReviewRow; highlighted: 
             <p className="font-black text-slate-800 text-sm tracking-wide">{row.ref}</p>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${badge.className}`}>{badge.label}</span>
           </div>
-          <p className="text-[13px] text-slate-500 truncate">{row.name} <span className="mx-1 text-slate-300">•</span> {row.phone} <span className="mx-1 text-slate-300">•</span> {row.tireName}</p>
+          <p className="text-[13px] text-slate-500 truncate">{row.name} <span className="mx-1 text-slate-300">•</span> {row.phone} <span className="mx-1 text-slate-300">•</span> {row.productName}</p>
           {row.depositVerifyNote && (
             <p className={`text-[11px] mt-1.5 inline-flex items-center gap-1 font-medium ${status === 'verified' ? 'text-green-600' : 'text-amber-600'}`}>
               <CheckCircle2 size={12} /> {status === 'verified' ? 'Slip2Go: ' : ''}{row.depositVerifyNote}

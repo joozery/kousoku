@@ -6,19 +6,17 @@ import { ProductCategory } from '@/models/ProductCategory';
 
 export type CategoryRow = { id: string; key: string; label: string; productType: string };
 
-const TIRE_DEFAULTS: Omit<CategoryRow, 'id'>[] = [
-  { key: 'touring',   label: 'ทั่วไป',             productType: 'tires' },
-  { key: 'eco',       label: 'ประหยัดพลังงาน',      productType: 'tires' },
-  { key: 'sport',     label: 'สปอร์ต',              productType: 'tires' },
-  { key: 'suv',       label: 'SUV/PPV',             productType: 'tires' },
-  { key: 'allseason', label: 'ออลซีซั่น',            productType: 'tires' },
+const GENERAL_DEFAULTS: Omit<CategoryRow, 'id'>[] = [
+  { key: 'general',   label: 'ทั่วไป',              productType: 'general' },
+  { key: 'premium',   label: 'พรีเมียม',             productType: 'general' },
+  { key: 'accessory', label: 'อุปกรณ์เสริม',          productType: 'general' },
 ];
 
 export async function getCategories(productType: string): Promise<CategoryRow[]> {
   await connectDB();
   let docs = await ProductCategory.find({ productType }).sort({ createdAt: 1 }).lean();
-  if (docs.length === 0 && productType === 'tires') {
-    await ProductCategory.insertMany(TIRE_DEFAULTS);
+  if (docs.length === 0 && productType === 'general') {
+    await ProductCategory.insertMany(GENERAL_DEFAULTS);
     docs = await ProductCategory.find({ productType }).sort({ createdAt: 1 }).lean();
   }
   return docs.map(d => ({

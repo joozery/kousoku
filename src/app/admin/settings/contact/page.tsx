@@ -99,7 +99,7 @@ export default function ContactSettingsPage() {
           googleMapUrl: data.googleMapUrl || '',
           heroTitle: data.heroTitle || 'ติดต่อเรา',
           heroSubtitle: data.heroSubtitle || 'KOSOKU',
-          heroDesc: data.heroDesc || 'สอบถามข้อมูลเพิ่มเติม จองคิวเปลี่ยนยาง\\nหรือปรึกษาปัญหาเรื่องรถยนต์ เราพร้อมดูแลคุณ',
+          heroDesc: data.heroDesc || 'สอบถามข้อมูลเพิ่มเติม จองคิวติดตั้งสินค้า\\nหรือปรึกษาปัญหาเรื่องรถยนต์ เราพร้อมดูแลคุณ',
           heroImage: data.heroImage || '/yang.png'
         });
         setCustomSocials(Array.isArray(data.customSocials) ? data.customSocials : []);

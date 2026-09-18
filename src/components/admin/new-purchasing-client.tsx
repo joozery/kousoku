@@ -20,7 +20,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 
 // ── constants ─────────────────────────────────────────────────────────────────
 
-const UNITS = ['เส้น', 'ชุด', 'คู่', 'ชิ้น', 'กล่อง', 'แพ็ค'];
+const UNITS = ['ชิ้น', 'ชุด', 'คู่', 'กล่อง', 'แพ็ค'];
 
 const PAYMENT_TERMS: Record<string, string> = {
   cash: 'ชำระทันที',
@@ -217,7 +217,7 @@ export function NewPurchasingClient({
   const [lines, setLines] = useState<LineItem[]>(
     initialData?.items.length
       ? initialData.items.map((item, i) => ({ key: i + 1, ...item }))
-      : [{ key: 1, productName: '', unit: 'เส้น', qty: 1, unitPrice: 0, discount: 0, discountType: 'pct' as const, year: '' }],
+      : [{ key: 1, productName: '', unit: 'ชิ้น', qty: 1, unitPrice: 0, discount: 0, discountType: 'pct' as const, year: '' }],
   );
   const [productPickerLineKey, setProductPickerLineKey] = useState<number | null>(null);
 
@@ -272,7 +272,7 @@ export function NewPurchasingClient({
   };
 
   const addLine = () =>
-    setLines(prev => [...prev, { key: Date.now(), productName: '', unit: 'เส้น', qty: 1, unitPrice: 0, discount: 0, discountType: 'pct' as const, year: '' }]);
+    setLines(prev => [...prev, { key: Date.now(), productName: '', unit: 'ชิ้น', qty: 1, unitPrice: 0, discount: 0, discountType: 'pct' as const, year: '' }]);
 
   const removeLine = (key: number) =>
     setLines(prev => prev.filter(l => l.key !== key));
@@ -871,8 +871,8 @@ export function NewPurchasingClient({
 
       {productPickerLineKey !== null && (
         <PickerModal
-          title="เลือกสินค้า / ยาง"
-          placeholder="ค้นหายี่ห้อ รุ่น หรือขนาดยาง..."
+          title="เลือกสินค้า"
+          placeholder="ค้นหายี่ห้อ รุ่น หรือขนาด / สเปก..."
           items={products}
           filterFn={(p, q) => `${p.brand} ${p.model} ${p.size}`.toLowerCase().includes(q)}
           renderItem={(p) => (

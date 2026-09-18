@@ -1,8 +1,8 @@
 export function LowStock() {
   const items = [
-    { name: "ยาง 205/55R16",           brand: "Michelin Primacy 4",  stock: 4,  reorder: 10, unit: "เส้น", img: "/cover/cover.png" },
-    { name: "ยาง 195/65R15",           brand: "Bridgestone T005A",   stock: 6,  reorder: 10, unit: "เส้น", img: "/cover/bridgestone.png" },
-    { name: "ยาง 265/60R18",           brand: "Bridgestone HT684",   stock: 3,  reorder: 5,  unit: "เส้น", img: "/cover/bridgestone.png" },
+    { name: "สินค้าตัวอย่าง A", brand: "แบรนด์ A", stock: 4, reorder: 10, unit: "ชิ้น", img: "/cover/cover.png" },
+    { name: "สินค้าตัวอย่าง B", brand: "แบรนด์ B", stock: 6, reorder: 10, unit: "ชิ้น", img: "/cover/cover.png" },
+    { name: "สินค้าตัวอย่าง C", brand: "แบรนด์ C", stock: 3, reorder: 5, unit: "ชิ้น", img: "/cover/cover.png" },
     { name: "แม็ก Lenso Jager Craft",  brand: "18x9.0 6H139.7",      stock: 2,  reorder: 4,  unit: "วง",   img: "/yang/31.png" },
     { name: "น้ำมันเครื่อง Mobil 1",   brand: "5W-30",               stock: 4,  reorder: 10, unit: "ลิตร", img: "/yang/percent.png" },
   ];

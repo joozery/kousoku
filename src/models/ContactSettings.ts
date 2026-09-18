@@ -72,7 +72,7 @@ const ContactSettingsSchema: Schema = new Schema({
   googleMapUrl: { type: String, required: true, default: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15502.830635414603!2d100.510000!3d13.730000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQzJzQ4LjAiTiAxMDDCsDMwJzM2LjAiRQ!5e0!3m2!1sth!2sth!4v1620000000000!5m2!1sth!2sth' },
   heroTitle: { type: String, default: 'ติดต่อเรา' },
   heroSubtitle: { type: String, default: 'KOSOKU' },
-  heroDesc: { type: String, default: 'สอบถามข้อมูลเพิ่มเติม จองคิวเปลี่ยนยาง\\nหรือปรึกษาปัญหาเรื่องรถยนต์ เราพร้อมดูแลคุณ' },
+  heroDesc: { type: String, default: 'สอบถามข้อมูลเพิ่มเติม จองคิวติดตั้งสินค้า\\nหรือปรึกษาปัญหาเรื่องรถยนต์ เราพร้อมดูแลคุณ' },
   heroImage: { type: String, default: '/yang.png' },
 }, {
   timestamps: true

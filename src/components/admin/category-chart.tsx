@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function CategoryChart() {
   const data = [
-    { name: 'ยางรถยนต์',    value: 72450,  color: '#4f46e5' }, // indigo
+    { name: 'สินค้าทั่วไป',    value: 72450,  color: '#4f46e5' }, // indigo
     { name: 'แม็ก & ล้อ',  value: 25600,  color: '#0ea5e9' }, // sky
     { name: 'บริการ',       value: 18300,  color: '#10b981' }, // emerald
     { name: 'น้ำมันเครื่อง',value: 7200,   color: '#f59e0b' }, // amber

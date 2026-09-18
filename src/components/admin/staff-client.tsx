@@ -12,7 +12,7 @@ import type { EmpRole } from '@/models/Employee';
 import { DatePicker } from "@/components/ui/date-picker";
 
 const ROLE_LABELS: Record<EmpRole, string> = {
-  mechanic: 'ช่างยาง',
+  mechanic: 'ช่างเทคนิค',
   alignment: 'ช่างตั้งศูนย์',
   cashier: 'แคชเชียร์',
   admin_role: 'ธุรการ / บัญชี',
@@ -48,7 +48,7 @@ const EMPTY_FORM = {
   nickname: '',
   phone: '',
   idCard: '',
-  role: 'ช่างยาง',
+  role: 'ช่างเทคนิค',
   employeeType: 'fulltime' as 'fulltime' | 'parttime',
   status: 'active' as EmployeeRow['status'],
   baseSalary: 15000,
@@ -439,7 +439,7 @@ export function StaffClient({ initialEmployees }: { initialEmployees: EmployeeRo
                         />
                         <button type="button" onClick={() => {
                           setIsCustomRole(false);
-                          setForm(f => ({ ...f, role: allUniqueRoles[0] || 'ช่างยาง' }));
+                          setForm(f => ({ ...f, role: allUniqueRoles[0] || 'ช่างเทคนิค' }));
                         }} className="px-3 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shrink-0">
                           ยกเลิก
                         </button>

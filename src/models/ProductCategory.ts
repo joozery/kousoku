@@ -10,7 +10,7 @@ export interface IProductCategory {
 const ProductCategorySchema = new Schema<IProductCategory>({
   key:         { type: String, required: true },
   label:       { type: String, required: true },
-  productType: { type: String, required: true, default: 'tires' },
+  productType: { type: String, required: true, default: 'general' },
   createdAt:   { type: Date, default: Date.now },
 });
 

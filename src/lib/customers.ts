@@ -393,7 +393,7 @@ export async function getCustomers(): Promise<CustomerRow[]> {
           lineId:     { $last: '$lineId' },
           cars:       { $addToSet: { $concat: ['$carModel', ' ปี ', '$carYear'] } },
           totalBills: { $sum: 1 },
-          totalSpent: { $sum: { $multiply: ['$tirePrice', '$quantity'] } },
+          totalSpent: { $sum: { $multiply: ['$productPrice', '$quantity'] } },
           lastVisit:  { $max: '$createdAt' },
         },
       },

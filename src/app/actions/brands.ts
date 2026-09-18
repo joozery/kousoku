@@ -11,16 +11,16 @@ function normalize(doc: Record<string, unknown>): BrandRow {
     id: String(doc._id),
     name: doc.name as string,
     logo: (doc.logo as string) ?? '',
-    productType: (doc.productType as string) ?? 'tires',
+    productType: (doc.productType as string) ?? 'general',
   };
 }
 
 export async function getBrands(productType?: string): Promise<BrandRow[]> {
   await connectDB();
-  // แบรนด์เก่าที่ไม่มี productType field ให้นับเป็น 'tires' (default)
+  // แบรนด์เก่าที่ไม่มี productType field ให้นับเป็น 'general' (default)
   const query = !productType ? {}
-    : productType === 'tires'
-      ? { $or: [{ productType: 'tires' }, { productType: { $exists: false } }, { productType: null }] }
+    : productType === 'general'
+      ? { $or: [{ productType: 'general' }, { productType: { $exists: false } }, { productType: null }] }
       : { productType };
   const docs = await Brand.find(query).sort({ name: 1 }).lean();
   return docs.map(d => normalize(d as Record<string, unknown>));
@@ -29,7 +29,7 @@ export async function getBrands(productType?: string): Promise<BrandRow[]> {
 export async function createBrand(_: unknown, formData: FormData): Promise<{ error?: string; ok?: boolean }> {
   const name        = (formData.get('name') as string ?? '').trim().toUpperCase();
   const logo        = (formData.get('logo') as string ?? '').trim();
-  const productType = (formData.get('productType') as string ?? 'tires').trim();
+  const productType = (formData.get('productType') as string ?? 'general').trim();
   if (!name) return { error: 'กรุณากรอกชื่อแบรนด์' };
   try {
     await connectDB();

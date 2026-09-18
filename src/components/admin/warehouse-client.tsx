@@ -81,11 +81,11 @@ function MoveModal({
   const filteredProducts = useMemo(() => {
     const q = search.toLowerCase().trim();
     if (!q) return products;
-    const normalizeTire = (s: string) => s.replace(/[\/rR\s]/g, '');
-    const qNorm = normalizeTire(q);
+    const normalizeProductTerm = (s: string) => s.replace(/[\/rR\s]/g, '');
+    const qNorm = normalizeProductTerm(q);
     return products.filter(p => {
       const label = p.label.toLowerCase();
-      return label.includes(q) || normalizeTire(label).includes(qNorm);
+      return label.includes(q) || normalizeProductTerm(label).includes(qNorm);
     });
   }, [products, search]);
 
@@ -383,7 +383,7 @@ function ProductHistoryModal({
             <div>
               <h2 className="text-base font-black text-slate-900">{product.label}</h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                ประวัติการเคลื่อนไหว · สต๊อกปัจจุบัน <span className="font-bold text-slate-600">{product.stock} เส้น</span>
+                ประวัติการเคลื่อนไหว · สต๊อกปัจจุบัน <span className="font-bold text-slate-600">{product.stock} ชิ้น</span>
               </p>
             </div>
           </div>
@@ -499,9 +499,9 @@ function StockTable({ items, onAdjust, onHistory }: { items: StockItem[]; onAdju
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    // normalize tire size: "215/55R17", "215/55r17", "215/55/17", "2155517" → "2155517"
-    const normalizeTire = (s: string) => s.replace(/[\/rR\s]/g, '');
-    const qNorm = normalizeTire(q);
+    // normalize product specification: "215/55R17", "215/55r17", "215/55/17", "2155517" → "2155517"
+    const normalizeProductTerm = (s: string) => s.replace(/[\/rR\s]/g, '');
+    const qNorm = normalizeProductTerm(q);
     const base = items.filter(p => {
       if (!q) return filter === 'all' || (filter === 'low' ? p.isLow : !p.isLow);
       const label = p.label.toLowerCase();
@@ -509,7 +509,7 @@ function StockTable({ items, onAdjust, onHistory }: { items: StockItem[]; onAdju
         label.includes(q) ||
         p.brand.toLowerCase().includes(q) ||
         p.model.toLowerCase().includes(q) ||
-        normalizeTire(label).includes(qNorm);
+        normalizeProductTerm(label).includes(qNorm);
       const matchFilter = filter === 'all' || (filter === 'low' ? p.isLow : !p.isLow);
       return matchSearch && matchFilter;
     });
@@ -622,7 +622,7 @@ function StockTable({ items, onAdjust, onHistory }: { items: StockItem[]; onAdju
                   <span className={`text-[13px] font-bold ${p.stock <= 0 ? 'text-red-500' : p.isLow ? 'text-amber-500' : 'text-slate-800'}`}>
                     {p.stock}
                   </span>
-                  <span className="text-[12px] text-slate-400 ml-1.5 font-medium">เส้น</span>
+                  <span className="text-[12px] text-slate-400 ml-1.5 font-medium">ชิ้น</span>
                 </td>
                 <td className="px-5 py-4 text-right text-slate-500 font-semibold text-[13px]">฿{p.priceCash.toLocaleString()}</td>
                 <td className="px-5 py-4 text-center font-bold text-slate-700 text-[13px]">฿{p.stockValue.toLocaleString()}</td>
@@ -891,7 +891,7 @@ export function WarehouseClient({
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
           {[
             { label: 'มูลค่าสต๊อกรวม', value: `฿${stats.totalValue.toLocaleString()}`, sub: `${stats.totalItems.toLocaleString()} ชิ้น`, color: 'text-slate-800', icon: <Package size={18} className="text-emerald-600" />, bg: 'bg-emerald-50' },
-            { label: 'สินค้าทั้งหมด',   value: String(stats.totalItems), sub: `< 8 เส้น`, color: 'text-slate-800', icon: <Tag size={18} className="text-blue-600" />, bg: 'bg-blue-50' },
+            { label: 'สินค้าทั้งหมด',   value: String(stats.totalItems), sub: `< 8 ชิ้น`, color: 'text-slate-800', icon: <Tag size={18} className="text-blue-600" />, bg: 'bg-blue-50' },
             { label: 'รับเข้าวันนี้',   value: `+${stats.todayIn}`,  sub: '0 ชิ้น', color: 'text-emerald-600', icon: <Download size={18} className="text-emerald-600" />, bg: 'bg-emerald-50' },
             { label: 'เบิกออกวันนี้',   value: `-${stats.todayOut}`, sub: '0 ชิ้น', color: 'text-rose-600', icon: <Upload size={18} className="text-rose-600" />, bg: 'bg-rose-50' },
             { label: 'คงเหลือสุทธิ',    value: stats.todayIn - stats.todayOut >= 0 ? `+${stats.todayIn - stats.todayOut}` : String(stats.todayIn - stats.todayOut), sub: 'วันนี้', color: 'text-slate-800', icon: <TrendingUp size={18} className="text-indigo-600" />, bg: 'bg-indigo-50' },
@@ -961,7 +961,7 @@ export function WarehouseClient({
                       <p className="text-[13px] font-bold text-slate-700 leading-relaxed pr-4">{item.label}</p>
                       <div className="text-right shrink-0">
                         <p className={`text-[14px] font-black ${item.stock <= 0 ? 'text-red-500' : 'text-amber-500'}`}>
-                          {item.stock} <span className="text-[12px] font-bold text-slate-400">เส้น</span>
+                          {item.stock} <span className="text-[12px] font-bold text-slate-400">ชิ้น</span>
                         </p>
                         <p className="text-[11px] text-slate-400 mt-0.5 font-medium">ขั้นต่ำ 8</p>
                       </div>

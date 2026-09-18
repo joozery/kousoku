@@ -3,7 +3,7 @@ import { Schema, model, models } from 'mongoose';
 const returnItemSchema = new Schema({
   productId:   { type: Schema.Types.ObjectId, ref: 'Product', default: null },
   productName: { type: String, required: true },
-  unit:        { type: String, default: 'เส้น' },
+  unit:        { type: String, default: 'ชิ้น' },
   qty:         { type: Number, required: true },
   unitPrice:   { type: Number, default: 0 },
   lineTotal:   { type: Number, default: 0 },

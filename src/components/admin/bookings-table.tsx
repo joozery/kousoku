@@ -17,8 +17,8 @@ const LineIcon = ({ className }: { className?: string }) => (
 type Booking = {
   _id: string;
   ref: string;
-  tireName: string;
-  tirePrice: number;
+  productName: string;
+  productPrice: number;
   quantity: number;
   name: string;
   customerType?: 'individual' | 'corporate';
@@ -387,10 +387,10 @@ export function BookingsTable({
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="flex flex-col">
-                        <p className="text-[13px] text-slate-800 font-semibold max-w-[200px] truncate" title={b.tireName}>{b.tireName}</p>
+                        <p className="text-[13px] text-slate-800 font-semibold max-w-[200px] truncate" title={b.productName}>{b.productName}</p>
                         <div className="flex items-center gap-2 mt-1.5">
-                          <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">{b.quantity} เส้น</span>
-                          <span className="text-[12px] font-bold text-emerald-600">฿{(b.tirePrice * b.quantity).toLocaleString()}</span>
+                          <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60">{b.quantity} ชิ้น</span>
+                          <span className="text-[12px] font-bold text-emerald-600">฿{(b.productPrice * b.quantity).toLocaleString()}</span>
                         </div>
                       </div>
                     </td>
