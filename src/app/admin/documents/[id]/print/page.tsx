@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { headers } from 'next/headers';
 import QRCode from 'qrcode';
 import { getDocumentById, DOC_TYPE_COLOR } from '@/lib/documents';
@@ -25,6 +26,16 @@ function docTypePrintLabel(type: string, vatRate: number): string {
   return DOC_TYPE_PRINT_LABEL[type] ?? type;
 }
 
+// ใบเสร็จ/ใบกำกับภาษี (INV) ออกเป็นชุด 6 ใบ: ใบกำกับภาษี/ใบส่งสินค้า (ต้นฉบับ+สำเนา) → ใบแจ้งหนี้ → ใบส่งสินค้า (สำเนา) → ใบเสร็จรับเงิน (ต้นฉบับ+สำเนา)
+const INVOICE_SET: { label: string; copy: string }[] = [
+  { label: 'ใบกำกับภาษี/ใบส่งสินค้า',       copy: '(ต้นฉบับ)' },
+  { label: 'ใบกำกับภาษี/ใบส่งสินค้า',       copy: '(สำเนา)' },
+  { label: 'ใบแจ้งหนี้/สำเนาใบส่งสินค้า',   copy: '' },
+  { label: 'ใบส่งสินค้า',                    copy: '(สำเนา)' },
+  { label: 'ใบเสร็จรับเงิน',                 copy: '(ต้นฉบับ)' },
+  { label: 'ใบเสร็จรับเงิน',                 copy: '(สำเนา)' },
+];
+
 const PAYMENT_LABEL: Record<string, string> = {
   cash:        'เงินสด',
   transfer:    'โอนเงิน',
@@ -41,8 +52,15 @@ function fmtDate(iso: string) {
   }
 }
 
-export default async function DocumentPrintPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DocumentPrintPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ copies?: string }>;
+}) {
   const { id } = await params;
+  const { copies } = await searchParams;
   const [doc, settings, hdrs] = await Promise.all([
     getDocumentById(id),
     getDocumentSettings(),
@@ -98,9 +116,36 @@ export default async function DocumentPrintPage({ params }: { params: Promise<{ 
     qrCodeUrl,
   };
 
+  // ใบเสร็จที่มี VAT พิมพ์เป็นชุด 6 ใบโดยอัตโนมัติ (เลือกพิมพ์ใบเดียวได้ด้วย ?copies=single)
+  const isInvoiceSet = doc.type === 'invoice' && doc.vatRate > 0;
+  const printSet = isInvoiceSet && copies !== 'single';
+
+  const toolbarExtra = isInvoiceSet ? (
+    <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden">
+      <Link
+        href={`/admin/documents/${id}/print`}
+        className={`px-3 py-1.5 text-xs font-bold transition-colors ${printSet ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
+      >
+        ชุด 6 ใบ
+      </Link>
+      <Link
+        href={`/admin/documents/${id}/print?copies=single`}
+        className={`px-3 py-1.5 text-xs font-bold transition-colors ${!printSet ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'}`}
+      >
+        ใบเดียว
+      </Link>
+    </div>
+  ) : undefined;
+
   return (
-    <PrintPageShell>
-      <DocumentTemplate {...templateProps} />
+    <PrintPageShell toolbarExtra={toolbarExtra}>
+      {printSet ? (
+        INVOICE_SET.map((page, i) => (
+          <DocumentTemplate key={i} {...templateProps} docTypeLabel={page.label} copyLabel={page.copy} />
+        ))
+      ) : (
+        <DocumentTemplate {...templateProps} />
+      )}
       {doc.showPaymentInfo && (
         <PaymentInfoPage
           settings={settings}

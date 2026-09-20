@@ -4,6 +4,8 @@ import { PurchaseOrder } from '@/models/PurchaseOrder';
 import { Payslip } from '@/models/Payslip';
 import { FinancialDocument } from '@/models/FinancialDocument';
 import { Customer } from '@/models/Customer';
+import { getCustomers, mergeCustomerSources } from '@/lib/customers';
+import { getCustomerDirectory } from '@/lib/customer-directory';
 
 export type MonthlyBar = {
   year:    number;
@@ -28,6 +30,9 @@ export type ReportSummary = {
   newCustomerCount: number;
   topProducts:      TopProduct[];
   ytdIncome:        number;
+  totalCustomers:   number;                    // ลูกค้าทั้งหมดในระบบ (ไม่นับคู่ค้า) — ไม่ขึ้นกับช่วงที่เลือก
+  totalDocuments:   number;                    // เอกสารทุกประเภทในระบบ — ไม่ขึ้นกับช่วงที่เลือก
+  docsByType:       { type: string; count: number }[];
 };
 
 type AggRow = { _id: { y: number; m: number }; total: number };
@@ -138,8 +143,19 @@ export async function getReportSummary(start: Date, end: Date): Promise<ReportSu
 
   const ytdIncome = ytdInvoiceAgg[0]?.total ?? 0;
 
+  // ภาพรวมทั้งระบบ (ไม่ผูกกับช่วงเวลา): จำนวนลูกค้า + จำนวนเอกสารแยกตามประเภท
+  const [bookingCustomers, directoryCustomers, docTypeAgg] = await Promise.all([
+    getCustomers(),
+    getCustomerDirectory(),
+    FinancialDocument.aggregate<{ _id: string; count: number }>([{ $group: { _id: '$type', count: { $sum: 1 } } }]),
+  ]);
+  const totalCustomers = mergeCustomerSources(bookingCustomers, directoryCustomers).filter(c => c.relationType === 'customer').length;
+  const docsByType = docTypeAgg.map(r => ({ type: r._id, count: r.count })).sort((a, b) => b.count - a.count);
+  const totalDocuments = docsByType.reduce((s, r) => s + r.count, 0);
+
   return {
     totalIncome, totalExpense, netProfit, grossProfit, monthly, incomeByCategory, expenseByCategory,
     billCount, newCustomerCount, topProducts, ytdIncome,
+    totalCustomers, totalDocuments, docsByType,
   };
 }

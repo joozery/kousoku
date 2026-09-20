@@ -10,7 +10,7 @@ const A5_SCALE = 0.7071;
 
 // children = 1 หน้าเอกสารปกติ, มากกว่า 1 = หลายหน้าต่อกัน (เช่น เอกสารหลัก + หน้าข้อมูลการรับชำระ)
 // แต่ละหน้าจะถูกครอบด้วยกรอบของตัวเอง และตัดขึ้นหน้าใหม่ให้อัตโนมัติตอนพิมพ์จริง
-export function PrintPageShell({ children }: { children: React.ReactNode }) {
+export function PrintPageShell({ children, toolbarExtra }: { children: React.ReactNode; toolbarExtra?: React.ReactNode }) {
   const pages = Children.toArray(children);
   const [paper, setPaper] = useState<PaperSize>('A4');
   const isA5 = paper === 'A5';
@@ -32,6 +32,7 @@ export function PrintPageShell({ children }: { children: React.ReactNode }) {
       <div className="print-shell-bg min-h-screen bg-slate-100 flex flex-col items-center gap-6 py-6">
         <div className="no-print mb-4 flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 sticky top-4 z-10">
           <span className="text-sm font-semibold text-slate-600">ตัวอย่างก่อนพิมพ์{pages.length > 1 ? ` (${pages.length} หน้า)` : ''}</span>
+          {toolbarExtra}
           {/* เลือกขนาดกระดาษ */}
           <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden">
             {(['A4', 'A5'] as PaperSize[]).map(p => (

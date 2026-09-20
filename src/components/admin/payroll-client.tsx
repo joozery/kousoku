@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   CalendarDays, CheckCircle, Clock, Calculator, Wallet, Edit2, X,
-  TrendingUp, TrendingDown, Users, DollarSign, AlertCircle, ChevronRight, Trash2,
+  TrendingUp, TrendingDown, Users, DollarSign, AlertCircle, ChevronRight, Trash2, Printer,
 } from 'lucide-react';
 import { generatePayroll, updatePayslip, markPaid, markAllPaid, markUnpaid, markAllUnpaid, deletePayslip } from '@/app/actions/payroll';
 import type { PayslipRow } from '@/lib/payroll';
@@ -156,6 +157,16 @@ export function PayrollClient({
             <Calculator size={15} />
             {payslips.length === 0 ? 'คำนวณรอบนี้' : 'คำนวณใหม่'}
           </button>
+          {payslips.length > 0 && (
+            <Link
+              href={`/admin/payroll/print?period=${period}`}
+              target="_blank"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-200 text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition-all shadow-sm"
+              title="พิมพ์สลิปเงินเดือนของทุกคนในรอบนี้"
+            >
+              <Printer size={15} /> พิมพ์สลิปทั้งหมด
+            </Link>
+          )}
           {paid > 0 && (
             <button
               onClick={handleUnmarkAll}
@@ -331,6 +342,10 @@ export function PayrollClient({
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center justify-end gap-1">
+                          <Link href={`/admin/payroll/print?period=${period}&id=${p.id}`} target="_blank" title="พิมพ์สลิปเงินเดือน"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                            <Printer size={14} />
+                          </Link>
                           {/* ปุ่มแก้ไข: โชว์ทุก status */}
                           <button onClick={() => openEdit(p)} title="แก้ไขโบนัส/หัก"
                             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">

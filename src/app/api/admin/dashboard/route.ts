@@ -82,6 +82,27 @@ export async function GET(req: Request) {
     ]);
     const totalIncomeMonth = monthIncomes[0]?.total ?? 0;
     const totalExpenseMonth = (monthExpenses[0]?.total ?? 0) + (monthPO[0]?.total ?? 0) + (monthPayslip[0]?.total ?? 0);
+    const profitMonth = totalIncomeMonth - totalExpenseMonth;
+
+    // ─── เอกสารค้างชำระ: ใบเสร็จที่ยังไม่ชำระ + ใบแจ้งหนี้ที่ยังค้าง (หักยอดที่รับชำระแล้วผ่านใบรับชำระ) ───
+    const today = new Date();
+    const [unpaidInvoices, openBillingNotes, paymentSums] = await Promise.all([
+      FinancialDocument.find({ type: 'invoice', status: 'unpaid' }, { grandTotal: 1, dueDate: 1 }).lean(),
+      FinancialDocument.find({ type: 'billing_note', status: { $in: ['unpaid', 'partial'] } }, { grandTotal: 1, dueDate: 1 }).lean(),
+      FinancialDocument.aggregate([
+        { $match: { type: 'payment_note' } },
+        { $group: { _id: '$relatedDocId', paid: { $sum: '$grandTotal' } } },
+      ]),
+    ]);
+    const paidByDoc = new Map(paymentSums.map(p => [String(p._id), p.paid as number]));
+    const isOverdue = (d: { dueDate?: Date | null }) => !!d.dueDate && new Date(d.dueDate) < today;
+    const unpaidDocs = {
+      count: unpaidInvoices.length + openBillingNotes.length,
+      amount:
+        unpaidInvoices.reduce((s, d) => s + d.grandTotal, 0) +
+        openBillingNotes.reduce((s, d) => s + Math.max(0, d.grandTotal - (paidByDoc.get(String(d._id)) ?? 0)), 0),
+      overdueCount: [...unpaidInvoices, ...openBillingNotes].filter(isOverdue).length,
+    };
 
     // เทียบเปอร์เซ็นต์ได้เฉพาะตอนเลือกวันเดียว (เทียบกับวันก่อนหน้า) — ช่วงหลายวันเทียบกับช่วงก่อนหน้าไม่สมเหตุ จึงไม่แสดง
     const revenueTrend = !isRange && prevDayRevenue > 0
@@ -101,25 +122,36 @@ export async function GET(req: Request) {
       createdAt: { $gte: rangeStart, $lte: rangeEnd },
     });
 
-    // ─── Recent invoices (ในช่วงที่เลือก) ─────────────────────────
-    const recentInvoices = await FinancialDocument.find({ type: 'invoice', issuedAt: { $gte: rangeStart, $lte: rangeEnd } })
-      .sort({ createdAt: -1 })
-      .limit(8)
-      .lean();
+    // ─── เอกสารที่เคลื่อนไหวล่าสุด (ทุกประเภท) — นับทั้งตอนออกเอกสารและตอนชำระ ───────────
+    const recentDocs = await FinancialDocument.aggregate([
+      { $addFields: { activityAt: { $max: ['$createdAt', { $ifNull: ['$paidAt', '$createdAt'] }] } } },
+      { $sort: { activityAt: -1 } },
+      { $limit: 8 },
+      { $project: { docNumber: 1, type: 1, customerName: 1, grandTotal: 1, status: 1, activityAt: 1 } },
+    ]);
 
-    // ─── Monthly chart data (last 6 months) ──────────────────────
+    // ─── รายรับ-รายจ่าย 6 เดือนล่าสุด (นิยามเดียวกับการ์ดรายเดือน) ──────────────────
+    const chartStart = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+    const byMonth = (field: string, sumField: string, extra: Record<string, unknown> = {}) => [
+      { $match: { ...extra, [field]: { $gte: chartStart, $lt: nextMonthStart } } },
+      { $group: { _id: { y: { $year: `$${field}` }, m: { $month: `$${field}` } }, total: { $sum: `$${sumField}` } } },
+    ];
+    const [incomeAgg, expenseAgg, poAgg, payslipAgg] = await Promise.all([
+      Income.aggregate(byMonth('incomeDate', 'amount')),
+      Expense.aggregate(byMonth('expenseDate', 'amount', { category: { $ne: 'PurchaseOrder' } })),
+      PurchaseOrder.aggregate(byMonth('paymentDate', 'amountPaid', { status: 'received', paymentStatus: { $in: ['partial', 'paid'] } })),
+      Payslip.aggregate(byMonth('paidAt', 'netPay', { status: 'paid' })),
+    ]);
+    const pick = (agg: { _id: { y: number; m: number }; total: number }[], y: number, m: number) =>
+      agg.find(r => r._id.y === y && r._id.m === m)?.total ?? 0;
+    const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
     const chartData = [];
     for (let i = 5; i >= 0; i--) {
-      const mStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const mEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-      const docs = await FinancialDocument.find({
-        type: 'invoice',
-        status: 'paid',
-        issuedAt: { $gte: mStart, $lt: mEnd },
-      }).lean();
-      const total = docs.reduce((s, d) => s + d.grandTotal, 0);
-      const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      chartData.push({ month: thMonths[mStart.getMonth()], revenue: total, count: docs.length });
+      const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const y = m.getFullYear(), mo = m.getMonth() + 1;
+      const income = pick(incomeAgg, y, mo);
+      const expense = pick(expenseAgg, y, mo) + pick(poAgg, y, mo) + pick(payslipAgg, y, mo);
+      chartData.push({ month: thMonths[m.getMonth()], income, expense, profit: income - expense });
     }
 
     // ─── Category breakdown ───────────────────────────────────────
@@ -148,15 +180,17 @@ export async function GET(req: Request) {
         totalStock: totalStock[0]?.total ?? 0,
         totalIncomeMonth,
         totalExpenseMonth,
+        profitMonth,
+        unpaidDocs,
       },
-      recentInvoices: recentInvoices.map(inv => ({
-        id: inv._id.toString(),
-        docNumber: inv.docNumber,
-        customerName: inv.customerName,
-        grandTotal: inv.grandTotal,
-        status: inv.status,
-        paymentMethod: inv.paymentMethod,
-        createdAt: inv.createdAt,
+      recentDocs: recentDocs.map(d => ({
+        id: d._id.toString(),
+        docNumber: d.docNumber,
+        type: d.type,
+        customerName: d.customerName,
+        grandTotal: d.grandTotal,
+        status: d.status,
+        activityAt: d.activityAt,
       })),
       lowStock: lowStock.map(p => ({
         id: p._id.toString(),

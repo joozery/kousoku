@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   TrendingUp, TrendingDown, DollarSign, ArrowUpRight, ArrowDownRight,
-  Plus, X, Trash2, ClipboardList,
+  Plus, X, Trash2, ClipboardList, CalendarDays,
 } from 'lucide-react';
 import { createExpense, deleteExpense } from '@/app/actions/expenses';
 import { FinanceCalendar } from '@/components/admin/finance-calendar';
@@ -143,6 +143,12 @@ export function FinanceClient({
               <option key={value} value={value}>{label}</option>
             ))}
           </select>
+          <Link
+            href="/admin/finance/calendar"
+            className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-50 hover:border-slate-300 transition-colors w-fit bg-white"
+          >
+            <CalendarDays size={16} /> ปฏิทินการเงิน
+          </Link>
           <Link
             href="/admin/finance/expenses"
             className="flex items-center gap-2 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-50 hover:border-slate-300 transition-colors w-fit bg-white"

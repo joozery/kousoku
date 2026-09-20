@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import {
   BarChart2, TrendingUp, TrendingDown, Download, Calendar,
-  Users, Package, DollarSign,
+  Users, Package, DollarSign, FileText,
 } from 'lucide-react';
 import type { ReportSummary } from '@/lib/reports';
+import { TYPE_LABEL as DOC_TYPE_TH } from '@/components/admin/documents/shared';
 import { DatePicker } from "@/components/ui/date-picker";
 
 const RANGE_OPTIONS = [
@@ -238,7 +239,7 @@ export function ReportsClient({
       </div>
 
       {/* ── 4 KPI Cards (ข้อมูลจริง) ─────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {[
           {
             label: `รายได้รวม (ปี ${new Date().getFullYear() + 543})`,
@@ -260,6 +261,22 @@ export function ReportsClient({
             sub:   `ราย · ${periodLabel}`,
             icon:  <Users size={18} />,
             color: 'text-purple-600 bg-purple-50',
+          },
+          {
+            label: 'ลูกค้าทั้งหมดในระบบ',
+            value: fmt(summary.totalCustomers),
+            sub:   'ราย · ทั้งระบบ',
+            icon:  <Users size={18} />,
+            color: 'text-indigo-600 bg-indigo-50',
+          },
+          {
+            label: 'เอกสารทั้งหมดในระบบ',
+            value: fmt(summary.totalDocuments),
+            sub:   summary.docsByType.length
+              ? summary.docsByType.map(d => `${DOC_TYPE_TH[d.type] ?? d.type} ${d.count}`).join(' · ')
+              : 'ใบ · ทุกประเภท',
+            icon:  <FileText size={18} />,
+            color: 'text-teal-600 bg-teal-50',
           },
           {
             label: 'รายการขายทั้งหมด',

@@ -1,5 +1,6 @@
 import connectDB from './mongodb';
 import { Payslip } from '@/models/Payslip';
+import { Employee } from '@/models/Employee';
 
 export const PAYROLL = {
   LATE_RATE:    300,   // default อัตราหักสาย (ถ้าไม่ได้ตั้งรายบุคคล)
@@ -120,4 +121,24 @@ export async function getPayslips(period: string): Promise<PayslipRow[]> {
   await connectDB();
   const docs = await Payslip.find({ period }).sort({ status: 1, employeeName: 1 }).lean();
   return docs.map(normalize);
+}
+
+// ข้อมูลสำหรับพิมพ์สลิป: สลิปเงินเดือน + ข้อมูลพนักงาน (รหัส/บัญชีธนาคาร) — ระบุ id = พิมพ์รายคน, ไม่ระบุ = ทั้งรอบ
+export type PayslipPrintRow = PayslipRow & {
+  empId:       string;
+  bankName:    string;
+  bankAccount: string;
+};
+
+export async function getPayslipsForPrint(period: string, id?: string): Promise<PayslipPrintRow[]> {
+  await connectDB();
+  const filter = id ? { _id: id, period } : { period };
+  const docs = await Payslip.find(filter).sort({ employeeName: 1 }).lean();
+  const emps = await Employee.find({ _id: { $in: docs.map(d => d.employeeId) } })
+    .select('empId bankName bankAccount').lean();
+  const empMap = new Map(emps.map(e => [String(e._id), e]));
+  return docs.map(d => {
+    const e = empMap.get(String(d.employeeId));
+    return { ...normalize(d), empId: e?.empId ?? '', bankName: e?.bankName ?? '', bankAccount: e?.bankAccount ?? '' };
+  });
 }

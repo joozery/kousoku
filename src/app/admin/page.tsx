@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { DollarSign, TrendingUp, FileText, Package, CalendarCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { DollarSign, TrendingUp, FileText, Package, CalendarCheck, AlertTriangle, Loader2, PiggyBank, FileWarning } from 'lucide-react';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts';
+import { TYPE_LABEL, TYPE_STYLE, STATUS_STYLE } from '@/components/admin/documents/shared';
 import { DatePicker } from "@/components/ui/date-picker";
 
 interface DashboardData {
@@ -23,15 +24,17 @@ interface DashboardData {
     totalStock: number;
     totalIncomeMonth: number;
     totalExpenseMonth: number;
+    profitMonth: number;
+    unpaidDocs: { count: number; amount: number; overdueCount: number };
   };
-  recentInvoices: {
+  recentDocs: {
     id: string;
     docNumber: string;
+    type: string;
     customerName: string;
     grandTotal: number;
     status: string;
-    paymentMethod: string;
-    createdAt: string;
+    activityAt: string;
   }[];
   lowStock: {
     id: string;
@@ -39,7 +42,7 @@ interface DashboardData {
     stock: number;
     category: string;
   }[];
-  chartData: { month: string; revenue: number; count: number }[];
+  chartData: { month: string; income: number; expense: number; profit: number }[];
   categoryData: { name: string; count: number; stock: number }[];
 }
 
@@ -54,16 +57,6 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 function fmt(n: number) {
   return n.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function getStatusLabel(status: string) {
-  const map: Record<string, { label: string; cls: string }> = {
-    paid:    { label: 'ชำระแล้ว', cls: 'bg-green-50 text-green-700' },
-    unpaid:  { label: 'ค้างชำระ',  cls: 'bg-red-50 text-red-600' },
-    voided:  { label: 'ยกเลิก',    cls: 'bg-slate-100 text-slate-500' },
-    draft:   { label: 'ร่าง',       cls: 'bg-yellow-50 text-yellow-600' },
-  };
-  return map[status] ?? { label: status, cls: 'bg-slate-100 text-slate-500' };
 }
 
 export default function AdminDashboard() {
@@ -100,7 +93,7 @@ export default function AdminDashboard() {
     </div>
   );
 
-  const { summary, recentInvoices, lowStock, chartData, categoryData } = data;
+  const { summary, recentDocs, lowStock, chartData, categoryData } = data;
 
   const financeCards = [
     {
@@ -126,6 +119,15 @@ export default function AdminDashboard() {
       trendUp: false, isNeutral: true,
       icon: <AlertTriangle size={18} />,
       iconClass: 'text-rose-600', iconBg: 'bg-rose-50',
+    },
+    {
+      title: 'กำไรเดือนนี้',
+      value: `${summary.profitMonth < 0 ? '-' : ''}฿${fmt(Math.abs(summary.profitMonth))}`,
+      trend: 'รายรับ – รายจ่าย',
+      trendUp: summary.profitMonth >= 0, isNeutral: false,
+      icon: <PiggyBank size={18} />,
+      iconClass: summary.profitMonth >= 0 ? 'text-emerald-600' : 'text-rose-600',
+      iconBg: summary.profitMonth >= 0 ? 'bg-emerald-50' : 'bg-rose-50',
     },
   ];
 
@@ -153,6 +155,16 @@ export default function AdminDashboard() {
       isNeutral: summary.isRange,
       icon: <FileText size={18} />,
       iconClass: 'text-blue-600', iconBg: 'bg-blue-50',
+    },
+    {
+      title: 'เอกสารค้างชำระ',
+      value: `${summary.unpaidDocs.count} ฉบับ`,
+      trend: summary.unpaidDocs.count === 0
+        ? 'ไม่มียอดค้าง'
+        : `฿${fmt(summary.unpaidDocs.amount)}${summary.unpaidDocs.overdueCount > 0 ? ` · เกินกำหนด ${summary.unpaidDocs.overdueCount}` : ''}`,
+      trendUp: false, isNeutral: summary.unpaidDocs.count === 0,
+      icon: <FileWarning size={18} />,
+      iconClass: 'text-red-600', iconBg: 'bg-red-50',
     },
     {
       title: 'การจองรออนุมัติ',
@@ -201,7 +213,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Finance Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
         {financeCards.map((card, idx) => (
           <div key={`fin-${idx}`} className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group">
             <div className="absolute right-0 top-0 opacity-[0.03] group-hover:opacity-[0.06] group-hover:scale-110 transition-transform pointer-events-none -mr-4 -mt-4">
@@ -222,7 +234,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Ops Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         {opsCards.map((card, idx) => (
           <div key={`ops-${idx}`} className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
             <div className={`${card.iconBg} w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 ${card.iconClass}`}>
@@ -239,29 +251,29 @@ export default function AdminDashboard() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Sales Chart */}
+        {/* Income vs Expense (6 เดือน) */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-bold text-slate-800">ยอดขาย 6 เดือนล่าสุด</h3>
-            <span className="text-xs text-slate-400">จากใบแจ้งหนี้ที่ชำระแล้ว</span>
+            <h3 className="font-bold text-slate-800">รายรับ–รายจ่าย 6 เดือนล่าสุด</h3>
+            <span className="text-xs text-slate-400">เส้น = กำไร (รายรับ – รายจ่าย)</span>
           </div>
-          {chartData.every(d => d.revenue === 0) ? (
-            <div className="flex items-center justify-center h-48 text-slate-400 text-sm">ยังไม่มีข้อมูลยอดขาย</div>
+          {chartData.every(d => d.income === 0 && d.expense === 0) ? (
+            <div className="flex items-center justify-center h-48 text-slate-400 text-sm">ยังไม่มีข้อมูลรายรับ/รายจ่าย</div>
           ) : (
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#16a34a" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+            <ResponsiveContainer width="100%" height={240}>
+              <ComposedChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `฿${Number(v).toLocaleString()}`} />
-                <Tooltip formatter={(v: any) => [`฿${fmt(v)}`, 'ยอดขาย']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }} />
-                <Area type="monotone" dataKey="revenue" stroke="#16a34a" strokeWidth={2.5} fill="url(#colorRev)" dot={{ fill: '#16a34a', r: 4 }} />
-              </AreaChart>
+                <Tooltip
+                  formatter={(v, n) => [`฿${fmt(Number(v))}`, n as string]}
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+                />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="income" name="รายรับ" fill="#16a34a" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                <Bar dataKey="expense" name="รายจ่าย" fill="#f87171" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                <Line type="monotone" dataKey="profit" name="กำไร" stroke="#2563eb" strokeWidth={2.5} dot={{ r: 3.5, fill: '#2563eb' }} />
+              </ComposedChart>
             </ResponsiveContainer>
           )}
         </div>
@@ -287,20 +299,21 @@ export default function AdminDashboard() {
 
       {/* Tables Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Recent Invoices */}
+        {/* Recent Documents */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="font-bold text-slate-800">บิลล่าสุด</h3>
+            <h3 className="font-bold text-slate-800">เอกสารเคลื่อนไหวล่าสุด</h3>
             <a href="/admin/documents" className="text-xs font-semibold text-green-600 hover:text-green-700">ดูทั้งหมด →</a>
           </div>
-          {recentInvoices.length === 0 ? (
-            <div className="text-center py-10 text-slate-400 text-sm">ยังไม่มีบิล</div>
+          {recentDocs.length === 0 ? (
+            <div className="text-center py-10 text-slate-400 text-sm">ยังไม่มีเอกสาร</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-100">
-                    <th className="pb-3 text-xs font-bold text-slate-500 text-left">เลขบิล</th>
+                    <th className="pb-3 text-xs font-bold text-slate-500 text-left">เลขที่</th>
+                    <th className="pb-3 text-xs font-bold text-slate-500 text-left">ประเภท</th>
                     <th className="pb-3 text-xs font-bold text-slate-500 text-left">ลูกค้า</th>
                     <th className="pb-3 text-xs font-bold text-slate-500 text-right">ยอดรวม</th>
                     <th className="pb-3 text-xs font-bold text-slate-500 text-center">สถานะ</th>
@@ -308,18 +321,25 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentInvoices.map(inv => {
-                    const st = getStatusLabel(inv.status);
+                  {recentDocs.map(doc => {
+                    const st = STATUS_STYLE[doc.status];
                     return (
-                      <tr key={inv.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                        <td className="py-3 text-xs text-slate-500 font-mono">{inv.docNumber}</td>
-                        <td className="py-3 text-xs font-medium text-slate-700 max-w-[140px] truncate">{inv.customerName}</td>
-                        <td className="py-3 text-xs font-bold text-slate-900 text-right">฿{fmt(inv.grandTotal)}</td>
-                        <td className="py-3 text-center">
-                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                      <tr key={doc.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                        <td className="py-3 text-xs font-mono">
+                          <a href={`/admin/documents/${doc.id}/print`} className="text-slate-500 hover:text-green-700 hover:underline">{doc.docNumber}</a>
                         </td>
-                        <td className="py-3 text-xs text-slate-400 text-right">
-                          {new Date(inv.createdAt).toLocaleDateString('th-TH', { day: '2-digit', month: 'short' })}
+                        <td className="py-3">
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-md border whitespace-nowrap ${TYPE_STYLE[doc.type] ?? 'bg-slate-50 text-slate-600 border-slate-200'}`}>
+                            {TYPE_LABEL[doc.type] ?? doc.type}
+                          </span>
+                        </td>
+                        <td className="py-3 text-xs font-medium text-slate-700 max-w-[140px] truncate">{doc.customerName}</td>
+                        <td className="py-3 text-xs font-bold text-slate-900 text-right">฿{fmt(doc.grandTotal)}</td>
+                        <td className="py-3 text-center">
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full border whitespace-nowrap ${st?.className ?? 'bg-slate-50 text-slate-500 border-slate-200/50'}`}>{st?.label ?? doc.status}</span>
+                        </td>
+                        <td className="py-3 text-xs text-slate-400 text-right whitespace-nowrap">
+                          {new Date(doc.activityAt).toLocaleDateString('th-TH', { day: '2-digit', month: 'short' })}
                         </td>
                       </tr>
                     );
