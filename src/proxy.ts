@@ -10,11 +10,15 @@ export async function proxy(request: NextRequest) {
   const ok = token ? await verifySessionToken(token) : false;
 
   if (!ok) {
+    // API หลังบ้านตอบ 401 (ไม่ redirect) — ไม่งั้นข้อมูลการเงิน/ตั้งค่า เรียกได้โดยไม่ต้องล็อกอิน
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*'],
 };
