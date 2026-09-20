@@ -151,7 +151,7 @@ export function FinanceClient({
           </Link>
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-xl font-bold text-sm hover:bg-green-700 transition-colors w-fit"
+            className="flex items-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg font-bold text-sm hover:bg-green-700 transition-colors w-fit"
           >
             <Plus size={16} /> บันทึกรายจ่าย
           </button>
