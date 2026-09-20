@@ -29,7 +29,7 @@ export default async function AdminUsersPage() {
   }));
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-black text-slate-900">จัดการ Admin</h1>
         <p className="text-slate-500 text-sm mt-1">เพิ่ม แก้ไข หรือลบบัญชีผู้ดูแลระบบ</p>

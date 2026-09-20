@@ -80,7 +80,7 @@ export function TimeCorrectionClient({ requests }: { requests: TimeCorrectionRow
 
   return (
     <>
-      <div className={`max-w-5xl mx-auto transition-opacity ${isPending ? 'opacity-60' : ''}`}>
+      <div className={`max-w-7xl mx-auto transition-opacity ${isPending ? 'opacity-60' : ''}`}>
         <div className="mb-6">
           <h1 className="text-2xl font-black text-slate-900">อนุมัติแก้ไขเวลา</h1>
           <p className="text-sm text-slate-500 mt-1">คำขอแก้ไขเวลาเข้า-ออกงานของพนักงาน</p>

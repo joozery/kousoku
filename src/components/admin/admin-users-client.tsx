@@ -1,9 +1,25 @@
 'use client';
 
-import { useActionState, useTransition, useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+import { useActionState, useTransition, useState, useEffect } from 'react';
 import { createAdminUser, deleteAdminUser, toggleAdminUserActive, updateAdminUser, changeAdminPassword } from '@/app/actions/admin-users';
-import { Trash2, UserPlus, Shield, ShieldCheck, Search, Edit2, Lock, ToggleLeft, ToggleRight, X, Check, Clock, Users, UserCheck, MoreVertical } from 'lucide-react';
+import {
+  Trash2, UserPlus, Shield, ShieldCheck, Search, Pencil, Lock, Power, PowerOff, Check, Clock, Users, UserCheck, MoreVertical,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarBadge, AvatarFallback } from '@/components/ui/avatar';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
+  AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface AdminUserRow {
   id: string;
@@ -22,151 +38,190 @@ interface Props {
   currentUsername: string;
 }
 
-// ─── Modal Components ──────────────────────────────────────
-function EditModal({ user, onClose }: { user: AdminUserRow; onClose: () => void }) {
-  const [state, formAction, pending] = useActionState(updateAdminUser, null);
+type FormState = { error?: string; success?: boolean } | null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
-          <h3 className="font-bold text-slate-800 flex items-center gap-2"><Edit2 size={16} className="text-green-500" />แก้ไขข้อมูลผู้ใช้</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition p-1 rounded-lg hover:bg-slate-100"><X size={18} /></button>
-        </div>
-        <form action={async (fd) => { await formAction(fd); if (!state?.error) onClose(); }} className="p-5 space-y-4">
-          <input type="hidden" name="id" value={user.id} />
-          {state?.error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2.5 rounded-xl">{state.error}</div>}
-          {state?.success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm px-3 py-2.5 rounded-xl flex items-center gap-2"><Check size={14}/>บันทึกสำเร็จ</div>}
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">ชื่อที่แสดง *</label>
-            <input type="text" name="displayName" defaultValue={user.displayName} required className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">อีเมล</label>
-            <input type="email" name="email" defaultValue={user.email} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">เบอร์โทร</label>
-            <input type="tel" name="phone" defaultValue={user.phone} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">บทบาท</label>
-            <select name="role" defaultValue={user.role} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 bg-white">
-              <option value="admin">Admin</option>
-              <option value="super">Super Admin</option>
-            </select>
-          </div>
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 font-medium py-2.5 rounded-xl text-sm hover:bg-slate-50 transition">ยกเลิก</button>
-            <button type="submit" disabled={pending} className="flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold py-2.5 rounded-xl text-sm transition">
-              {pending ? 'กำลังบันทึก...' : 'บันทึก'}
-            </button>
-          </div>
-        </form>
+const ROLE_ITEMS = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'super', label: 'Super Admin' },
+];
+const ROLE_FILTER_ITEMS = [{ value: 'all', label: 'ทุกบทบาท' }, ...ROLE_ITEMS];
+const STATUS_FILTER_ITEMS = [
+  { value: 'all', label: 'ทุกสถานะ' },
+  { value: 'active', label: 'ใช้งาน' },
+  { value: 'inactive', label: 'ปิดใช้งาน' },
+];
+
+const primaryBtn = 'h-10 px-4 bg-green-600 text-white hover:bg-green-700';
+const fieldCls = 'h-10';
+
+// ─── Shared bits ───────────────────────────────────────────────
+function FormAlert({ state, successText }: { state: FormState; successText: string }) {
+  if (state?.error) {
+    return <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-600">{state.error}</div>;
+  }
+  if (state?.success) {
+    return (
+      <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2.5 text-sm text-green-600">
+        <Check size={14} /> {successText}
       </div>
-    </div>
-  );
+    );
+  }
+  return null;
 }
 
-function PasswordModal({ user, onClose }: { user: AdminUserRow; onClose: () => void }) {
-  const [state, formAction, pending] = useActionState(changeAdminPassword, null);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
-          <h3 className="font-bold text-slate-800 flex items-center gap-2"><Lock size={16} className="text-amber-500" />เปลี่ยนรหัสผ่าน</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition p-1 rounded-lg hover:bg-slate-100"><X size={18} /></button>
-        </div>
-        <form action={async (fd) => { await formAction(fd); }} className="p-5 space-y-4">
-          <input type="hidden" name="id" value={user.id} />
-          <p className="text-sm text-slate-500">ตั้งรหัสผ่านใหม่ให้ <span className="font-semibold text-slate-700">{user.displayName}</span></p>
-          {state?.error && <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-3 py-2.5 rounded-xl">{state.error}</div>}
-          {state?.success && <div className="bg-green-50 border border-green-200 text-green-600 text-sm px-3 py-2.5 rounded-xl flex items-center gap-2"><Check size={14}/>เปลี่ยนรหัสผ่านสำเร็จ</div>}
-          <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">รหัสผ่านใหม่ *</label>
-            <input type="password" name="newPassword" required placeholder="อย่างน้อย 6 ตัวอักษร" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-          </div>
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 border border-slate-200 text-slate-600 font-medium py-2.5 rounded-xl text-sm hover:bg-slate-50 transition">ยกเลิก</button>
-            <button type="submit" disabled={pending} className="flex-1 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-bold py-2.5 rounded-xl text-sm transition">
-              {pending ? 'กำลังบันทึก...' : 'เปลี่ยนรหัสผ่าน'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-// ─── Create Modal ─────────────────────────────────────────────
-function CreateModal({ onClose }: { onClose: () => void }) {
-  const [state, formAction, pending] = useActionState(createAdminUser, null);
-
+// ปิดหน้าต่างอัตโนมัติหลังบันทึกสำเร็จ (เว้นเวลาให้เห็นข้อความสำเร็จ)
+function useCloseOnSuccess(state: FormState, onClose: () => void, delay = 900) {
   useEffect(() => {
-    if (state?.success) {
-      const t = setTimeout(() => onClose(), 1200);
-      return () => clearTimeout(t);
-    }
-  }, [state?.success, onClose]);
+    if (!state?.success) return;
+    const t = setTimeout(onClose, delay);
+    return () => clearTimeout(t);
+  }, [state?.success, onClose, delay]);
+}
 
+function RoleSelect({ name, defaultValue }: { name: string; defaultValue: 'admin' | 'super' }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
-          <h3 className="font-bold text-slate-800 flex items-center gap-2"><UserPlus size={16} className="text-green-500" />เพิ่มบัญชีใหม่</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 transition p-1 rounded-lg hover:bg-slate-100"><X size={18} /></button>
-        </div>
-        <div className="p-5">
-          {state?.error && <div className="mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-600 text-sm">{state.error}</div>}
-          {state?.success && (
-            <div className="mb-4 bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-green-600 text-sm flex items-center gap-2">
-              <Check size={14} />เพิ่มบัญชีสำเร็จแล้ว! กำลังปิดหน้าต่าง...
-            </div>
-          )}
-          <form action={formAction} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">Username *</label>
-              <input type="text" name="username" required placeholder="เช่น staff01" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">ชื่อที่แสดง *</label>
-              <input type="text" name="displayName" required placeholder="เช่น คุณสมชาย" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">อีเมล</label>
-              <input type="email" name="email" placeholder="example@email.com" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">เบอร์โทร</label>
-              <input type="tel" name="phone" placeholder="08x-xxx-xxxx" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">รหัสผ่าน * (อย่างน้อย 6 ตัว)</label>
-              <input type="password" name="password" required placeholder="••••••••" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">บทบาท</label>
-              <select name="role" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-green-400 bg-white">
-                <option value="admin">Admin</option>
-                <option value="super">Super Admin</option>
-              </select>
-            </div>
-            <div className="md:col-span-2 flex gap-3 justify-end pt-2">
-              <button type="button" onClick={onClose} className="border border-slate-200 text-slate-600 font-medium px-5 py-2.5 rounded-xl text-sm hover:bg-slate-50 transition">ยกเลิก</button>
-              <button type="submit" disabled={pending} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-60 text-white font-bold px-6 py-2.5 rounded-xl transition-colors text-sm">
-                <UserPlus size={16} />
-                {pending ? 'กำลังเพิ่ม...' : 'เพิ่มบัญชี'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Select name={name} defaultValue={defaultValue} items={ROLE_ITEMS}>
+      <SelectTrigger className="w-full data-[size=default]:h-10">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {ROLE_ITEMS.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+      </SelectContent>
+    </Select>
   );
 }
 
-// ─── Row Actions Menu ───────────────────────────────────────────
+function RoleBadge({ role }: { role: AdminUserRow['role'] }) {
+  return role === 'super' ? (
+    <Badge variant="outline" className="border-amber-200 bg-amber-50 text-amber-700"><ShieldCheck /> Super Admin</Badge>
+  ) : (
+    <Badge variant="secondary"><Shield /> Admin</Badge>
+  );
+}
+
+// ─── Dialogs ───────────────────────────────────────────────────
+function CreateDialog({ onClose }: { onClose: () => void }) {
+  const [state, formAction, pending] = useActionState<FormState, FormData>(createAdminUser, null);
+  useCloseOnSuccess(state, onClose, 1200);
+
+  return (
+    <Dialog open onOpenChange={o => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><UserPlus size={16} className="text-green-600" /> เพิ่มบัญชีใหม่</DialogTitle>
+          <DialogDescription>สร้างบัญชีผู้ดูแลระบบสำหรับเข้าสู่หลังบ้าน</DialogDescription>
+        </DialogHeader>
+        <form action={formAction} className="space-y-4">
+          <FormAlert state={state} successText="เพิ่มบัญชีสำเร็จแล้ว กำลังปิดหน้าต่าง..." />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="new-username">Username *</Label>
+              <Input id="new-username" name="username" required placeholder="เช่น staff01" className={fieldCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="new-displayName">ชื่อที่แสดง *</Label>
+              <Input id="new-displayName" name="displayName" required placeholder="เช่น คุณสมชาย" className={fieldCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="new-email">อีเมล</Label>
+              <Input id="new-email" type="email" name="email" placeholder="example@email.com" className={fieldCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="new-phone">เบอร์โทร</Label>
+              <Input id="new-phone" type="tel" name="phone" placeholder="08x-xxx-xxxx" className={fieldCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="new-password">รหัสผ่าน * (อย่างน้อย 6 ตัว)</Label>
+              <Input id="new-password" type="password" name="password" required placeholder="••••••••" className={fieldCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>บทบาท</Label>
+              <RoleSelect name="role" defaultValue="admin" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" className="h-10" onClick={onClose}>ยกเลิก</Button>
+            <Button type="submit" disabled={pending} className={primaryBtn}>
+              <UserPlus /> {pending ? 'กำลังเพิ่ม...' : 'เพิ่มบัญชี'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function EditDialog({ user, onClose }: { user: AdminUserRow; onClose: () => void }) {
+  const [state, formAction, pending] = useActionState<FormState, FormData>(updateAdminUser, null);
+  useCloseOnSuccess(state, onClose);
+
+  return (
+    <Dialog open onOpenChange={o => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><Pencil size={16} className="text-green-600" /> แก้ไขข้อมูลผู้ใช้</DialogTitle>
+          <DialogDescription>บัญชี <span className="font-mono">{user.username}</span></DialogDescription>
+        </DialogHeader>
+        <form action={formAction} className="space-y-4">
+          <input type="hidden" name="id" value={user.id} />
+          <FormAlert state={state} successText="บันทึกสำเร็จ" />
+          <div className="space-y-1.5">
+            <Label htmlFor="edit-displayName">ชื่อที่แสดง *</Label>
+            <Input id="edit-displayName" name="displayName" defaultValue={user.displayName} required className={fieldCls} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="edit-email">อีเมล</Label>
+            <Input id="edit-email" type="email" name="email" defaultValue={user.email} className={fieldCls} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="edit-phone">เบอร์โทร</Label>
+            <Input id="edit-phone" type="tel" name="phone" defaultValue={user.phone} className={fieldCls} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>บทบาท</Label>
+            <RoleSelect name="role" defaultValue={user.role} />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" className="h-10" onClick={onClose}>ยกเลิก</Button>
+            <Button type="submit" disabled={pending} className={primaryBtn}>{pending ? 'กำลังบันทึก...' : 'บันทึก'}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PasswordDialog({ user, onClose }: { user: AdminUserRow; onClose: () => void }) {
+  const [state, formAction, pending] = useActionState<FormState, FormData>(changeAdminPassword, null);
+  useCloseOnSuccess(state, onClose);
+
+  return (
+    <Dialog open onOpenChange={o => { if (!o) onClose(); }}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2"><Lock size={16} className="text-amber-500" /> เปลี่ยนรหัสผ่าน</DialogTitle>
+          <DialogDescription>ตั้งรหัสผ่านใหม่ให้ <span className="font-semibold text-foreground">{user.displayName}</span></DialogDescription>
+        </DialogHeader>
+        <form action={formAction} className="space-y-4">
+          <input type="hidden" name="id" value={user.id} />
+          <FormAlert state={state} successText="เปลี่ยนรหัสผ่านสำเร็จ" />
+          <div className="space-y-1.5">
+            <Label htmlFor="pw-new">รหัสผ่านใหม่ *</Label>
+            <Input id="pw-new" type="password" name="newPassword" required placeholder="อย่างน้อย 6 ตัวอักษร" className={fieldCls} />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" className="h-10" onClick={onClose}>ยกเลิก</Button>
+            <Button type="submit" disabled={pending} className="h-10 px-4 bg-amber-500 text-white hover:bg-amber-600">
+              {pending ? 'กำลังบันทึก...' : 'เปลี่ยนรหัสผ่าน'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+// ─── Row actions ───────────────────────────────────────────────
 function RowActions({
   user, isSelf, onEdit, onPassword, onToggle, onDelete,
 }: {
@@ -177,86 +232,30 @@ function RowActions({
   onToggle: () => void;
   onDelete: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const [pos, setPos] = useState({ top: 0, right: 0 });
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      const target = e.target as Node;
-      if (btnRef.current?.contains(target) || menuRef.current?.contains(target)) return;
-      setOpen(false);
-    }
-    function handleReposition() {
-      if (!btnRef.current) return;
-      const rect = btnRef.current.getBoundingClientRect();
-      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-    }
-    document.addEventListener('mousedown', handleClick);
-    window.addEventListener('scroll', handleReposition, true);
-    window.addEventListener('resize', handleReposition);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      window.removeEventListener('scroll', handleReposition, true);
-      window.removeEventListener('resize', handleReposition);
-    };
-  }, [open]);
-
-  const handleOpen = () => {
-    if (btnRef.current) {
-      const rect = btnRef.current.getBoundingClientRect();
-      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
-    }
-    setOpen(o => !o);
-  };
-
   return (
-    <>
-      <button
-        ref={btnRef}
-        onClick={handleOpen}
-        title="จัดการ"
-        className={`p-1.5 rounded-lg transition-colors ${open ? 'bg-slate-100 text-slate-700' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'}`}
-      >
-        <MoreVertical size={16} />
-      </button>
-
-      {open && createPortal(
-        <div
-          ref={menuRef}
-          style={{ position: 'fixed', top: pos.top, right: pos.right }}
-          className="w-48 bg-white rounded-xl border border-slate-100 shadow-lg py-1.5 z-50 text-left"
-        >
-          <button onClick={() => { setOpen(false); onEdit(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
-            <Edit2 size={14} className="text-slate-400" /> แก้ไขข้อมูล
-          </button>
-          <button onClick={() => { setOpen(false); onPassword(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
-            <Lock size={14} className="text-slate-400" /> เปลี่ยนรหัสผ่าน
-          </button>
-          {!isSelf && (
-            <button onClick={() => { setOpen(false); onToggle(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
-              {user.isActive ? <ToggleRight size={14} className="text-slate-400" /> : <ToggleLeft size={14} className="text-slate-400" />}
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label={`จัดการ ${user.displayName}`} />}>
+        <MoreVertical />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuItem onClick={onEdit}><Pencil /> แก้ไขข้อมูล</DropdownMenuItem>
+        <DropdownMenuItem onClick={onPassword}><Lock /> เปลี่ยนรหัสผ่าน</DropdownMenuItem>
+        {!isSelf && (
+          <>
+            <DropdownMenuItem onClick={onToggle}>
+              {user.isActive ? <PowerOff /> : <Power />}
               {user.isActive ? 'ปิดใช้งาน' : 'เปิดใช้งาน'}
-            </button>
-          )}
-          {!isSelf && (
-            <>
-              <div className="my-1.5 border-t border-slate-100" />
-              <button onClick={() => { setOpen(false); onDelete(); }} className="w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                <Trash2 size={14} /> ลบบัญชี
-              </button>
-            </>
-          )}
-        </div>,
-        document.body
-      )}
-    </>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={onDelete}><Trash2 /> ลบบัญชี</DropdownMenuItem>
+          </>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────
+// ─── Main ──────────────────────────────────────────────────────
 export function AdminUsersClient({ users, currentUsername }: Props) {
   const [, startTransition] = useTransition();
   const [search, setSearch] = useState('');
@@ -265,12 +264,15 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const [editUser, setEditUser] = useState<AdminUserRow | null>(null);
   const [passwordUser, setPasswordUser] = useState<AdminUserRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminUserRow | null>(null);
 
+  const q = search.trim().toLowerCase();
   const filtered = users.filter(u => {
     const matchesSearch =
-      u.displayName.toLowerCase().includes(search.toLowerCase()) ||
-      u.username.toLowerCase().includes(search.toLowerCase()) ||
-      u.email?.toLowerCase().includes(search.toLowerCase());
+      !q ||
+      u.displayName.toLowerCase().includes(q) ||
+      u.username.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q);
     const matchesRole = roleFilter === 'all' || u.role === roleFilter;
     const matchesStatus = statusFilter === 'all' || (statusFilter === 'active' ? u.isActive : !u.isActive);
     return matchesSearch && matchesRole && matchesStatus;
@@ -283,163 +285,151 @@ export function AdminUsersClient({ users, currentUsername }: Props) {
     { label: 'ใช้งานอยู่', value: users.filter(u => u.isActive).length, icon: UserCheck, iconBg: 'bg-green-50', iconColor: 'text-green-600' },
   ];
 
-  function handleDelete(id: string, name: string) {
-    if (!confirm(`ยืนยันการลบบัญชี "${name}"?`)) return;
+  function confirmDelete() {
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
+    setDeleteTarget(null);
     startTransition(() => deleteAdminUser(id, currentUsername));
-  }
-
-  function handleToggle(id: string) {
-    startTransition(() => toggleAdminUserActive(id, currentUsername));
   }
 
   function formatDate(dateStr: string | null) {
     if (!dateStr) return 'ยังไม่เคย Login';
-    const d = new Date(dateStr);
-    return d.toLocaleString('th-TH', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return new Date(dateStr).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
   }
 
   return (
     <>
-      {/* Modals */}
-      {showCreate && <CreateModal onClose={() => setShowCreate(false)} />}
-      {editUser && <EditModal user={editUser} onClose={() => setEditUser(null)} />}
-      {passwordUser && <PasswordModal user={passwordUser} onClose={() => setPasswordUser(null)} />}
+      {showCreate && <CreateDialog onClose={() => setShowCreate(false)} />}
+      {editUser && <EditDialog user={editUser} onClose={() => setEditUser(null)} />}
+      {passwordUser && <PasswordDialog user={passwordUser} onClose={() => setPasswordUser(null)} />}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={o => { if (!o) setDeleteTarget(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ลบบัญชีนี้?</AlertDialogTitle>
+            <AlertDialogDescription>
+              บัญชี &ldquo;{deleteTarget?.displayName}&rdquo; ({deleteTarget?.username}) จะถูกลบถาวร และเข้าสู่ระบบไม่ได้อีก
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={confirmDelete}>ลบบัญชี</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="space-y-6">
-        {/* Header Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {stats.map(s => (
-            <div key={s.label} className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.iconBg} ${s.iconColor}`}>
+            <div key={s.label} className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${s.iconBg} ${s.iconColor}`}>
                 <s.icon size={18} />
               </div>
               <div>
-                <p className="text-2xl font-black text-slate-800 leading-tight">{s.value}</p>
+                <p className="text-2xl font-black leading-tight text-slate-800">{s.value}</p>
                 <p className="text-xs font-medium text-slate-400">{s.label}</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* User List */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center gap-3 justify-between">
+        {/* List */}
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+          <div className="flex flex-col justify-between gap-3 border-b border-slate-100 px-5 py-4 lg:flex-row lg:items-center">
             <h2 className="font-bold text-slate-800">บัญชีผู้ดูแลระบบ ({filtered.length})</h2>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="relative">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
+              <div className="relative w-full sm:w-64">
+                <Search size={15} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Input
+                  type="search"
                   placeholder="ค้นหาชื่อ, username, email..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-100 w-full sm:w-56"
+                  className="h-10 pl-9"
                 />
               </div>
-              <select
-                value={roleFilter}
-                onChange={e => setRoleFilter(e.target.value as typeof roleFilter)}
-                className="border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:border-green-400 bg-white"
-              >
-                <option value="all">ทุกบทบาท</option>
-                <option value="super">Super Admin</option>
-                <option value="admin">Admin</option>
-              </select>
-              <select
-                value={statusFilter}
-                onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}
-                className="border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:border-green-400 bg-white"
-              >
-                <option value="all">ทุกสถานะ</option>
-                <option value="active">ใช้งาน</option>
-                <option value="inactive">ปิดใช้งาน</option>
-              </select>
-              <button
-                onClick={() => setShowCreate(true)}
-                className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition-colors whitespace-nowrap"
-              >
-                <UserPlus size={15} /> เพิ่มบัญชี
-              </button>
+              <Select items={ROLE_FILTER_ITEMS} value={roleFilter} onValueChange={v => setRoleFilter((v ?? 'all') as typeof roleFilter)}>
+                <SelectTrigger className="w-36 data-[size=default]:h-10"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {ROLE_FILTER_ITEMS.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select items={STATUS_FILTER_ITEMS} value={statusFilter} onValueChange={v => setStatusFilter((v ?? 'all') as typeof statusFilter)}>
+                <SelectTrigger className="w-36 data-[size=default]:h-10"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {STATUS_FILTER_ITEMS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Button className={primaryBtn} onClick={() => setShowCreate(true)}>
+                <UserPlus /> เพิ่มบัญชี
+              </Button>
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[640px]">
-              <thead className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wider">
-                <tr>
-                  <th className="px-5 py-3 text-left">ผู้ใช้</th>
-                  <th className="px-5 py-3 text-left">Username</th>
-                  <th className="px-5 py-3 text-left">บทบาท</th>
-                  <th className="px-5 py-3 text-left">Login ล่าสุด</th>
-                  <th className="px-5 py-3 text-left">สถานะ</th>
-                  <th className="px-5 py-3 text-right">จัดการ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {filtered.length === 0 && (
-                  <tr><td colSpan={6} className="text-center py-10 text-slate-400 text-sm">ไม่พบผู้ใช้งาน</td></tr>
-                )}
-                {filtered.map(user => (
-                  <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-5 py-3.5">
+          <Table className="min-w-[720px]">
+            <TableHeader className="bg-slate-50">
+              <TableRow className="hover:bg-slate-50">
+                <TableHead className="px-5">ผู้ใช้</TableHead>
+                <TableHead>Username</TableHead>
+                <TableHead>บทบาท</TableHead>
+                <TableHead>Login ล่าสุด</TableHead>
+                <TableHead>สถานะ</TableHead>
+                <TableHead className="px-5 text-right">จัดการ</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="py-10 text-center text-sm text-slate-400">ไม่พบผู้ใช้งาน</TableCell>
+                </TableRow>
+              )}
+              {filtered.map(user => {
+                const isSelf = user.username === currentUsername;
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="relative shrink-0">
-                          <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm ${user.isActive ? 'bg-gradient-to-br from-green-400 to-green-600' : 'bg-slate-300'}`}>
+                        <Avatar size="lg">
+                          <AvatarFallback className={user.isActive ? 'bg-gradient-to-br from-green-400 to-green-600 font-bold text-white' : 'bg-slate-300 font-bold text-white'}>
                             {user.displayName[0]?.toUpperCase()}
-                          </div>
-                          <span
-                            title={user.isActive ? 'ใช้งาน' : 'ปิดใช้งาน'}
-                            className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full ring-2 ring-white ${user.isActive ? 'bg-green-500' : 'bg-slate-300'}`}
-                          />
-                        </div>
+                          </AvatarFallback>
+                          <AvatarBadge className={user.isActive ? 'bg-green-500' : 'bg-slate-300'} />
+                        </Avatar>
                         <div className={user.isActive ? '' : 'opacity-60'}>
-                          <p className="font-semibold text-slate-800 flex items-center gap-1.5">
+                          <p className="flex items-center gap-1.5 font-semibold text-slate-800">
                             {user.displayName}
-                            {user.username === currentUsername && (
-                              <span className="text-[10px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full font-bold">คุณ</span>
-                            )}
+                            {isSelf && <Badge className="h-4 bg-green-100 px-1.5 text-[10px] text-green-700">คุณ</Badge>}
                           </p>
                           <p className="text-xs text-slate-400">{user.email || '-'}</p>
                         </div>
                       </div>
-                    </td>
-                    <td className="px-5 py-3.5 text-slate-500 font-mono text-xs">{user.username}</td>
-                    <td className="px-5 py-3.5">
-                      {user.role === 'super' ? (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
-                          <ShieldCheck size={11} /> Super Admin
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full">
-                          <Shield size={11} /> Admin
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 text-slate-400 text-xs">
-                      <span className="flex items-center gap-1.5">
-                        <Clock size={12} />{formatDate(user.lastLoginAt)}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${user.isActive ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-slate-500">{user.username}</TableCell>
+                    <TableCell><RoleBadge role={user.role} /></TableCell>
+                    <TableCell className="text-xs text-slate-400">
+                      <span className="flex items-center gap-1.5"><Clock size={12} />{formatDate(user.lastLoginAt)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={user.isActive ? 'border-green-200 bg-green-50 text-green-700' : 'bg-slate-50 text-slate-500'}>
                         {user.isActive ? 'ใช้งาน' : 'ปิดใช้งาน'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 text-right">
                       <RowActions
                         user={user}
-                        isSelf={user.username === currentUsername}
+                        isSelf={isSelf}
                         onEdit={() => setEditUser(user)}
                         onPassword={() => setPasswordUser(user)}
-                        onToggle={() => handleToggle(user.id)}
-                        onDelete={() => handleDelete(user.id, user.displayName)}
+                        onToggle={() => startTransition(() => toggleAdminUserActive(user.id, currentUsername))}
+                        onDelete={() => setDeleteTarget(user)}
                       />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </>

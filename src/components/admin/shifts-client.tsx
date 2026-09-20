@@ -207,7 +207,7 @@ export function ShiftsClient({ date, shifts, employees }: {
 
   return (
     <>
-      <div className={`max-w-5xl mx-auto transition-opacity ${isPending || copying ? 'opacity-60' : ''}`}>
+      <div className={`max-w-7xl mx-auto transition-opacity ${isPending || copying ? 'opacity-60' : ''}`}>
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>

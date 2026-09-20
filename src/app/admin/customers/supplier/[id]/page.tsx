@@ -57,7 +57,7 @@ export default async function SupplierDetailPage({ params }: { params: Promise<{
   ].filter(r => r.value);
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
+    <div className="max-w-7xl mx-auto space-y-6 pb-12">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link href="/admin/customers" className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 hover:text-slate-800">

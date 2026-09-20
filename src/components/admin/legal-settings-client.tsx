@@ -47,7 +47,7 @@ export function LegalSettingsClient({ privacy, terms }: { privacy: LegalPageRow;
   ];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       {toast && <Toast msg={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">

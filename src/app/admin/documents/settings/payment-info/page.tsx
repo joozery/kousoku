@@ -8,7 +8,7 @@ export default async function PaymentInfoSettingsPage() {
   const settings = await getDocumentSettings();
 
   return (
-    <div className="max-w-3xl mx-auto space-y-5">
+    <div className="max-w-7xl mx-auto space-y-5">
       <div>
         <h1 className="text-xl font-bold text-slate-900 tracking-tight">ข้อมูลการรับชำระเงิน</h1>
         <p className="text-xs text-slate-400 mt-0.5">

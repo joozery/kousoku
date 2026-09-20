@@ -37,7 +37,7 @@ const toggleItems = [
 
 export default function SettingsPage() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-black text-slate-900">การตั้งค่า</h1>
         <p className="text-sm text-slate-500 mt-1">ตั้งค่าการทำงานของระบบ</p>

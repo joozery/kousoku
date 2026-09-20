@@ -43,7 +43,7 @@ export default async function SystemPage() {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-black text-slate-900">ตั้งค่าระบบ</h1>
         <p className="text-sm text-slate-500 mt-1">จัดการข้อมูลระบบ, ฐานข้อมูล, และตรวจสอบการทำงาน</p>

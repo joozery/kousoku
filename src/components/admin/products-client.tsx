@@ -124,7 +124,7 @@ export function ProductsClient({
 
   /* ─── filters ─── */
   const allSizes = useMemo(
-    () => [...new Set(initialProducts.map(p => p.size).filter(Boolean))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })),
+    () => [...new Set(initialProducts.map(p => p.size).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'th', { numeric: true })),
     [initialProducts]
   );
   const availableBrands = useMemo(() => {

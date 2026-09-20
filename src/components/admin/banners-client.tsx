@@ -69,7 +69,7 @@ export function BannersClient({ banners }: { banners: BannerRow[] }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
 
       {/* Toast */}
       {toast && (
