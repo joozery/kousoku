@@ -10,7 +10,9 @@ import {
   HeadphonesIcon, ChevronDown, ShieldCheck, Tag,
   CalendarClock, CalendarOff, Wrench,
   CalendarRange, Shield, Landmark, ClipboardList,
+  Receipt, FileEdit, FileClock, FileMinus, BookMarked, List,
 } from 'lucide-react';
+import { newDocHref } from '@/lib/doc-routes';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -57,7 +59,19 @@ export function AdminSidebar({ isOpen }: SidebarProps) {
               label: "ฝ่ายบัญชี",
               children: [
                 { key: 'finance', icon: <DollarSign size={18} />, label: "การเงิน", href: "/admin/finance", active: pathname.startsWith("/admin/finance") },
-                { key: 'documents', icon: <FileText size={18} />, label: "บิล/เอกสาร", href: "/admin/documents", active: pathname.startsWith("/admin/documents") && !pathname.startsWith("/admin/documents/settings/services") },
+                {
+                  key: 'documents',
+                  icon: <FileText size={18} />,
+                  label: "บิล/เอกสาร",
+                  children: [
+                    { key: 'documents-list', icon: <List size={16} />, label: "รายการเอกสาร", href: "/admin/documents", active: pathname.startsWith("/admin/documents") && !pathname.startsWith("/admin/documents/new") && !pathname.startsWith("/admin/documents/settings/services") },
+                    { key: 'documents-new-invoice', icon: <Receipt size={16} />, label: "ใบเสร็จ/ใบกำกับภาษี", href: newDocHref('invoice'), active: pathname.startsWith("/admin/documents/new/invoice") },
+                    { key: 'documents-new-quote', icon: <FileEdit size={16} />, label: "ใบเสนอราคา", href: newDocHref('quote'), active: pathname.startsWith("/admin/documents/new/quote") },
+                    { key: 'documents-new-billing', icon: <FileClock size={16} />, label: "ใบแจ้งหนี้", href: newDocHref('billing_note'), active: pathname.startsWith("/admin/documents/new/billing-note") },
+                    { key: 'documents-new-credit', icon: <FileMinus size={16} />, label: "ใบลดหนี้", href: newDocHref('credit_note'), active: pathname.startsWith("/admin/documents/new/credit-note") },
+                    { key: 'documents-new-booking', icon: <BookMarked size={16} />, label: "ใบจอง", href: newDocHref('booking_note'), active: pathname.startsWith("/admin/documents/new/booking-note") },
+                  ],
+                },
                 { key: 'reports', icon: <BarChart2 size={18} />, label: "รายงาน", href: "/admin/reports", active: pathname.startsWith("/admin/reports") },
               ],
             },

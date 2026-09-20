@@ -5,6 +5,7 @@ import { X, Printer, CreditCard, Banknote, FileEdit, LayoutGrid, Calendar, Phone
 import type { DocRow, PaymentMethod } from '@/lib/documents';
 import { fmtDate, fmtMoney, StatusBadge, TYPE_LABEL, PAYMENT_LABEL } from './shared';
 import { isDocEditable } from '@/lib/doc-editable';
+import { newDocHref } from '@/lib/doc-routes';
 import { RecordPaymentForm } from './RecordPaymentForm';
 import { OrderBooking } from '@/lib/payment-settings';
 import Link from 'next/link';
@@ -434,19 +435,19 @@ export function ViewModal({
             {doc.type === 'quote' && (
               <div className="flex flex-wrap items-center gap-2 ml-auto">
                 <Link
-                  href={`/admin/documents/new?from=${doc.id}&type=booking_note`}
+                  href={newDocHref('booking_note', { from: doc.id })}
                   className="flex items-center gap-2 px-4 py-2 border border-rose-200 text-rose-700 bg-rose-50 rounded-xl text-sm font-bold hover:bg-rose-100 transition-colors"
                 >
                   <BookMarked size={16} /> ออกใบจองมัดจำ
                 </Link>
                 <Link
-                  href={`/admin/documents/new?from=${doc.id}&type=billing_note`}
+                  href={newDocHref('billing_note', { from: doc.id })}
                   className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors"
                 >
                   <FileClock size={16} className="text-amber-500" /> สร้างใบแจ้งหนี้
                 </Link>
                 <Link
-                  href={`/admin/documents/new?from=${doc.id}&type=invoice`}
+                  href={newDocHref('invoice', { from: doc.id })}
                   className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors"
                 >
                   <Receipt size={16} className="text-blue-500" /> สร้างใบเสร็จ
@@ -467,14 +468,14 @@ export function ViewModal({
                 )}
                 {doc.status === 'deposit_paid' && doc.depositAmount > 0 && (
                   <Link
-                    href={`/admin/documents/new?from=${doc.id}&type=invoice&deposit=1`}
+                    href={newDocHref('invoice', { from: doc.id, deposit: true })}
                     className="flex items-center gap-2 px-4 py-2 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-xl text-sm font-bold hover:bg-emerald-100 transition-colors"
                   >
                     <Receipt size={16} className="text-emerald-600" /> ออกใบเสร็จมัดจำ ฿{doc.depositAmount.toLocaleString()}
                   </Link>
                 )}
                 <Link
-                  href={`/admin/documents/new?from=${doc.id}&type=invoice`}
+                  href={newDocHref('invoice', { from: doc.id })}
                   className="flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-colors"
                 >
                   <Receipt size={16} className="text-blue-500" /> ออกใบเสร็จเต็มจำนวน
@@ -491,4 +492,4 @@ export function ViewModal({
       </div>
     </div>
   );
-}
+}

@@ -27,6 +27,7 @@ import { ViewModal } from './documents/ViewModal';
 // ── ImportResultToast ─────────────────────────────────────────────────────────
 
 import { Toast } from './documents/Toast';
+import { newDocHref } from '@/lib/doc-routes';
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 export function DocumentsClient({
@@ -273,7 +274,7 @@ export function DocumentsClient({
           {/* Actions */}
           <div className="lg:w-1/3 bg-white p-5 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col justify-center gap-3">
             <Link
-              href="/admin/documents/new"
+              href={newDocHref('invoice')}
               className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#009e73] text-white rounded-xl font-bold text-sm hover:bg-[#008a65] transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               <Plus size={18} /> สร้างเอกสารใหม่
@@ -622,19 +623,19 @@ export function DocumentsClient({
                             <>
                               <div className="h-[1px] bg-slate-100 my-1 mx-2"></div>
                               <Link
-                                href={`/admin/documents/new?from=${d.id}&type=billing_note`}
+                                href={newDocHref('billing_note', { from: d.id })}
                                 className="w-full text-left px-3 py-2.5 text-[13px] text-amber-600 hover:bg-amber-50 rounded-lg font-bold flex items-center gap-2.5 transition-colors"
                               >
                                 <FileClock size={15} /> สร้างใบแจ้งหนี้อ้างอิงใบนี้
                               </Link>
                               <Link
-                                href={`/admin/documents/new?from=${d.id}&type=invoice`}
+                                href={newDocHref('invoice', { from: d.id })}
                                 className="w-full text-left px-3 py-2.5 text-[13px] text-blue-600 hover:bg-blue-50 rounded-lg font-bold flex items-center gap-2.5 transition-colors"
                               >
                                 <Receipt size={15} /> สร้างใบเสร็จอ้างอิงใบนี้
                               </Link>
                               <Link
-                                href={`/admin/documents/new?from=${d.id}&type=credit_note`}
+                                href={newDocHref('credit_note', { from: d.id })}
                                 className="w-full text-left px-3 py-2.5 text-[13px] text-orange-600 hover:bg-orange-50 rounded-lg font-bold flex items-center gap-2.5 transition-colors"
                               >
                                 <FileMinus size={15} /> สร้างใบลดหนี้อ้างอิงใบนี้

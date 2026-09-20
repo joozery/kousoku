@@ -12,6 +12,7 @@ import {
 import { createDocument, updateDocument } from '@/app/actions/documents';
 import type { DocFormPayload } from '@/app/actions/documents';
 import type { DocType, PaymentMethod } from '@/lib/documents';
+import { newDocHref, type CreatableDocType } from '@/lib/doc-routes';
 import type { UnifiedCustomerRow } from '@/lib/customers';
 import type { VehicleEntry } from '@/app/actions/customers';
 import { addVehicleToCustomer } from '@/app/actions/customers';
@@ -134,6 +135,7 @@ export function NewDocumentClient({
   carBrands = [],
   carModels = [],
   prefill,
+  initialType,
   editTarget,
 }: {
   customers?: UnifiedCustomerRow[];
@@ -143,14 +145,15 @@ export function NewDocumentClient({
   carBrands?: CarBrandRow[];
   carModels?: CarModelRow[];
   prefill?: DocPrefill;
+  initialType?: DocType;
   editTarget?: DocEditTarget;
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const isEditMode = !!editTarget;
 
-  // doc type
-  const [docType, setDocType] = useState<DocType>(prefill?.docType ?? 'invoice');
+  // doc type — สร้างใหม่: กำหนดโดย path (/admin/documents/new/<type>) · แก้ไข: มาจากเอกสารเดิม
+  const docType: DocType = prefill?.docType ?? initialType ?? 'invoice';
 
   // customer
   const [customerName,    setCustomerName]    = useState(prefill?.customerName ?? '');
@@ -552,7 +555,7 @@ export function NewDocumentClient({
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <h1 className="text-xl font-black text-slate-900">{isEditMode ? 'แก้ไขเอกสาร' : 'สร้างเอกสารใหม่'}</h1>
+            <h1 className="text-xl font-black text-slate-900">{isEditMode ? 'แก้ไขเอกสาร' : `สร้าง${DOC_TYPES.find(t => t.value === docType)?.label ?? 'เอกสารใหม่'}`}</h1>
             <p className="text-xs text-slate-400 mt-0.5">
               {isEditMode ? <>เลขที่เอกสาร <span className="font-bold text-slate-600">{editTarget.docNumber}</span></> : 'ออกเลขที่อัตโนมัติ'} &nbsp;·&nbsp; {displayDate(issuedDate)}
             </p>
@@ -591,27 +594,39 @@ export function NewDocumentClient({
           {isEditMode && <span className="text-[11px] text-slate-400 font-medium">(เปลี่ยนประเภทไม่ได้ตอนแก้ไข)</span>}
         </div>
         <div className="p-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {DOC_TYPES.filter(t => !t.editOnly || isEditMode).map(t => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => !isEditMode && setDocType(t.value)}
-              disabled={isEditMode && docType !== t.value}
-              className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
-                docType === t.value
-                  ? `${t.sel.border} ${t.sel.bg}`
-                  : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white disabled:cursor-not-allowed'
-              }`}
-            >
-              <div className={`mt-0.5 ${docType === t.value ? t.sel.icon : 'text-slate-400'}`}>{t.icon}</div>
-              <div>
-                <p className={`font-bold text-sm ${docType === t.value ? t.sel.text : 'text-slate-700'}`}>
-                  {t.value === 'invoice' ? (vatMode !== 'none' ? 'ใบเสร็จรับเงิน/ใบกำกับภาษี' : 'ใบเสร็จรับเงิน') : t.label}
-                </p>
-                <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
-              </div>
-            </button>
-          ))}
+          {DOC_TYPES.filter(t => !t.editOnly || isEditMode).map(t => {
+            const selected = docType === t.value;
+            const cardClass = `flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all ${
+              selected
+                ? `${t.sel.border} ${t.sel.bg}`
+                : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:hover:bg-white disabled:cursor-not-allowed'
+            }`;
+            const body = (
+              <>
+                <div className={`mt-0.5 ${selected ? t.sel.icon : 'text-slate-400'}`}>{t.icon}</div>
+                <div>
+                  <p className={`font-bold text-sm ${selected ? t.sel.text : 'text-slate-700'}`}>
+                    {t.value === 'invoice' ? (vatMode !== 'none' ? 'ใบเสร็จรับเงิน/ใบกำกับภาษี' : 'ใบเสร็จรับเงิน') : t.label}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
+                </div>
+              </>
+            );
+            return isEditMode ? (
+              <button key={t.value} type="button" disabled={!selected} className={cardClass}>
+                {body}
+              </button>
+            ) : (
+              <Link
+                key={t.value}
+                href={newDocHref(t.value as CreatableDocType, { from: prefill?.sourceDocId || undefined })}
+                aria-current={selected ? 'page' : undefined}
+                className={cardClass}
+              >
+                {body}
+              </Link>
+            );
+          })}
         </div>
       </div>
 
