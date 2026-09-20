@@ -8,7 +8,7 @@ import {
   XCircle, MoreHorizontal, ChevronLeft, ChevronRight,
   X, Printer, CreditCard, Banknote, ArrowRightLeft,
   AlertCircle, FileEdit, LayoutGrid, Calendar, Phone, Car, Tag,
-  Receipt, FileMinus, FileClock, Wallet, History, TrendingUp, ArrowRight, Settings, Wrench, Pencil, BookMarked,
+  Receipt, FileMinus, FileClock, Wallet, History, TrendingUp, ArrowRight, Settings, Pencil, BookMarked,
 } from 'lucide-react';
 import type { DocRow, DocStats, PaymentMethod } from '@/lib/documents';
 import { isDocEditable } from '@/lib/doc-editable';
@@ -285,12 +285,6 @@ export function DocumentsClient({
             >
               <Download size={18} className="text-slate-400" /> ส่งออก Excel (ตามที่กรอง)
             </button>
-            <Link
-              href="/admin/documents/settings/services"
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-colors"
-            >
-              <Wrench size={18} className="text-slate-400" /> จัดการรายการบริการ/ค่าแรง
-            </Link>
           </div>
 
           {/* Main Stat (Green Card) */}
@@ -441,19 +435,19 @@ export function DocumentsClient({
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto pb-32 min-h-[300px]">
-          <table className="w-full min-w-[960px] text-left border-collapse whitespace-nowrap md:whitespace-normal table-fixed">
+        <div className="overflow-x-auto min-h-[300px] scrollbar-thin">
+          <table className="w-full min-w-[1000px] text-left border-collapse whitespace-nowrap md:whitespace-normal table-fixed">
             <colgroup>
-              <col className="w-[21%]" />
+              <col className="w-[20%]" />
               <col className="w-[18%]" />
-              <col className="w-[11%]" />
+              <col className="w-[12%]" />
               <col className="w-[12%]" />
               <col className="w-[12%]" />
               <col className="w-[13%]" />
               <col className="w-[13%]" />
             </colgroup>
-            <thead>
-              <tr className="bg-white border-b border-slate-100">
+            <thead className="sticky top-0 z-10 bg-white">
+              <tr className="bg-white border-b border-slate-100 shadow-xs">
                 <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">เอกสาร</th>
                 <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">ลูกค้า</th>
                 <th className="px-5 py-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider hidden md:table-cell text-right">ยอดเงิน</th>

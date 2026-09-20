@@ -7,25 +7,20 @@ import {
   ArrowLeft, Plus, Trash2, Send, FileText,
   User, Phone, Mail, Hash, ChevronDown,
   AlertCircle, Receipt, FileEdit, FileMinus, FileClock, BookMarked,
-  Search, X, Building2, MapPin, Car, UserPlus, Wrench, PackageSearch, Gauge, HardHat, Banknote, Check,
+  Search, X, Building2, MapPin, UserPlus, Wrench, PackageSearch, HardHat, Banknote,
 } from 'lucide-react';
 import { createDocument, updateDocument } from '@/app/actions/documents';
 import type { DocFormPayload } from '@/app/actions/documents';
 import type { DocType, PaymentMethod } from '@/lib/documents';
 import { newDocHref, type CreatableDocType } from '@/lib/doc-routes';
 import type { UnifiedCustomerRow } from '@/lib/customers';
-import type { VehicleEntry } from '@/app/actions/customers';
-import { addVehicleToCustomer } from '@/app/actions/customers';
 import type { ProductRow } from '@/lib/products';
 import type { ServiceItemRow } from '@/lib/service-items';
 import type { getActiveEmployees } from '@/lib/employees';
 type ActiveEmployee = Awaited<ReturnType<typeof getActiveEmployees>>[number];
 import { createServiceItem } from '@/app/actions/service-items';
-import { createCarBrand, createCarModel } from '@/app/actions/car-data';
-import type { CarBrandRow, CarModelRow } from '@/app/actions/car-data';
 import { PickerModal } from '@/components/admin/picker-modal';
 import { CustomerModal } from '@/components/admin/customers-client';
-import { parseCarInfo, composeCarInfo } from '@/lib/car-info';
 import { composeTaxBranch, parseTaxBranch, type TaxBranchType } from '@/lib/tax-branch';
 import { DatePicker } from "@/components/ui/date-picker";
 
@@ -37,7 +32,7 @@ const DOC_TYPES: { value: DocType; label: string; desc: string; icon: React.Reac
   { value: 'quote',        label: 'ใบเสนอราคา',              desc: 'เสนอราคาให้ลูกค้าก่อนตัดสินใจ',   icon: <FileEdit size={18} />, sel: { border: 'border-green-500', bg: 'bg-green-50', text: 'text-green-700', icon: 'text-green-600' } },
   { value: 'billing_note', label: 'ใบแจ้งหนี้',              desc: 'บิลเครดิต ออกก่อนรับเงิน รอลูกค้าชำระ (จ่ายเป็นงวดได้)', icon: <FileClock size={18} />, sel: { border: 'border-purple-500', bg: 'bg-purple-50', text: 'text-purple-700', icon: 'text-purple-600' } },
   { value: 'credit_note',  label: 'ใบลดหนี้',                desc: 'ลดยอดหนี้จากใบเสร็จที่ออกแล้ว',  icon: <FileMinus   size={18} />, sel: { border: 'border-rose-500', bg: 'bg-rose-50', text: 'text-rose-700', icon: 'text-rose-600' } },
-  { value: 'booking_note', label: 'ใบจอง',                  desc: 'จองสินค้าล่วงหน้า รับมัดจำ นัดวันรับรถ', icon: <BookMarked size={18} />, sel: { border: 'border-amber-500', bg: 'bg-amber-50', text: 'text-amber-700', icon: 'text-amber-600' } },
+  { value: 'booking_note', label: 'ใบจอง',                  desc: 'จองสินค้าล่วงหน้า รับมัดจำ นัดวันรับสินค้า', icon: <BookMarked size={18} />, sel: { border: 'border-amber-500', bg: 'bg-amber-50', text: 'text-amber-700', icon: 'text-amber-600' } },
   // ใบรับชำระออกอัตโนมัติจากการรับชำระใบแจ้งหนี้ — สร้างเองไม่ได้ แต่เปิดแก้ไขได้
   { value: 'payment_note', label: 'ใบรับชำระ',              desc: 'บันทึกการรับชำระของใบแจ้งหนี้',   icon: <Receipt size={18} />, editOnly: true, sel: { border: 'border-indigo-500', bg: 'bg-indigo-50', text: 'text-indigo-700', icon: 'text-indigo-600' } },
 ];
@@ -132,8 +127,6 @@ export function NewDocumentClient({
   products = [],
   serviceItems = [],
   employees = [],
-  carBrands = [],
-  carModels = [],
   prefill,
   initialType,
   editTarget,
@@ -142,8 +135,6 @@ export function NewDocumentClient({
   products?: ProductRow[];
   serviceItems?: ServiceItemRow[];
   employees?: ActiveEmployee[];
-  carBrands?: CarBrandRow[];
-  carModels?: CarModelRow[];
   prefill?: DocPrefill;
   initialType?: DocType;
   editTarget?: DocEditTarget;
@@ -158,13 +149,6 @@ export function NewDocumentClient({
   // customer
   const [customerName,    setCustomerName]    = useState(prefill?.customerName ?? '');
   const [customerPhone,   setCustomerPhone]   = useState(prefill?.customerPhone ?? '');
-  const prefillCar = parseCarInfo(prefill?.customerCar ?? '');
-  const [carBrand,     setCarBrand]     = useState(prefillCar.carBrand);
-  const [carModel,     setCarModel]     = useState(prefillCar.carModel);
-  const [carColor,     setCarColor]     = useState(prefillCar.carColor);
-  const [licensePlate, setLicensePlate] = useState(prefillCar.licensePlate);
-  const [mileage,      setMileage]      = useState(prefillCar.mileage);
-  const [chassisNo,    setChassisNo]    = useState(prefillCar.chassisNo);
   const [bookingRef]                          = useState(prefill?.bookingRef ?? '');
   const [customerAddress, setCustomerAddress] = useState(prefill?.customerAddress ?? '');
   const [customerTaxId,   setCustomerTaxId]   = useState(prefill?.customerTaxId ?? '');
@@ -174,78 +158,8 @@ export function NewDocumentClient({
   const [customerEmail,   setCustomerEmail]   = useState('');
   const [customerLineId,  setCustomerLineId]  = useState('');
   const [customerSelected, setCustomerSelected] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  const [saveVehiclePending, setSaveVehiclePending] = useState(false);
-  const [saveVehicleMsg, setSaveVehicleMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [customerPickerOpen, setCustomerPickerOpen] = useState(false);
   const [addCustomerOpen, setAddCustomerOpen] = useState(false);
-  const [customerVehicles, setCustomerVehicles] = useState<VehicleEntry[]>([]);
-  const [selectedVehicleIdx, setSelectedVehicleIdx] = useState(0);
-
-  // car brand/model combobox UI state
-  const [brandDropOpen,  setBrandDropOpen]  = useState(false);
-  const [modelDropOpen,  setModelDropOpen]  = useState(false);
-  const [localBrands,    setLocalBrands]    = useState<CarBrandRow[]>(carBrands);
-  const [localModels,    setLocalModels]    = useState<CarModelRow[]>(carModels);
-  const [brandSearch,    setBrandSearch]    = useState('');
-  const [modelSearch,    setModelSearch]    = useState('');
-
-  const filteredBrands = useMemo(() => {
-    const q = brandSearch.toLowerCase();
-    return localBrands.filter(b => b.name.toLowerCase().includes(q));
-  }, [localBrands, brandSearch]);
-
-  const selectedBrandId = useMemo(() =>
-    localBrands.find(b => b.name.toLowerCase() === carBrand.toLowerCase())?.id ?? null,
-    [localBrands, carBrand]
-  );
-
-  const filteredModels = useMemo(() => {
-    const q = modelSearch.toLowerCase();
-    const base = selectedBrandId ? localModels.filter(m => m.brandId === selectedBrandId) : localModels;
-    return base.filter(m => m.name.toLowerCase().includes(q));
-  }, [localModels, modelSearch, selectedBrandId]);
-
-  async function pickBrand(name: string) {
-    setCarBrand(name);
-    setBrandSearch(name);
-    setBrandDropOpen(false);
-    setCarModel('');
-    setModelSearch('');
-    // save to DB if new
-    if (!localBrands.find(b => b.name.toLowerCase() === name.toLowerCase())) {
-      const fd = new FormData();
-      fd.append('name', name);
-      const res = await createCarBrand(null, fd);
-      if (res.ok || res.error?.includes('มีอยู่แล้ว')) {
-        // re-use existing or just add locally
-        const existing = localBrands.find(b => b.name.toLowerCase() === name.toLowerCase());
-        if (!existing) setLocalBrands(prev => [...prev, { id: name, name }]);
-      }
-    }
-  }
-
-  async function pickModel(name: string, brandId?: string) {
-    setCarModel(name);
-    setModelSearch(name);
-    setModelDropOpen(false);
-    const bid = brandId ?? selectedBrandId ?? '';
-    if (bid && !localModels.find(m => m.name.toLowerCase() === name.toLowerCase() && m.brandId === bid)) {
-      const res = await createCarModel(bid, name);
-      if (res.ok || res.error?.includes('มีอยู่แล้ว')) {
-        setLocalModels(prev => [...prev, { id: name, name, brandId: bid }]);
-      }
-    }
-  }
-
-  function applyVehicle(v: VehicleEntry) {
-    setCarBrand(v.carBrand);
-    setCarModel(v.carModel);
-    setCarColor(v.carColor);
-    setLicensePlate(v.licensePlate);
-    setMileage(v.mileage);
-    setChassisNo(v.chassisNo);
-  }
 
   function applyBranch(branch: string) {
     const b = parseTaxBranch(branch);
@@ -260,47 +174,19 @@ export function NewDocumentClient({
     setCustomerTaxId(c.taxId);
     applyBranch(c.branch);
     setCustomerSelected(true);
-    setSelectedCustomerId(c.id);
-    setSaveVehicleMsg(null);
-
-    if (c.vehicles && c.vehicles.length > 0) {
-      setCustomerVehicles(c.vehicles);
-      setSelectedVehicleIdx(0);
-      applyVehicle(c.vehicles[0]);
-    } else {
-      setCustomerVehicles([]);
-      setSelectedVehicleIdx(0);
-      const car = parseCarInfo(c.carInfo);
-      setCarBrand(car.carBrand);
-      setCarModel(car.carModel);
-      setCarColor(car.carColor);
-      setLicensePlate(car.licensePlate);
-      setMileage(car.mileage);
-      setChassisNo(car.chassisNo);
-    }
   }
 
   function clearCustomerSelection() {
     setCustomerSelected(false);
-    setSelectedCustomerId(null);
-    setSaveVehicleMsg(null);
     setCustomerName('');
     setCustomerPhone('');
     setCustomerAddress('');
     setCustomerTaxId('');
     setBranchType('none');
     setBranchCode('');
-    setCustomerVehicles([]);
-    setSelectedVehicleIdx(0);
-    setCarBrand('');
-    setCarModel('');
-    setCarColor('');
-    setLicensePlate('');
-    setMileage('');
-    setChassisNo('');
   }
 
-  function handleNewCustomerSaved(c?: { id: string; name: string; phone: string; address: string; taxId: string; branch: string; carInfo: string; vehicles: VehicleEntry[] }) {
+  function handleNewCustomerSaved(c?: { id: string; name: string; phone: string; address: string; taxId: string; branch: string }) {
     setAddCustomerOpen(false);
     if (!c) return;
     setCustomerName(c.name);
@@ -309,50 +195,6 @@ export function NewDocumentClient({
     setCustomerTaxId(c.taxId);
     applyBranch(c.branch);
     setCustomerSelected(true);
-    setSelectedCustomerId(c.id);
-    setSaveVehicleMsg(null);
-
-    if (c.vehicles && c.vehicles.length > 0) {
-      setCustomerVehicles(c.vehicles);
-      setSelectedVehicleIdx(0);
-      applyVehicle(c.vehicles[0]);
-    } else {
-      setCustomerVehicles([]);
-      setSelectedVehicleIdx(0);
-      const car = parseCarInfo(c.carInfo);
-      setCarBrand(car.carBrand);
-      setCarModel(car.carModel);
-      setCarColor(car.carColor);
-      setLicensePlate(car.licensePlate);
-      setMileage(car.mileage);
-      setChassisNo(car.chassisNo);
-    }
-  }
-
-  async function handleSaveVehicleToCustomer() {
-    if (!selectedCustomerId) return;
-    setSaveVehiclePending(true);
-    setSaveVehicleMsg(null);
-    const result = await addVehicleToCustomer(selectedCustomerId, {
-      carBrand, carModel, carColor, licensePlate, mileage, chassisNo,
-    });
-    setSaveVehiclePending(false);
-    if (result.ok) {
-      const vehicle = { carBrand, carModel, carColor, licensePlate, mileage, chassisNo };
-      if (result.updated) {
-        // ทะเบียนเดิม — ฝั่ง server อัปเดตคันเดิมให้แล้ว อัปเดต list ในหน้าจอให้ตรงกัน ไม่เพิ่มซ้ำ
-        const plate = licensePlate.trim().replace(/[\s-]+/g, '').toLowerCase();
-        setCustomerVehicles(prev => prev.map(v =>
-          v.licensePlate.trim().replace(/[\s-]+/g, '').toLowerCase() === plate ? vehicle : v
-        ));
-        setSaveVehicleMsg({ ok: true, text: 'ทะเบียนนี้มีอยู่แล้ว — อัปเดตข้อมูลรถคันเดิมให้แทน' });
-      } else {
-        setCustomerVehicles(prev => [...prev, vehicle]);
-        setSaveVehicleMsg({ ok: true, text: 'บันทึกรถไว้กับลูกค้าแล้ว' });
-      }
-    } else {
-      setSaveVehicleMsg({ ok: false, text: result.error ?? 'บันทึกไม่สำเร็จ' });
-    }
   }
 
   // line items
@@ -480,7 +322,7 @@ export function NewDocumentClient({
 
   // ── validation ─────────────────────────────────────────────────────────────
 
-  const effectiveCustomerName = customerName.trim() || (vatMode === 'none' && licensePlate.trim() ? licensePlate.trim() : '');
+  const effectiveCustomerName = customerName.trim();
   const isValid = !!effectiveCustomerName && lines.every(l => l.description.trim() && l.qty > 0 && l.unitPrice >= 0);
 
   // ── submit ─────────────────────────────────────────────────────────────────
@@ -495,7 +337,7 @@ export function NewDocumentClient({
         customerPhone:  customerPhone.trim(),
         customerEmail:  customerEmail.trim(),
         customerLineId: customerLineId.trim(),
-        customerCar:    composeCarInfo({ carBrand, carModel, carColor, licensePlate, mileage, chassisNo }),
+        customerCar:    prefill?.customerCar ?? '', // ไม่มีช่องกรอกแล้ว — คงค่าเดิมของเอกสารเก่าไว้ตอนแก้ไข
         bookingRef:    bookingRef,
         customerAddress: customerAddress.trim(),
         customerTaxId:   customerTaxId.trim(),
@@ -649,7 +491,7 @@ export function NewDocumentClient({
               <div>
                 <Label>
                   {docType === 'billing_note' ? 'วันครบกำหนดชำระ'
-                    : docType === 'booking_note' ? 'วันนัดรับรถ / คาดว่าสินค้าจะถึง'
+                    : docType === 'booking_note' ? 'วันนัดรับสินค้า / คาดว่าสินค้าจะถึง'
                     : 'วันหมดอายุ (ใบเสนอราคา)'}
                 </Label>
                 <DatePicker value={dueDate} onChange={e => setDueDate(e.target.value)} className={inputCls} />
@@ -747,26 +589,6 @@ export function NewDocumentClient({
                       <X size={14} />
                     </button>
                   </div>
-                  {customerVehicles.length > 1 && (
-                    <div className="flex items-center gap-2">
-                      <Car size={13} className="text-slate-400 shrink-0" />
-                      <select
-                        value={selectedVehicleIdx}
-                        onChange={e => {
-                          const idx = Number(e.target.value);
-                          setSelectedVehicleIdx(idx);
-                          applyVehicle(customerVehicles[idx]);
-                        }}
-                        className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-green-400 bg-white"
-                      >
-                        {customerVehicles.map((v, i) => (
-                          <option key={i} value={i}>
-                            {[v.carBrand, v.carModel, v.carColor, v.licensePlate].filter(Boolean).join(' ') || `รถคันที่ ${i + 1}`}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <div className="flex gap-2">
@@ -835,179 +657,6 @@ export function NewDocumentClient({
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="relative">
-                <Label>ยี่ห้อรถ</Label>
-                <div className="relative">
-                  <input
-                    value={brandSearch || carBrand}
-                    onChange={e => { setBrandSearch(e.target.value); setCarBrand(e.target.value); setBrandDropOpen(true); }}
-                    onFocus={() => { setBrandSearch(''); setBrandDropOpen(true); }}
-                    onBlur={() => setTimeout(() => setBrandDropOpen(false), 150)}
-                    placeholder="Toyota"
-                    autoComplete="off"
-                    className={inputCls + ' pr-8'}
-                  />
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-                {brandDropOpen && (
-                  <div className="absolute z-30 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
-                    {filteredBrands.length === 0 && brandSearch.trim() ? (
-                      <button
-                        type="button"
-                        onMouseDown={() => pickBrand(brandSearch.trim())}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-green-700 hover:bg-green-50 font-bold"
-                      >
-                        <Plus size={14} /> เพิ่ม "{brandSearch.trim()}"
-                      </button>
-                    ) : (
-                      filteredBrands.map(b => (
-                        <button
-                          key={b.id}
-                          type="button"
-                          onMouseDown={() => pickBrand(b.name)}
-                          className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left hover:bg-slate-50 ${
-                            b.name.toLowerCase() === carBrand.toLowerCase() ? 'bg-green-50 text-green-700 font-bold' : 'text-slate-700'
-                          }`}
-                        >
-                          {b.name.toLowerCase() === carBrand.toLowerCase() && <Check size={12} className="text-green-600" />}
-                          {b.name}
-                        </button>
-                      ))
-                    )}
-                    {filteredBrands.length > 0 && brandSearch.trim() &&
-                      !filteredBrands.find(b => b.name.toLowerCase() === brandSearch.toLowerCase()) && (
-                      <button
-                        type="button"
-                        onMouseDown={() => pickBrand(brandSearch.trim())}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-green-700 hover:bg-green-50 font-bold border-t border-slate-100"
-                      >
-                        <Plus size={14} /> เพิ่ม "{brandSearch.trim()}"
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className="relative">
-                <Label>รุ่นรถ</Label>
-                <div className="relative">
-                  <input
-                    value={modelSearch || carModel}
-                    onChange={e => { setModelSearch(e.target.value); setCarModel(e.target.value); setModelDropOpen(true); }}
-                    onFocus={() => { setModelSearch(''); setModelDropOpen(true); }}
-                    onBlur={() => setTimeout(() => setModelDropOpen(false), 150)}
-                    placeholder="Camry"
-                    autoComplete="off"
-                    className={inputCls + ' pr-8'}
-                  />
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-                {modelDropOpen && (
-                  <div className="absolute z-30 mt-1 w-full bg-white border border-slate-200 rounded-xl shadow-xl max-h-48 overflow-y-auto">
-                    {filteredModels.length === 0 && modelSearch.trim() ? (
-                      <button
-                        type="button"
-                        onMouseDown={() => pickModel(modelSearch.trim())}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-green-700 hover:bg-green-50 font-bold"
-                      >
-                        <Plus size={14} /> เพิ่ม "{modelSearch.trim()}"
-                      </button>
-                    ) : (
-                      filteredModels.map(m => (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onMouseDown={() => pickModel(m.name, m.brandId)}
-                          className={`w-full flex items-center gap-2 px-3 py-2.5 text-sm text-left hover:bg-slate-50 ${
-                            m.name.toLowerCase() === carModel.toLowerCase() ? 'bg-green-50 text-green-700 font-bold' : 'text-slate-700'
-                          }`}
-                        >
-                          {m.name.toLowerCase() === carModel.toLowerCase() && <Check size={12} className="text-green-600" />}
-                          {m.name}
-                        </button>
-                      ))
-                    )}
-                    {filteredModels.length > 0 && modelSearch.trim() &&
-                      !filteredModels.find(m => m.name.toLowerCase() === modelSearch.toLowerCase()) && (
-                      <button
-                        type="button"
-                        onMouseDown={() => pickModel(modelSearch.trim())}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-green-700 hover:bg-green-50 font-bold border-t border-slate-100"
-                      >
-                        <Plus size={14} /> เพิ่ม "{modelSearch.trim()}"
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div>
-                <Label>สีรถ</Label>
-                <input
-                  value={carColor}
-                  onChange={e => setCarColor(e.target.value)}
-                  placeholder="ขาว"
-                  className={inputCls}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>ทะเบียนรถ</Label>
-                <div className="relative">
-                  <Car size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    value={licensePlate}
-                    onChange={e => setLicensePlate(e.target.value)}
-                    placeholder="กก-1234 กรุงเทพฯ"
-                    className={inputCls + ' pl-8'}
-                  />
-                </div>
-              </div>
-              <div>
-                <Label>ไมล์ปัจจุบัน (กม.)</Label>
-                <div className="relative">
-                  <Gauge size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                  <input
-                    value={mileage}
-                    onChange={e => setMileage(e.target.value.replace(/[^\d,]/g, ''))}
-                    placeholder="45,000"
-                    className={inputCls + ' pl-8'}
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <Label>เลขที่ตัวถัง (Chassis No.)</Label>
-              <div className="relative">
-                <Hash size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  value={chassisNo}
-                  onChange={e => setChassisNo(e.target.value)}
-                  placeholder="เช่น JTMHX3JH50D000001"
-                  className={inputCls + ' pl-8'}
-                />
-              </div>
-            </div>
-
-            {selectedCustomerId && (carBrand || licensePlate) && (
-              <div className="pt-1">
-                <button
-                  type="button"
-                  onClick={handleSaveVehicleToCustomer}
-                  disabled={saveVehiclePending}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-dashed border-blue-300 text-blue-600 text-xs font-semibold hover:bg-blue-50 hover:border-blue-400 disabled:opacity-50 transition-colors"
-                >
-                  <Car size={13} />
-                  {saveVehiclePending ? 'กำลังบันทึก...' : 'บันทึกรถนี้ไว้กับลูกค้า'}
-                </button>
-                {saveVehicleMsg && (
-                  <p className={`text-xs mt-1.5 text-center font-medium ${saveVehicleMsg.ok ? 'text-green-600' : 'text-red-500'}`}>
-                    {saveVehicleMsg.text}
-                  </p>
-                )}
-              </div>
-            )}
-
             <div>
               <Label>ที่อยู่ (สำหรับออกเอกสาร)</Label>
               <div className="relative">
@@ -1340,16 +989,10 @@ export function NewDocumentClient({
       {customerPickerOpen && (
         <PickerModal
           title="เลือกลูกค้า"
-          placeholder="ค้นหาทะเบียนรถ, ชื่อ หรือเบอร์โทร..."
+          placeholder="ค้นหาชื่อหรือเบอร์โทร..."
           items={customers}
-          filterFn={(c, q) => {
-            const plates = c.vehicles?.map(v => v.licensePlate.toLowerCase()).join(' ') ?? '';
-            const legacy = c.carInfo?.toLowerCase() ?? '';
-            return plates.includes(q) || legacy.includes(q) || c.name.toLowerCase().includes(q) || c.phone.includes(q);
-          }}
+          filterFn={(c, q) => c.name.toLowerCase().includes(q) || c.phone.includes(q)}
           renderItem={(c) => {
-            const plates = c.vehicles?.filter(v => v.licensePlate).map(v => v.licensePlate).join(', ')
-              || c.carInfo || '';
             return (
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${c.customerType === 'corporate' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'}`}>
@@ -1358,11 +1001,6 @@ export function NewDocumentClient({
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-slate-800 truncate">{c.name || <span className="text-slate-400 italic">ไม่มีชื่อ</span>}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    {plates && (
-                      <span className="text-xs font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
-                        {plates}
-                      </span>
-                    )}
                     <span className="text-xs text-slate-400">{c.phone || ''}</span>
                   </div>
                 </div>
@@ -1380,8 +1018,6 @@ export function NewDocumentClient({
       {addCustomerOpen && (
         <CustomerModal
           initial={null}
-          carBrands={localBrands}
-          carModels={localModels}
           onClose={() => setAddCustomerOpen(false)}
           onSaved={handleNewCustomerSaved}
         />

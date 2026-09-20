@@ -5,7 +5,6 @@ import { getServiceItems } from '@/lib/service-items';
 import { getDocumentById } from '@/lib/documents';
 import type { DocType } from '@/lib/documents';
 import { getActiveEmployees } from '@/lib/employees';
-import { getCarBrands, getCarModels } from '@/app/actions/car-data';
 import { docTypeFromSlug } from '@/lib/doc-routes';
 import { notFound } from 'next/navigation';
 import { NewDocumentClient, type DocPrefill } from '@/components/admin/new-document-client';
@@ -37,15 +36,13 @@ export default async function NewDocumentPage({
   if (!docType) notFound();
   const { from, deposit } = await searchParams;
 
-  const [bookingCustomers, directoryCustomers, products, serviceItems, sourceDoc, employees, carBrands, carModels] = await Promise.all([
+  const [bookingCustomers, directoryCustomers, products, serviceItems, sourceDoc, employees] = await Promise.all([
     getCustomers(),
     getCustomerDirectory(),
     getAllProductsAdmin(),
     getServiceItems(),
     from ? getDocumentById(from) : Promise.resolve(null),
     getActiveEmployees(),
-    getCarBrands(),
-    getCarModels(),
   ]);
   const customers = mergeCustomerSources(bookingCustomers, directoryCustomers);
 
@@ -105,5 +102,5 @@ export default async function NewDocumentPage({
     }
   }
 
-  return <NewDocumentClient key={docType} customers={customers} products={products} serviceItems={serviceItems} employees={employees} prefill={prefill} initialType={docType} carBrands={carBrands} carModels={carModels} />;
+  return <NewDocumentClient key={docType} customers={customers} products={products} serviceItems={serviceItems} employees={employees} prefill={prefill} initialType={docType} />;
 }
