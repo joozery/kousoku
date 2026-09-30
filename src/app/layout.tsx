@@ -18,8 +18,15 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Kosoku Admin",
-  description: "ระบบหลังบ้าน Kosoku",
+  title: "KOUSOKU (THAILAND) CO., LTD.",
+  description: "วัสดุโลหะ ท่อเหล็ก ทองแดง และอุปกรณ์ข้อต่อคุณภาพ",
+  icons: {
+    icon: [
+      { url: '/logo/logo.png', type: 'image/png' },
+    ],
+    shortcut: ['/logo/logo.png'],
+    apple: [{ url: '/logo/logo.png', type: 'image/png' }],
+  },
 };
 
 export default function RootLayout({
