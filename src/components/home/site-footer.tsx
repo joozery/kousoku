@@ -1,5 +1,6 @@
 'use client';
 
+import { CookieSettingsButton } from '@/components/home/cookie-consent';
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
@@ -248,14 +249,16 @@ export function SiteFooter() {
             {t('copyright')}
           </p>
 
-          <div className="flex items-center justify-center gap-3.5 sm:gap-4">
-            <a href="#privacy" className="hover:text-white transition-colors py-1">
-              {t('privacy')}
-            </a>
+          <div className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-4">
+            <CookieSettingsButton />
             <span aria-hidden className="h-2.5 w-px bg-white/20" />
-            <a href="#terms" className="hover:text-white transition-colors py-1">
+            <Link href="/privacy" className="hover:text-white transition-colors py-1">
+              {t('privacy')}
+            </Link>
+            <span aria-hidden className="h-2.5 w-px bg-white/20" />
+            <Link href="/terms" className="hover:text-white transition-colors py-1">
               {t('terms')}
-            </a>
+            </Link>
             <button
               type="button"
               onClick={scrollToTop}

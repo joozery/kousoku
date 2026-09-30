@@ -1,3 +1,4 @@
+import { CookieConsentBanner } from '@/components/home/cookie-consent';
 import { SiteHeader } from '@/components/home/site-header';
 import { SiteFooter } from '@/components/home/site-footer';
 import { FloatingContact } from '@/components/home/floating-contact';
@@ -13,6 +14,7 @@ export default function MarketingLayout({
       {children}
       <SiteFooter />
       <FloatingContact />
+      <CookieConsentBanner />
     </div>
   );
 }

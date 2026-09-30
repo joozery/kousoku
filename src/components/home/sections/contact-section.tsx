@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { ConsentMap } from '@/components/home/consent-map';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, ArrowUpRight, MapPin, Phone, Mail, Clock, Headset, Check, Navigation, MessagesSquare } from 'lucide-react';
 import { QuoteRequestForm } from '@/components/home/quote-request-form';
@@ -51,7 +52,7 @@ export function ContactSection() {
       <section aria-labelledby="contact-location" className={`pb-12 lg:pb-16 ${shell}`}>
         <div className="overflow-hidden rounded-2xl border border-blue-100/70 bg-white lg:grid lg:grid-cols-[0.75fr_1.25fr]">
           <div className="p-6 sm:p-8 lg:p-9"><p className="text-[11px] font-bold tracking-[0.23em] text-blue-500">OUR LOCATION</p><h2 id="contact-location" className="mt-2 text-2xl font-bold">{p('locationTitle')}</h2><p className="mt-5 text-sm font-bold">KOUSOKU (THAILAND) CO., LTD.</p><div className="mt-3 flex items-start gap-3"><MapPin size={21} aria-hidden="true" className="mt-0.5 shrink-0 text-blue-600" /><p className="text-sm leading-relaxed text-[#7183a2]">{CONTACT_INFO.address}</p></div><a href={mapUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-5 text-sm font-semibold text-blue-700 hover:bg-blue-100"><Navigation size={16} aria-hidden="true" />{p('directions')}<ArrowUpRight size={15} aria-hidden="true" /></a></div>
-          <iframe title={p('mapTitle')} src={`https://maps.google.com/maps?q=${mapQuery}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="h-80 w-full border-0 bg-blue-50 lg:h-full lg:min-h-80" allowFullScreen />
+          <ConsentMap query={mapQuery} title={p('mapTitle')} />
         </div>
       </section>
     </main>

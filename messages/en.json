@@ -636,5 +636,44 @@
     "reference": "Reference",
     "another": "Submit another request",
     "error": "We could not save your request. Check your details and try again, or call our team. Your entries have been preserved."
+  },
+  "cookieConsent": {
+    "title": "Your cookie preferences",
+    "intro": "We use necessary cookies to operate the website and remember your preferences. External content such as Google Maps loads only when you allow it.",
+    "accept": "Accept all",
+    "reject": "Necessary only",
+    "settings": "Cookie settings",
+    "description": "Choose what you allow. You can change your preferences using Cookie settings in the footer.",
+    "necessary": "Necessary cookies",
+    "alwaysOn": "Always enabled",
+    "necessaryIntro": "These remember your cookie choices, language and essential website functions. They cannot be disabled here.",
+    "external": "External content",
+    "externalIntro": "Allow embedded Google Maps. The provider may receive connection information and use cookies under its own policies.",
+    "retention": "Your choice is remembered for 180 days. This website does not currently have analytics or advertising integrations.",
+    "save": "Save preferences",
+    "error": "Your choice could not be saved. Check whether your browser allows cookies and try again.",
+    "mapTitle": "Our location",
+    "mapIntro": "Allow external content to display the map here, or open Google Maps in a new tab.",
+    "openMap": "Open Google Maps"
+  },
+  "legalPage": {
+    "privacy": {
+      "title": "Privacy Policy",
+      "intro": "Information about how your personal data is collected, used and handled."
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "intro": "Information and terms for using our website, products and services."
+    },
+    "breadcrumb": "Breadcrumb",
+    "home": "Home",
+    "contents": "Contents",
+    "contact": "Contact us",
+    "helpTitle": "Have a question?",
+    "helpIntro": "Contact our team for information about our policies and services.",
+    "updated": "Last updated",
+    "languageNote": "The policy content is currently published in Thai.",
+    "unavailable": "The policy could not be loaded. Please try again later or contact our team using the details below.",
+    "empty": "No content has been published yet."
   }
 }

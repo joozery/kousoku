@@ -64,7 +64,7 @@ export const INDUSTRIES = [
 ] as const;
 
 export const CONTACT_INFO = {
-  address: '75/33 หมู่ที่ 11 ต.คลองหนึ่ง อ.คลองหลวง จ.ปทุมธานี 12120',
+  address: '31 ชั้น 2 และ 3 ห้อง 208-01 ซอยสุขุมวิท 26 ถนนสุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110',
   phone: '02-123-4567',
   phoneHref: 'tel:021234567',
   email: 'info@kousoku.co.th',
