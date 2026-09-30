@@ -55,6 +55,13 @@ export function AdminSidebar({ isOpen }: SidebarProps) {
           active: pathname === "/admin"
         },
         {
+          key: 'quote-requests',
+          icon: <ClipboardList size={18} />,
+          label: 'คำขอใบเสนอราคา',
+          href: '/admin/quote-requests',
+          active: pathname.startsWith('/admin/quote-requests'),
+        },
+        {
           key: 'finance-root',
           icon: <DollarSign size={18} />,
           label: "การเงิน",

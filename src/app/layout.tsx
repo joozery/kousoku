@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Thai } from "next/font/google";
+import { Inter, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
 const notoSansThai = Noto_Sans_Thai({
-  subsets: ["thai", "latin"],
-  variable: "--font-sans",
+  subsets: ["thai"],
+  variable: "--font-noto-thai",
 });
 
 export const viewport: Viewport = {
@@ -22,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${notoSansThai.variable} font-sans h-full antialiased`} suppressHydrationWarning>
+    <html lang="th" className={`${inter.variable} ${notoSansThai.variable} font-sans h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-slate-50" suppressHydrationWarning>
         {children}
       </body>

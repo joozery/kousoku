@@ -1,0 +1,640 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "会社概要",
+    "products": "製品",
+    "services": "選ばれる理由",
+    "industries": "対応業界",
+    "news": "ニュース",
+    "contact": "お問い合わせ"
+  },
+  "common": {
+    "requestQuote": "お見積り依頼",
+    "readMore": "詳しく見る",
+    "contactUs": "お問い合わせ",
+    "breadcrumbHome": "ホーム",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "language": "言語"
+  },
+  "floatingContact": {
+    "open": "お問い合わせ方法を開く",
+    "close": "お問い合わせ方法を閉じる",
+    "buttonLabel": "お問い合わせ",
+    "title": "営業・サポート窓口",
+    "subtitle": "ご希望の方法でお気軽にお問い合わせください",
+    "onlineStatus": "受付中",
+    "line": "LINEでチャット",
+    "lineDesc": "@kousoku（迅速対応）",
+    "facebook": "Facebookでチャット",
+    "facebookDesc": "ページから直接チャット",
+    "phone": "お電話",
+    "phoneDesc": "02-123-4567（営業時間内）",
+    "recommended": "おすすめ",
+    "company": "KOUSOKU (THAILAND) CO., LTD."
+  },
+  "search": {
+    "ariaLabel": "検索",
+    "placeholder": "製品・サービスを検索...",
+    "noResults": "「{query}」に一致する結果が見つかりません",
+    "items": {
+      "home": {
+        "label": "ホーム",
+        "keywords": "home ホーム"
+      },
+      "about": {
+        "label": "会社概要",
+        "keywords": "about 会社概要 企業"
+      },
+      "copper": {
+        "label": "銅 (Copper)",
+        "keywords": "copper 銅 銅管"
+      },
+      "steelPipe": {
+        "label": "鋼管 (Steel Pipe)",
+        "keywords": "steel pipe 鋼管 亜鉛メッキ鋼管 ステンレス"
+      },
+      "metalSupply": {
+        "label": "金属資材 (Metal Supply)",
+        "keywords": "metal supply 鋼板 山形鋼 プレート"
+      },
+      "fittingAccessories": {
+        "label": "継手・付属品 (Fitting & Accessories)",
+        "keywords": "fitting accessories 継手 チーズ フランジ"
+      },
+      "services": {
+        "label": "KSKが選ばれる理由",
+        "keywords": "why choose ksk サービス"
+      },
+      "industries": {
+        "label": "対応業界",
+        "keywords": "industries 建設 エネルギー 自動車"
+      },
+      "news": {
+        "label": "ニュース・記事",
+        "keywords": "news 更新 記事"
+      },
+      "contact": {
+        "label": "お問い合わせ",
+        "keywords": "contact 住所 電話"
+      }
+    }
+  },
+  "hero": {
+    "eyebrow": "Metal for a stronger tomorrow",
+    "titleLine1": "高品質な金属で",
+    "titleLine2": "産業の未来を",
+    "titleHighlight": "支える",
+    "subtitle": "銅、鋼管、金属資材の販売をリードし、あらゆる産業ニーズにお応えします。",
+    "ctaQuote": "お見積り依頼",
+    "ctaProducts": "製品を見る",
+    "features": {
+      "quality": "認証取得済みの高品質な製品",
+      "delivery": "全国迅速配送",
+      "expert": "専門チームによる手厚いサポート"
+    }
+  },
+  "about": {
+    "eyebrow": "About us",
+    "title": "会社概要",
+    "companyName": "KOUSOKU (THAILAND) CO., LTD.",
+    "body": "コーソク（タイランド）株式会社は、建設・エネルギー・構造関連産業のニーズに応えるため、銅・鋼管・高品質金属資材の販売を行っています。豊富な経験と専門知識をもとに、高品質な製品とサービスをお届けし、お客様に信頼されるビジネスパートナーを目指します。",
+    "teaserBody": "コーソク（タイランド）株式会社は、建設・エネルギー・構造関連産業のニーズに応えるため、銅・鋼管・高品質金属資材の販売を行っています。",
+    "cta": "お問い合わせ",
+    "highlights": {
+      "quality": "国際基準品質",
+      "experience": "豊富な実績",
+      "service": "ワンストップサービス",
+      "grow": "共に成長する"
+    }
+  },
+  "products": {
+    "eyebrow": "Products",
+    "title": "取扱製品",
+    "subtitle": "あらゆる産業のニーズに応える高品質な製品ラインナップ",
+    "teaserBody": "銅、鋼管、金属資材、継手まで、あらゆる産業のニーズに応える高品質な製品を取り揃えています。",
+    "viewAll": "すべての製品を見る",
+    "viewMore": "詳しく見る",
+    "items": {
+      "copper": {
+        "name": "銅",
+        "desc": "銅管、銅板、銅棒および関連部品"
+      },
+      "steelPipe": {
+        "name": "鋼管",
+        "desc": "黒管、亜鉛メッキ鋼管、ステンレス鋼管および関連部品"
+      },
+      "metalSupply": {
+        "name": "金属資材",
+        "desc": "プレート、鋼板、山形鋼、C形鋼など"
+      },
+      "fittingAccessories": {
+        "name": "継手・付属品",
+        "desc": "継手、チーズ、フランジおよび配管付属品"
+      }
+    }
+  },
+  "services": {
+    "eyebrow": "Why choose ksk",
+    "title": "KSKが選ばれる理由",
+    "tagline": "信頼できる金属パートナー",
+    "teaserBody": "信頼できる金属パートナー — 高品質な製品、迅速な配送、プロフェッショナルなチーム、競争力のある価格。",
+    "viewAll": "サービスをすべて見る",
+    "metricYears": "年の実績",
+    "metricClients": "全国のお客様",
+    "metricProducts": "製品カテゴリ",
+    "metricDelivery": "翌日配送対応",
+    "items": {
+      "quality": {
+        "title": "高品質な製品",
+        "desc": "基準を満たした仕入れ先を厳選"
+      },
+      "delivery": {
+        "title": "迅速な配送",
+        "desc": "全国どこでも対応"
+      },
+      "team": {
+        "title": "プロフェッショナルなチーム",
+        "desc": "きめ細やかなご提案"
+      },
+      "price": {
+        "title": "競争力のある価格",
+        "desc": "コストパフォーマンスに優れ、透明で公正"
+      }
+    }
+  },
+  "industries": {
+    "eyebrow": "Our industries",
+    "title": "対応業界",
+    "teaserBody": "建設、製造業、エネルギー、自動車、機械、インフラなど幅広い業界に対応。",
+    "viewAll": "すべての業界を見る",
+    "exploreCard": "ソリューション・製品を見る",
+    "ctaText": "国際規格に準拠した高品質素材と専門スタッフによる確かなソリューションを提供します。",
+    "ctaButton": "お問い合わせ",
+    "items": {
+      "construction": "建設",
+      "manufacturing": "製造業",
+      "energy": "エネルギー",
+      "automotive": "自動車",
+      "machinery": "機械",
+      "infrastructure": "インフラ"
+    }
+  },
+  "news": {
+    "eyebrow": "News & Updates",
+    "title": "ニュース・記事",
+    "subtitle": "金属市場の動向、産業技術、KOUSOKUチームからの最新情報をお届けします。",
+    "latestBadge": "最新",
+    "viewAll": "すべてのニュースを見る",
+    "readMin": "分で読める",
+    "ctaHeading1": "お客様の産業の発展を",
+    "ctaHeading2": "共に支えていきます",
+    "ctaButton": "お見積り依頼",
+    "items": [
+      {
+        "date": "2026年9月15日",
+        "title": "世界の銅価格の動向とタイ産業への影響",
+        "excerpt": "世界市場での銅価格が継続的に上昇し、タイの製造業の生産コストに直接影響しています。この記事では主要因と対策を分析します。",
+        "category": "市場分析",
+        "readMin": 5,
+        "image": "/news/news-copper.jpg"
+      },
+      {
+        "date": "2026年8月2日",
+        "title": "KOUSOKU、食品・製薬業向けグレード316Lステンレス管の在庫を拡充",
+        "excerpt": "食品、製薬、化学業界向けの高品質316Lステンレス管を拡充。即日出荷可能な在庫を確保しています。",
+        "category": "お知らせ",
+        "readMin": 3,
+        "image": "/news/news-stainless.jpg"
+      },
+      {
+        "date": "2026年6月14日",
+        "title": "ISO規格と金属品質認証：購入前に知っておくべきこと",
+        "excerpt": "ISO規格に適合した金属の選択は、プロジェクトの安全性と効率性に不可欠です。購入前に確認すべき事項を解説します。",
+        "category": "知識",
+        "readMin": 6,
+        "image": "/news/news-iso.jpg"
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Contact us",
+    "title": "お問い合わせ",
+    "subtitle": "製品に関するご質問、お見積りのご依頼、担当チームへのご相談など、以下の窓口からお気軽にお問い合わせください。",
+    "addressLabel": "住所",
+    "phoneLabel": "電話番号",
+    "emailLabel": "メール",
+    "hoursLabel": "営業時間",
+    "hours": "月曜〜土曜：8:30〜17:30",
+    "lineHeading": "LINE公式アカウント",
+    "lineText": "QRコードをスキャン、またはLINEでチャットしてすぐにお見積りをご依頼ください（{lineId}）",
+    "lineCta": "友だち追加"
+  },
+  "footer": {
+    "taglinePrefix": "高品質な金属で",
+    "taglineHighlight": "持続可能な産業を支える",
+    "taglineSub": "Metal for a stronger tomorrow",
+    "hours": "月曜〜土曜：8:30〜17:30",
+    "followUs": "フォローする",
+    "mainMenu": "メインメニュー",
+    "contactHeading": "お問い合わせ",
+    "addressLabel": "住所",
+    "phoneLabel": "電話番号",
+    "emailLabel": "メール",
+    "lineHeading": "LINEでお問い合わせ",
+    "lineDesc": "QRコードをスキャン、またはチャットですぐにお見積りをご依頼ください",
+    "copyLineId": "LINE IDをコピー",
+    "copied": "コピーしました",
+    "addFriend": "友だち追加",
+    "copyright": "© 2026 KOUSOKU (THAILAND) CO., LTD. All rights reserved.",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "backToTop": "トップに戻る"
+  },
+  "metadata": {
+    "home": {
+      "title": "KOUSOKU (THAILAND) CO., LTD. | 持続可能な産業を支える高品質金属",
+      "description": "銅、鋼管、金属資材の販売をリードし、あらゆる産業ニーズにお応えします。"
+    },
+    "about": {
+      "title": "会社概要 | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "コーソク（タイランド）株式会社。産業向けに銅・鋼管・高品質金属資材を販売しています。"
+    },
+    "products": {
+      "title": "取扱製品 | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "銅、鋼管、金属資材、継手まで、あらゆる産業のニーズに応える高品質な製品を取り揃えています。"
+    },
+    "services": {
+      "title": "サービスのご案内 | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "高品質な製品、迅速な配送、プロフェッショナルなチーム、競争力のある価格をKOUSOKUがお届けします。"
+    },
+    "industries": {
+      "title": "対応業界 | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "建設、製造業、エネルギー、自動車、機械、インフラなど幅広い業界に対応。"
+    },
+    "news": {
+      "title": "ニュース・記事 | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "銅、鋼管、金属資材業界に関するニュースと記事。"
+    },
+    "contact": {
+      "title": "お問い合わせ | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "製品に関するご質問、お見積りのご依頼、KOUSOKU (THAILAND) CO., LTD. チームへのご相談はこちら。"
+    }
+  },
+  "servicesPage": {
+    "title": "サービスのご案内",
+    "intro": "高品質な製品の調達から、お客様のあらゆるご要望まで、\nすべての段階で総合的にサポートします。",
+    "details": "詳しく見る",
+    "processTitle": "サービスの流れ",
+    "processIntro": "お客様のニーズに合わせ、迅速かつ正確なサービスを各段階で提供します。",
+    "contactTitle": "詳しい情報を\nお求めですか？",
+    "contactIntro": "専門スタッフがご相談に応じ、最適な製品選びをお手伝いします。",
+    "cards": {
+      "sourcing": {
+        "title": "高品質な製品調達",
+        "description": "国内外の主要メーカーから、国際品質基準を満たす材料や機器を厳選してお届けします。"
+      },
+      "consulting": {
+        "title": "専門的なご相談",
+        "description": "エンジニアと専門スタッフが技術的なご相談に応じ、用途に適した材料仕様をご提案します。"
+      },
+      "delivery": {
+        "title": "タイ全国への迅速な配送",
+        "description": "効率的な物流体制で、バンコクおよびタイ全国へ迅速・安全・確実にお届けします。"
+      },
+      "assurance": {
+        "title": "品質基準と保証",
+        "description": "国際基準に基づく品質検査と製品保証により、安心してご使用いただけます。"
+      }
+    },
+    "steps": [
+      {
+        "title": "お問い合わせ",
+        "description": "ご希望の製品や詳細についてお聞かせください。"
+      },
+      {
+        "title": "お見積もり",
+        "description": "製品の詳細とともにお見積もりをご案内します。"
+      },
+      {
+        "title": "ご注文の確認",
+        "description": "仕様をご確認のうえ、ご注文を確定します。"
+      },
+      {
+        "title": "製品の配送",
+        "description": "必要書類を添え、予定どおりに配送します。"
+      }
+    ]
+  },
+  "aboutPage": {
+    "intro": "金属資材、鋼管、銅、継手の総合サプライヤーとして、\nあらゆる産業のニーズにお応えします。",
+    "tagline": "信頼できる金属資材のパートナー",
+    "body": "コーソク（タイランド）株式会社は、金属資材、鋼管、銅、各種継手を幅広く取り扱っています。高品質な製品、迅速なサービス、専門スタッフによるご提案で、さまざまな産業のお客様をサポートします。",
+    "learnMore": "詳しく見る",
+    "valuesLabel": "私たちの強み",
+    "stats": [
+      {
+        "value": "10+",
+        "label": "年の経験"
+      },
+      {
+        "value": "5,000+",
+        "label": "取扱製品"
+      },
+      {
+        "value": "1,000+",
+        "label": "法人のお客様"
+      },
+      {
+        "value": "全国対応",
+        "label": "あらゆる産業を\nサポート"
+      }
+    ],
+    "values": [
+      {
+        "title": "高品質な製品",
+        "description": "国際基準に適合する資材を厳選"
+      },
+      {
+        "title": "総合的なサービス",
+        "description": "金属資材から継手まで"
+      },
+      {
+        "title": "専門チーム",
+        "description": "専門スタッフが直接ご提案"
+      },
+      {
+        "title": "迅速な配送",
+        "description": "あらゆる規模の案件に対応"
+      }
+    ],
+    "historyTitle": "私たちの歩み",
+    "historyIntro": "金属・産業資材の分野で培った経験をもとに、継続的な改善を重ね、お客様に信頼されるパートナーとしてタイの産業とともに成長しています。",
+    "present": "現在",
+    "history": [
+      {
+        "title": "会社設立",
+        "description": "金属資材と鋼管の販売を開始。"
+      },
+      {
+        "title": "製品ラインの拡充",
+        "description": "需要の増加に応え、製品と継手を拡充。"
+      },
+      {
+        "title": "倉庫体制の強化",
+        "description": "在庫管理と配送体制を改善。"
+      },
+      {
+        "title": "顧客基盤の拡大",
+        "description": "全国のさまざまな産業のお客様に対応。"
+      },
+      {
+        "title": "未来への挑戦",
+        "description": "地域を代表する金属資材の企業を目指します。"
+      }
+    ],
+    "visionTitle": "ビジョンとミッション",
+    "warehouseAlt": "産業用金属資材と鋼管の倉庫",
+    "purpose": [
+      {
+        "title": "ビジョン (Vision)",
+        "description": "金属資材と継手の分野で全国のお客様に信頼される企業となり、タイの産業とともに持続的に成長します。"
+      },
+      {
+        "title": "ミッション (Mission)",
+        "description": "高品質な製品、迅速なサービス、専門的なご提案を通じ、あらゆる産業のお客様のニーズにお応えします。"
+      }
+    ]
+  },
+  "productsPage": {
+    "intro": "銅、鋼管、金属資材、継手。\nあらゆる産業に高品質な製品をお届けします。",
+    "search": "検索",
+    "searchPlaceholder": "鋼管、銅、鋼板、継手などを検索",
+    "categoryTitle": "製品カテゴリー",
+    "categoryIntro": "必要なカテゴリーから製品をお探しください。",
+    "viewProducts": "製品を見る",
+    "featuredTitle": "おすすめ製品",
+    "featuredIntro": "多くのお客様に選ばれている製品です。",
+    "resultsTitle": "製品一覧",
+    "searchResults": "「{query}」の検索結果：{count}件",
+    "empty": "該当する製品がありません。別の製品名やカテゴリーで検索してください。",
+    "previous": "前の製品",
+    "next": "次の製品",
+    "details": "詳細を見る",
+    "whyTitle": "当社の製品が選ばれる理由",
+    "applicationsIntro": "幅広い産業の現場で当社の製品が活躍しています。",
+    "customTitle": "特殊な製品や\n仕様をお探しですか？",
+    "customIntro": "専門スタッフがご相談に応じ、プロジェクトの要件に合わせた製品調達をサポートします。",
+    "knowledgeTitle": "関連記事",
+    "allArticles": "すべての記事を見る",
+    "applications": {
+      "construction": "構造物・建物・設備",
+      "manufacturing": "機械・産業用配管",
+      "energy": "発電所・石油・ガス",
+      "machinery": "機械部品・設備",
+      "infrastructure": "公共設備・構造物"
+    },
+    "benefits": [
+      {
+        "title": "確かな品質",
+        "description": "国際基準に適合する製品を厳選"
+      },
+      {
+        "title": "豊富な品揃え",
+        "description": "各カテゴリーの製品を取り揃え"
+      },
+      {
+        "title": "迅速な納品",
+        "description": "安定した供給と迅速な配送"
+      },
+      {
+        "title": "幅広い産業に対応",
+        "description": "建設・産業用途をサポート"
+      }
+    ],
+    "catalog": {
+      "copperTube": {
+        "name": "銅管",
+        "description": "空調、冷凍、産業用途向けの銅管。用途に合った寸法や肉厚について、スタッフにご相談ください。"
+      },
+      "galvanizedPipe": {
+        "name": "亜鉛メッキ鋼管",
+        "description": "配管・構造用途向けの亜鉛メッキ鋼管。対応寸法やプロジェクトへの適合性はお問い合わせください。"
+      },
+      "steelPlate": {
+        "name": "鋼板",
+        "description": "構造物、製造、加工向けの鋼板。材質、寸法、板厚についてご相談ください。"
+      },
+      "steelAngle": {
+        "name": "山形鋼",
+        "description": "構造物、支持材、組立用途向けの山形鋼。用途に適した寸法と仕様の選定をお手伝いします。"
+      },
+      "flange": {
+        "name": "フランジ",
+        "description": "配管と機器を接続するフランジ。システムに必要な材質、寸法、規格をご相談ください。"
+      },
+      "steelPipe": {
+        "name": "鋼管",
+        "description": "構造・産業用途向けの鋼管。種類、寸法、肉厚、配送についてお問い合わせください。"
+      },
+      "fittings": {
+        "name": "配管継手",
+        "description": "配管用の継手、エルボ、チーズ。材質、寸法、接続形式の選定をご相談ください。"
+      }
+    }
+  },
+  "industriesPage": {
+    "intro": "高品質な金属資材、鋼管、銅、継手を調達し、\n国内外の幅広い産業の\nニーズにお応えします。",
+    "breadcrumbLabel": "パンくずリスト",
+    "overviewTitle": "高品質な資材と総合的な提案で\nあらゆる産業をサポート",
+    "overviewIntro": "KOUSOKU (THAILAND) CO., LTD. は、各種産業向けに金属資材、鋼管、銅、継手を供給しています。国際基準に適合した製品と、各業界の要件を理解する専門チームが、お客様をサポートします。",
+    "consult": "専門スタッフに相談",
+    "highlights": [
+      {
+        "title": "高品質な資材",
+        "description": "国際基準"
+      },
+      {
+        "title": "幅広い用途",
+        "description": "多様な産業に対応"
+      },
+      {
+        "title": "確実な納品",
+        "description": "全国配送"
+      },
+      {
+        "title": "専門チーム",
+        "description": "専門的なご提案"
+      }
+    ],
+    "descriptions": {
+      "construction": "建物、インフラ、土木工事向けの構造材、鋼管、継手。",
+      "manufacturing": "機械製造、産業設備、工場システム向けの資材。",
+      "energy": "発電所、製油所、各種エネルギー設備向けの資材と機器。",
+      "automotive": "自動車の生産ラインや組立に使用する金属資材と部品。",
+      "machinery": "機械部品の製造、組立、産業設備の保守向けの資材。",
+      "infrastructure": "水道網、公共設備、大規模インフラ向けの資材。"
+    },
+    "ctaTitle": "あらゆる産業の発展を\nサポートします",
+    "ctaIntro": "業界を問わず、専門スタッフがご相談に応じ、お客様の要件に最適な資材をご提案・調達します。",
+    "statsLabel": "会社の実績",
+    "stats": [
+      {
+        "value": "1,000+",
+        "label": "法人のお客様"
+      },
+      {
+        "value": "5,000+",
+        "label": "取扱製品"
+      },
+      {
+        "value": "10+",
+        "label": "年の経験"
+      },
+      {
+        "value": "全国対応",
+        "label": "あらゆる産業をサポート"
+      }
+    ]
+  },
+  "newsPage": {
+    "title": "ニュースと活動",
+    "intro": "KOUSOKU (THAILAND) のニュース、知識、活動をご紹介。\n金属資材業界の動向をお届けします。",
+    "filterLabel": "記事カテゴリー",
+    "filters": {
+      "all": "すべて",
+      "company": "企業ニュース",
+      "knowledge": "基礎知識",
+      "market": "業界・動向",
+      "events": "イベント",
+      "press": "プレスリリース"
+    },
+    "search": "記事を検索…",
+    "readMore": "続きを読む",
+    "empty": "記事が見つかりません",
+    "emptyHint": "カテゴリーや検索語を変更してください。",
+    "pagination": "記事のページ",
+    "previous": "前のページ",
+    "next": "次のページ",
+    "page": "{number}ページ",
+    "recommended": "おすすめ記事",
+    "contactTitle": "詳しい情報をお求めですか？",
+    "contactIntro": "専門スタッフがご相談や製品情報のご案内に対応します。",
+    "contact": "お問い合わせ",
+    "newsletterTitle": "ニュースレターのご案内",
+    "newsletterIntro": "KOUSOKU (THAILAND) のニュースや最新情報をお届けします。",
+    "email": "メールアドレスを入力",
+    "subscribe": "登録する",
+    "consent": "KOUSOKU からメールでニュースを受け取ることに同意します。",
+    "newsletterUnavailable": "ニュースレターの登録受付はまだ開始していません。メールアドレスは保存されていません。最新情報は担当者までお問い合わせください。",
+    "articles": [
+      {
+        "date": "",
+        "title": "用途に合った鋼板の選び方",
+        "excerpt": "鋼板を選ぶ際は、プロジェクトの仕様と合わせて材質、板厚、寸法、使用環境を確認してください。構造用途と加工用途では求められる特性が異なる場合があります。発注前に材料の書類を確認し、担当技術者にご相談ください。",
+        "image": "/products/metal-supply.jpg"
+      },
+      {
+        "date": "",
+        "title": "配管に適した継手とフランジの選定",
+        "excerpt": "継手とフランジは、配管の寸法、材質、規格に適合している必要があります。流体、温度、圧力、接続形式をシステム仕様と照合してください。当社スタッフが製品情報の確認や仕様に合った資材調達をサポートします。",
+        "image": "/products/fittings.jpg"
+      }
+    ]
+  },
+  "contactPage": {
+    "channels": "お問い合わせ窓口",
+    "phoneIntro": "営業時間内に担当者へ直接ご相談いただけます。",
+    "emailIntro": "製品のご質問、仕様のご相談、お見積りのご依頼に。",
+    "lineIntro": "チャットで製品の写真や詳細をお送りいただけます。",
+    "call": "電話で相談",
+    "emailAction": "メールを送る",
+    "lineAction": "LINEで相談",
+    "talkTitle": "適切なご提案で\nプロジェクトをサポート",
+    "talkIntro": "新しいプロジェクト向けの資材から特殊な製品まで、用途に合った選定をお手伝いします。",
+    "help": [
+      "製品・寸法・仕様に関するご質問",
+      "プロジェクトのお見積り",
+      "資材調達と配送のご相談"
+    ],
+    "expertTitle": "専門スタッフにご相談ください",
+    "expertIntro": "必要な製品の詳細や写真をお送りください。適切な資材をご案内します。",
+    "formTitle": "お問い合わせ・お見積り",
+    "formIntro": "ご要望をお知らせください。内容に合わせた情報をご案内します。",
+    "name": "お名前",
+    "company": "会社名・組織名",
+    "namePlaceholder": "氏名",
+    "companyPlaceholder": "会社名（任意）",
+    "phonePlaceholder": "ご連絡先の電話番号",
+    "message": "お問い合わせ内容",
+    "messagePlaceholder": "製品の種類、寸法、数量、プロジェクトの詳細などをご記入ください。",
+    "emailNote": "ボタンを押すと入力内容を記載したメールアプリが開きます。内容をご確認のうえ、メールアプリから送信してください。",
+    "prepareEmail": "メールを作成",
+    "enquiry": "製品のお問い合わせ・お見積り",
+    "locationTitle": "所在地のご案内",
+    "directions": "Google Mapsで経路を確認",
+    "mapTitle": "KOUSOKUの会社所在地の地図"
+  },
+  "quoteForm": {
+    "title": "お見積りのご依頼",
+    "intro": "ご連絡先と必要な製品をご記入ください。担当者よりお見積りについてご連絡します。",
+    "name": "お名前",
+    "company": "会社名・組織名（任意）",
+    "email": "メールアドレス",
+    "phone": "電話番号",
+    "products": "製品・寸法・仕様",
+    "productsPlaceholder": "例：1/2インチ銅管。複数の製品は改行してご記入ください。",
+    "quantity": "数量と単位",
+    "quantityPlaceholder": "例：50本 / 製品1：20個、製品2：10メートル",
+    "details": "追加情報",
+    "detailsPlaceholder": "配送先、ご希望の納期、その他の要件をご記入ください。",
+    "note": "ご記入いただいた情報は、ご連絡とお見積りの作成に使用します。",
+    "submit": "見積り依頼を送信",
+    "sending": "送信中…",
+    "success": "お見積り依頼を受け付けました",
+    "successIntro": "担当者が内容を確認し、ご記入の連絡先にご連絡します。",
+    "reference": "受付番号",
+    "another": "新しい依頼を送信",
+    "error": "依頼を保存できませんでした。入力内容をご確認のうえ再度お試しいただくか、お電話でお問い合わせください。入力内容は保持されています。"
+  }
+}

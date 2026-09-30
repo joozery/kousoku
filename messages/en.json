@@ -1,0 +1,640 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About Us",
+    "products": "Products",
+    "services": "Services",
+    "industries": "Industries",
+    "news": "News",
+    "contact": "Contact"
+  },
+  "common": {
+    "requestQuote": "Request a Quote",
+    "readMore": "Read More",
+    "contactUs": "Contact Us",
+    "breadcrumbHome": "Home",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
+  },
+  "floatingContact": {
+    "open": "Open contact options",
+    "close": "Close contact options",
+    "buttonLabel": "Contact Us",
+    "title": "Contact Sales & Support",
+    "subtitle": "Choose your preferred channel to connect",
+    "onlineStatus": "Available now",
+    "line": "Chat on LINE",
+    "lineDesc": "@kousoku (Fastest response)",
+    "facebook": "Chat on Facebook",
+    "facebookDesc": "Chat on KOUSOKU page",
+    "phone": "Call us",
+    "phoneDesc": "02-123-4567 (Office hours)",
+    "recommended": "Recommended",
+    "company": "KOUSOKU (THAILAND) CO., LTD."
+  },
+  "search": {
+    "ariaLabel": "Search",
+    "placeholder": "Search products, services...",
+    "noResults": "No results found for “{query}”",
+    "items": {
+      "home": {
+        "label": "Home",
+        "keywords": "home"
+      },
+      "about": {
+        "label": "About Us",
+        "keywords": "about us company"
+      },
+      "copper": {
+        "label": "Copper",
+        "keywords": "copper copper pipe"
+      },
+      "steelPipe": {
+        "label": "Steel Pipe",
+        "keywords": "steel pipe galvanized stainless"
+      },
+      "metalSupply": {
+        "label": "Metal Supply",
+        "keywords": "metal supply steel sheet steel angle plate"
+      },
+      "fittingAccessories": {
+        "label": "Fitting & Accessories",
+        "keywords": "fitting accessories tee flange"
+      },
+      "services": {
+        "label": "Why Choose KSK",
+        "keywords": "why choose ksk services"
+      },
+      "industries": {
+        "label": "Industries We Serve",
+        "keywords": "industries construction energy automotive"
+      },
+      "news": {
+        "label": "News & Articles",
+        "keywords": "news update articles"
+      },
+      "contact": {
+        "label": "Contact Us",
+        "keywords": "contact address phone"
+      }
+    }
+  },
+  "hero": {
+    "eyebrow": "Metal for a stronger tomorrow",
+    "titleLine1": "Quality Metal",
+    "titleLine2": "for a Sustainable",
+    "titleHighlight": "Industry",
+    "subtitle": "A leading distributor of copper, steel pipe, and metal materials, meeting every need of the industrial sector.",
+    "ctaQuote": "Request a Quote",
+    "ctaProducts": "View Products",
+    "features": {
+      "quality": "Certified quality products",
+      "delivery": "Fast delivery nationwide",
+      "expert": "Expert team ready to advise"
+    }
+  },
+  "about": {
+    "eyebrow": "About us",
+    "title": "About Us",
+    "companyName": "KOUSOKU (THAILAND) CO., LTD.",
+    "body": "KOUSOKU (Thailand) Co., Ltd. trades in copper, steel pipe, and quality metal materials, serving the needs of the construction, energy, and structural engineering industries. We are committed to delivering quality products and services, backed by experience and expertise, to be a business partner you can trust.",
+    "teaserBody": "KOUSOKU (Thailand) Co., Ltd. trades in copper, steel pipe, and quality metal materials, serving the needs of the construction, energy, and structural engineering industries.",
+    "cta": "Contact Us",
+    "highlights": {
+      "quality": "International Standards",
+      "experience": "Years of Experience",
+      "service": "One-Stop Service",
+      "grow": "Growing Together"
+    }
+  },
+  "products": {
+    "eyebrow": "Products",
+    "title": "Our Products",
+    "subtitle": "A full range of quality products to meet every industry's needs.",
+    "teaserBody": "Copper, steel pipe, metal materials, and fittings — a full range of quality products to meet every industry's needs.",
+    "viewAll": "View All Products",
+    "viewMore": "Learn More",
+    "items": {
+      "copper": {
+        "name": "Copper",
+        "desc": "Copper pipes, copper sheets, copper rods, and accessories"
+      },
+      "steelPipe": {
+        "name": "Steel Pipe",
+        "desc": "Black steel pipe, galvanized steel pipe, stainless steel pipe, and accessories"
+      },
+      "metalSupply": {
+        "name": "Metal Supply",
+        "desc": "Plates, steel sheets, angle steel, C-channel steel, and more"
+      },
+      "fittingAccessories": {
+        "name": "Fitting & Accessories",
+        "desc": "Fittings, tees, flanges, and system accessories"
+      }
+    }
+  },
+  "services": {
+    "eyebrow": "Why choose ksk",
+    "title": "Why Choose KSK",
+    "tagline": "Your Trusted Metal Partner",
+    "teaserBody": "Your Trusted Metal Partner — quality products, fast delivery, professional team, competitive pricing.",
+    "viewAll": "View All Services",
+    "metricYears": "Years of Experience",
+    "metricClients": "Clients Nationwide",
+    "metricProducts": "Product Categories",
+    "metricDelivery": "Next-Day Delivery",
+    "items": {
+      "quality": {
+        "title": "Quality Products",
+        "desc": "Sourced to certified standards"
+      },
+      "delivery": {
+        "title": "Fast Delivery",
+        "desc": "Nationwide coverage"
+      },
+      "team": {
+        "title": "Professional Team",
+        "desc": "Close, dedicated consultation"
+      },
+      "price": {
+        "title": "Competitive Pricing",
+        "desc": "Great value, transparent, and fair"
+      }
+    }
+  },
+  "industries": {
+    "eyebrow": "Our industries",
+    "title": "Industries We Serve",
+    "teaserBody": "Construction, manufacturing, energy, automotive, machinery, and infrastructure.",
+    "viewAll": "View All Industries",
+    "exploreCard": "Explore Solutions & Products",
+    "ctaText": "Certified to global standards with specialist support for every scale of industrial project.",
+    "ctaButton": "Consult Our Team",
+    "items": {
+      "construction": "Construction",
+      "manufacturing": "Manufacturing",
+      "energy": "Energy",
+      "automotive": "Automotive",
+      "machinery": "Machinery",
+      "infrastructure": "Infrastructure"
+    }
+  },
+  "news": {
+    "eyebrow": "News & Updates",
+    "title": "News & Articles",
+    "subtitle": "Stay informed on global metal markets, industry technology, and updates from the KOUSOKU team.",
+    "latestBadge": "Latest",
+    "viewAll": "View All News",
+    "readMin": "min read",
+    "ctaHeading1": "Let us be part of",
+    "ctaHeading2": "driving your industry forward",
+    "ctaButton": "Request a Quote",
+    "items": [
+      {
+        "date": "Sep 15, 2026",
+        "title": "Global copper price trends and their impact on Thai industry",
+        "excerpt": "Copper prices have been rising steadily in global markets, directly affecting production costs for Thai manufacturers. This article analyzes key factors and strategies for operators.",
+        "category": "Market Analysis",
+        "readMin": 5,
+        "image": "/news/news-copper.jpg"
+      },
+      {
+        "date": "Aug 2, 2026",
+        "title": "KOUSOKU expands Grade 316L stainless steel stock for food and pharmaceutical industries",
+        "excerpt": "We now offer high-grade 316L stainless steel pipes for food, pharmaceutical, and chemical industries, ready for immediate delivery.",
+        "category": "Company News",
+        "readMin": 3,
+        "image": "/news/news-stainless.jpg"
+      },
+      {
+        "date": "Jun 14, 2026",
+        "title": "ISO standards and metal quality certification: What buyers should know before deciding",
+        "excerpt": "Choosing metals that meet ISO standards is critical for project safety and efficiency. This article explains what to verify before purchasing.",
+        "category": "Knowledge",
+        "readMin": 6,
+        "image": "/news/news-iso.jpg"
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Contact us",
+    "title": "Contact Us",
+    "subtitle": "Ask about our products, request a quote, or talk to our team — reach us through the channels below.",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "hoursLabel": "Business Hours",
+    "hours": "Mon - Sat: 8:30 AM - 5:30 PM",
+    "lineHeading": "Line official",
+    "lineText": "Scan the QR code or chat on LINE for a fast quote ({lineId})",
+    "lineCta": "Add Friend"
+  },
+  "footer": {
+    "taglinePrefix": "Quality Metal for a",
+    "taglineHighlight": "Sustainable Industry",
+    "taglineSub": "Metal for a stronger tomorrow",
+    "hours": "Mon - Sat: 8:30 AM - 5:30 PM",
+    "followUs": "Follow Us",
+    "mainMenu": "Main Menu",
+    "contactHeading": "Contact Us",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "lineHeading": "Ask us on LINE",
+    "lineDesc": "Scan the QR code or chat with us for a fast quote",
+    "copyLineId": "Copy LINE ID",
+    "copied": "Copied",
+    "addFriend": "Add Friend",
+    "copyright": "© 2026 KOUSOKU (THAILAND) CO., LTD. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "backToTop": "Back to top"
+  },
+  "metadata": {
+    "home": {
+      "title": "KOUSOKU (THAILAND) CO., LTD. | Quality Metal for a Sustainable Industry",
+      "description": "A leading distributor of copper, steel pipe, and metal materials, meeting every need of the industrial sector."
+    },
+    "about": {
+      "title": "About Us | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "KOUSOKU (Thailand) Co., Ltd., a distributor of copper, steel pipe, and quality metal materials for industry."
+    },
+    "products": {
+      "title": "Our Products | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "Copper, steel pipe, metal materials, and fittings — a full range of quality products to meet every industry's needs."
+    },
+    "services": {
+      "title": "Our services | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "Quality products, fast delivery, a professional team, and competitive pricing from KOUSOKU."
+    },
+    "industries": {
+      "title": "Industries We Serve | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "Construction, manufacturing, energy, automotive, machinery, and infrastructure."
+    },
+    "news": {
+      "title": "News & Articles | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "News and articles on the copper, steel pipe, and metal materials industry."
+    },
+    "contact": {
+      "title": "Contact Us | KOUSOKU (THAILAND) CO., LTD.",
+      "description": "Ask about our products, request a quote, or talk to the KOUSOKU (THAILAND) CO., LTD. team."
+    }
+  },
+  "servicesPage": {
+    "title": "Our services",
+    "intro": "Complete support, from sourcing quality materials\nto meeting your needs at every step.",
+    "details": "Learn more",
+    "processTitle": "How we work",
+    "processIntro": "Fast, accurate and professional service, tailored to your needs at every stage.",
+    "contactTitle": "Need more\ninformation?",
+    "contactIntro": "Our team is ready to advise you and help you choose the right products.",
+    "cards": {
+      "sourcing": {
+        "title": "Quality sourcing",
+        "description": "Carefully selected materials and equipment from leading local and international manufacturers, meeting international quality standards."
+      },
+      "consulting": {
+        "title": "Expert consultation",
+        "description": "Our engineers and specialists offer technical advice to help you select the right material specifications for your application."
+      },
+      "delivery": {
+        "title": "Nationwide delivery",
+        "description": "Efficient logistics for fast, safe and on-time delivery throughout Bangkok and across Thailand."
+      },
+      "assurance": {
+        "title": "Quality assurance",
+        "description": "Products are inspected against international quality standards and backed by warranties for confidence in every application."
+      }
+    },
+    "steps": [
+      {
+        "title": "Enquiry",
+        "description": "Tell us what you need or ask for product information."
+      },
+      {
+        "title": "Quotation",
+        "description": "Receive a quotation with product specifications."
+      },
+      {
+        "title": "Order confirmation",
+        "description": "Review the specifications and confirm your order."
+      },
+      {
+        "title": "Delivery",
+        "description": "Receive your order on schedule with complete documentation."
+      }
+    ]
+  },
+  "aboutPage": {
+    "intro": "Your partner for metal materials, steel pipes, copper and fittings.\nComplete solutions for every industry.",
+    "tagline": "Your trusted metal materials partner",
+    "body": "KOUSOKU (Thailand) Co., Ltd. supplies a wide range of metal materials, steel pipes, copper and fittings. We combine quality products with prompt service and expert advice to meet the needs of customers across industries.",
+    "learnMore": "Discover more",
+    "valuesLabel": "Our strengths",
+    "stats": [
+      {
+        "value": "10+",
+        "label": "Years of\nexperience"
+      },
+      {
+        "value": "5,000+",
+        "label": "Products"
+      },
+      {
+        "value": "1,000+",
+        "label": "Business clients"
+      },
+      {
+        "value": "Nationwide",
+        "label": "Supporting\nevery industry"
+      }
+    ],
+    "values": [
+      {
+        "title": "Quality products",
+        "description": "Selected to international standards"
+      },
+      {
+        "title": "Complete solutions",
+        "description": "Metal materials and fittings"
+      },
+      {
+        "title": "Expert team",
+        "description": "Direct, professional advice"
+      },
+      {
+        "title": "Fast delivery",
+        "description": "Supporting projects of every size"
+      }
+    ],
+    "historyTitle": "Our journey",
+    "historyIntro": "Built on experience in metals and industrial materials, we continuously improve to be a partner our customers trust, growing together with Thai industry.",
+    "present": "Today",
+    "history": [
+      {
+        "title": "Company founded",
+        "description": "Started supplying metal materials and steel pipes."
+      },
+      {
+        "title": "Product expansion",
+        "description": "Added products and fittings to meet growing demand."
+      },
+      {
+        "title": "Warehouse development",
+        "description": "Improved inventory management and delivery."
+      },
+      {
+        "title": "Growing our network",
+        "description": "Serving customers across industries nationwide."
+      },
+      {
+        "title": "Looking ahead",
+        "description": "Working toward regional leadership in metal materials."
+      }
+    ],
+    "visionTitle": "Our vision and mission",
+    "warehouseAlt": "Industrial metal materials and pipe warehouse",
+    "purpose": [
+      {
+        "title": "Vision",
+        "description": "To be a trusted national leader in metal materials and fittings, growing sustainably alongside Thai industry."
+      },
+      {
+        "title": "Mission",
+        "description": "To supply quality products with fast service and professional advice, meeting the needs of customers in every industry."
+      }
+    ]
+  },
+  "productsPage": {
+    "intro": "Copper, steel pipes, metal materials and fittings.\nQuality products for every industry.",
+    "search": "Search",
+    "searchPlaceholder": "Search steel pipes, copper, plates, fittings…",
+    "categoryTitle": "Product categories",
+    "categoryIntro": "Explore products by the category you need.",
+    "viewProducts": "View products",
+    "featuredTitle": "Featured products",
+    "featuredIntro": "Popular products for your next project.",
+    "resultsTitle": "Products",
+    "searchResults": "{count} results for “{query}”",
+    "empty": "No matching products. Try another product name or category.",
+    "previous": "Previous products",
+    "next": "Next products",
+    "details": "View details",
+    "whyTitle": "Why choose our products",
+    "applicationsIntro": "Our products support a wide range of industries.",
+    "customTitle": "Need a special product\nor a custom specification?",
+    "customIntro": "Our specialists can advise you and source products to meet your project requirements.",
+    "knowledgeTitle": "Related articles",
+    "allArticles": "View all articles",
+    "applications": {
+      "construction": "Structures, buildings and systems",
+      "manufacturing": "Machinery and industrial piping",
+      "energy": "Power plants, oil and gas",
+      "machinery": "Machine components and equipment",
+      "infrastructure": "Utilities and structural projects"
+    },
+    "benefits": [
+      {
+        "title": "Quality standards",
+        "description": "Selected to international standards"
+      },
+      {
+        "title": "A complete range",
+        "description": "Products across every category"
+      },
+      {
+        "title": "Ready to deliver",
+        "description": "Reliable supply and fast delivery"
+      },
+      {
+        "title": "For every industry",
+        "description": "Supporting construction and industry"
+      }
+    ],
+    "catalog": {
+      "copperTube": {
+        "name": "Copper tube",
+        "description": "Copper tubing for air conditioning, refrigeration and industrial applications. Contact our team to select the appropriate size and wall thickness."
+      },
+      "galvanizedPipe": {
+        "name": "Galvanized steel pipe",
+        "description": "Zinc-coated steel pipe for piping and structural applications. Contact us to confirm available sizes and suitability for your project."
+      },
+      "steelPlate": {
+        "name": "Steel plate",
+        "description": "Steel plates for structures, manufacturing and fabrication. Ask our team about grades, dimensions and thicknesses."
+      },
+      "steelAngle": {
+        "name": "Steel angle",
+        "description": "Angle steel for structures, supports and assemblies. Our team can help you select dimensions and specifications for your application."
+      },
+      "flange": {
+        "name": "Flange",
+        "description": "Flanges for connecting pipes and equipment. Contact us to select the material, size and standard required for your system."
+      },
+      "steelPipe": {
+        "name": "Steel pipe",
+        "description": "Steel pipes for structural and industrial applications. Ask our team about types, sizes, wall thicknesses and delivery."
+      },
+      "fittings": {
+        "name": "Pipe fittings",
+        "description": "Fittings, elbows and tees for piping systems. Contact us to choose the right material, size and connection type."
+      }
+    }
+  },
+  "industriesPage": {
+    "intro": "Quality metal materials, steel pipes, copper and fittings\nfor the needs of a wide range of industries,\nin Thailand and abroad.",
+    "breadcrumbLabel": "Breadcrumb",
+    "overviewTitle": "Supporting every industry\nwith quality materials and complete solutions",
+    "overviewIntro": "KOUSOKU (THAILAND) CO., LTD. supplies metal materials, steel pipes, copper and fittings for diverse industries. Our products meet international standards, backed by specialists who understand the requirements of each sector.",
+    "consult": "Consult our specialists",
+    "highlights": [
+      {
+        "title": "Quality materials",
+        "description": "International standards"
+      },
+      {
+        "title": "Versatile solutions",
+        "description": "Across industries"
+      },
+      {
+        "title": "On-time delivery",
+        "description": "Nationwide"
+      },
+      {
+        "title": "Expert team",
+        "description": "Professional advice"
+      }
+    ],
+    "descriptions": {
+      "construction": "Structural materials, steel pipes and fittings for buildings, infrastructure and engineering projects.",
+      "manufacturing": "Materials for machinery production, industrial equipment and factory systems.",
+      "energy": "Materials and equipment for power plants, refineries and energy systems.",
+      "automotive": "Metal materials and components for automotive production lines and assemblies.",
+      "machinery": "Materials for machine parts, assembly and industrial maintenance.",
+      "infrastructure": "Materials for water networks, utilities and major infrastructure projects."
+    },
+    "ctaTitle": "Ready to support\nyour industry",
+    "ctaIntro": "Whatever your industry, our team can advise you and source the right materials to meet your requirements.",
+    "statsLabel": "Company at a glance",
+    "stats": [
+      {
+        "value": "1,000+",
+        "label": "Business clients"
+      },
+      {
+        "value": "5,000+",
+        "label": "Products"
+      },
+      {
+        "value": "10+",
+        "label": "Years of experience"
+      },
+      {
+        "value": "Nationwide",
+        "label": "Supporting every industry"
+      }
+    ]
+  },
+  "newsPage": {
+    "title": "News & activities",
+    "intro": "News, insights and updates from KOUSOKU (THAILAND).\nStay informed about the metal materials industry.",
+    "filterLabel": "News categories",
+    "filters": {
+      "all": "All",
+      "company": "Company news",
+      "knowledge": "Knowledge",
+      "market": "Industry & trends",
+      "events": "Events",
+      "press": "Press releases"
+    },
+    "search": "Search articles…",
+    "readMore": "Read more",
+    "empty": "No articles found",
+    "emptyHint": "Try a different category or search term.",
+    "pagination": "Article pages",
+    "previous": "Previous page",
+    "next": "Next page",
+    "page": "Page {number}",
+    "recommended": "Recommended reading",
+    "contactTitle": "Need more information?",
+    "contactIntro": "Contact our specialists for advice and product information.",
+    "contact": "Contact us",
+    "newsletterTitle": "Stay updated with us",
+    "newsletterIntro": "Receive news, insights and the latest updates from KOUSOKU (THAILAND).",
+    "email": "Enter your email",
+    "subscribe": "Subscribe",
+    "consent": "I agree to receive KOUSOKU news by email.",
+    "newsletterUnavailable": "Newsletter registration is not available yet. Your email has not been saved. Please contact our team for updates.",
+    "articles": [
+      {
+        "date": "",
+        "title": "Choosing the right steel plate for your application",
+        "excerpt": "Consider the grade, thickness, dimensions and operating environment alongside your project specifications. Structural and fabrication work may require different properties. Review material documentation and consult the responsible engineer before ordering.",
+        "image": "/products/metal-supply.jpg"
+      },
+      {
+        "date": "",
+        "title": "Selecting fittings and flanges for your piping system",
+        "excerpt": "Fittings and flanges must match the dimensions, materials and standards of your piping system. Check the fluid, temperature, pressure and connection type against the system specifications. Our team can help confirm product information and source materials to your requirements.",
+        "image": "/products/fittings.jpg"
+      }
+    ]
+  },
+  "contactPage": {
+    "channels": "Contact channels",
+    "phoneIntro": "Speak directly with our team during business hours.",
+    "emailIntro": "Ask about products, share specifications or request a quote.",
+    "lineIntro": "Chat with us and share product photos and details.",
+    "call": "Call us",
+    "emailAction": "Send an email",
+    "lineAction": "Chat on LINE",
+    "talkTitle": "Start your next project\nwith the right advice",
+    "talkIntro": "Whether you need materials for a new project or a specialist product, our team can help you choose the right solution.",
+    "help": [
+      "Ask about products, sizes and specifications",
+      "Request a quotation for your project",
+      "Discuss sourcing and delivery"
+    ],
+    "expertTitle": "Talk to our specialists",
+    "expertIntro": "Share the details or photos of the products you need so our team can advise you.",
+    "formTitle": "Enquiry / quotation request",
+    "formIntro": "Tell us what you need so our team can prepare relevant information.",
+    "name": "Contact name",
+    "company": "Company / organization",
+    "namePlaceholder": "Full name",
+    "companyPlaceholder": "Company name (optional)",
+    "phonePlaceholder": "Contact phone number",
+    "message": "Your enquiry",
+    "messagePlaceholder": "Include product type, dimensions, quantities or details of your project.",
+    "emailNote": "This opens your email app with a prepared message. Please review it and send it from your email app.",
+    "prepareEmail": "Prepare email message",
+    "enquiry": "Product enquiry / quotation request",
+    "locationTitle": "Find us here",
+    "directions": "Get directions on Google Maps",
+    "mapTitle": "Map of the KOUSOKU company address"
+  },
+  "quoteForm": {
+    "title": "Request a quotation",
+    "intro": "Share your contact details and product requirements. Our team will contact you to prepare a quotation.",
+    "name": "Contact name",
+    "company": "Company / organization (optional)",
+    "email": "Email",
+    "phone": "Phone number",
+    "products": "Products / dimensions / specifications",
+    "productsPlaceholder": "For example: 1/2-inch copper tube. List multiple products on separate lines.",
+    "quantity": "Quantity and unit",
+    "quantityPlaceholder": "For example: 50 lengths / Item 1: 20 pieces, Item 2: 10 metres",
+    "details": "Additional details",
+    "detailsPlaceholder": "Delivery location, required date or other requirements.",
+    "note": "We use these details to contact you and prepare the quotation you requested.",
+    "submit": "Submit quotation request",
+    "sending": "Submitting…",
+    "success": "Quotation request received",
+    "successIntro": "Our team will review your requirements and contact you using the details provided.",
+    "reference": "Reference",
+    "another": "Submit another request",
+    "error": "We could not save your request. Check your details and try again, or call our team. Your entries have been preserved."
+  }
+}

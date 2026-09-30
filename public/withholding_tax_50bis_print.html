@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หนังสือรับรองการหักภาษี ณ ที่จ่าย</title>
+
+<style>
+@page {
+    size: A4 portrait;
+    margin: 8mm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #e9e9e9;
+    color: #000;
+    font-family: "TH Sarabun New", "Sarabun", Tahoma, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.page {
+    width: 194mm;
+    min-height: 281mm;
+    margin: 10mm auto;
+    padding: 4mm 5mm;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(0,0,0,.15);
+}
+
+.top-note {
+    font-size: 10px;
+    line-height: 1.05;
+    margin-bottom: 1mm;
+}
+
+.header {
+    position: relative;
+    text-align: center;
+    border-bottom: 0;
+    padding-bottom: 1mm;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.05;
+    font-weight: 700;
+}
+
+.header h2 {
+    margin: 1px 0 0;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 400;
+}
+
+.document-no {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 37mm;
+    text-align: left;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.document-no .dots {
+    display: inline-block;
+    width: 23mm;
+    border-bottom: 1px dotted #000;
+    height: 3mm;
+    vertical-align: bottom;
+}
+
+.box {
+    border: 1px solid #000;
+    padding: 1.8mm 2mm;
+}
+
+.box + .box {
+    margin-top: 1.5mm;
+}
+
+.field-row {
+    display: flex;
+    align-items: baseline;
+    gap: 2mm;
+    min-height: 5.5mm;
+}
+
+.field-label {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fill-line {
+    flex: 1;
+    min-width: 0;
+    border-bottom: 1px dotted #000;
+    min-height: 4.5mm;
+    line-height: 4.5mm;
+}
+
+.tax-row {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+    margin-top: 1mm;
+}
+
+.tax-label {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tax-id {
+    display: inline-flex;
+    gap: 0;
+    vertical-align: middle;
+}
+
+.tax-id span {
+    width: 5.5mm;
+    height: 6mm;
+    border: 1px solid #000;
+    border-right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+}
+
+.tax-id span:last-child {
+    border-right: 1px solid #000;
+}
+
+.tax-id.large span {
+    width: 6.2mm;
+    height: 6.3mm;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3mm;
+}
+
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    margin-right: 3mm;
+}
+
+.check {
+    width: 4.2mm;
+    height: 4.2mm;
+    border: 1px solid #000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1mm;
+    line-height: 1;
+    font-size: 11px;
+}
+
+.select-row {
+    margin-top: 1.2mm;
+    line-height: 5mm;
+}
+
+.section-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 1.5mm;
+    font-size: 10.8px;
+}
+
+.section-table th,
+.section-table td {
+    border: 1px solid #000;
+    padding: 1.1mm 1.3mm;
+    vertical-align: top;
+}
+
+.section-table th {
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.05;
+}
+
+.col-type {
+    width: 54%;
+}
+
+.col-date {
+    width: 15%;
+}
+
+.col-amount {
+    width: 16%;
+}
+
+.col-tax {
+    width: 15%;
+}
+
+.money {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.center {
+    text-align: center;
+}
+
+.type-list {
+    line-height: 1.15;
+}
+
+.type-list .indent {
+    padding-left: 4mm;
+}
+
+.type-list .deep {
+    padding-left: 8mm;
+}
+
+.big-income-cell {
+    height: 86mm;
+}
+
+.total-label {
+    text-align: right;
+    font-weight: 700;
+    vertical-align: middle !important;
+}
+
+.payment-box {
+    border: 1px solid #000;
+    margin-top: 1.5mm;
+    padding: 1.8mm 2mm;
+}
+
+.payment-line {
+    display: flex;
+    align-items: center;
+    gap: 4mm;
+    flex-wrap: wrap;
+}
+
+.signature-area {
+    display: grid;
+    grid-template-columns: 27% 73%;
+    border: 1px solid #000;
+    margin-top: 1.5mm;
+    min-height: 34mm;
+}
+
+.warning {
+    padding: 2mm;
+    border-right: 1px solid #000;
+    font-size: 10.5px;
+    line-height: 1.2;
+}
+
+.warning-title {
+    font-weight: 700;
+    margin-bottom: 1mm;
+}
+
+.certification {
+    padding: 2mm 3mm;
+    text-align: center;
+    font-size: 10.5px;
+}
+
+.signature-line {
+    width: 75%;
+    margin: 7mm auto 1mm;
+    border-bottom: 1px dotted #000;
+    height: 4mm;
+}
+
+.date-line {
+    margin-top: 2mm;
+}
+
+.seal {
+    position: absolute;
+    right: 7mm;
+    bottom: 7mm;
+    width: 14mm;
+    height: 14mm;
+    border: 1px solid #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+    line-height: 1;
+}
+
+.signature-wrap {
+    position: relative;
+    min-height: 29mm;
+}
+
+.notes {
+    margin-top: 1.5mm;
+    font-size: 8.8px;
+    line-height: 1.15;
+}
+
+.notes b {
+    font-size: 9px;
+}
+
+.print-button {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+.print-button:hover {
+    background: #333;
+}
+
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .page {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .print-button {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .page {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .document-no {
+        position: static;
+        width: auto;
+        text-align: right;
+        margin-bottom: 2mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<button class="print-button no-print" onclick="window.print()">🖨 พิมพ์เอกสาร</button>
+
+<main class="page">
+
+    <div class="top-note">
+        <b>ฉบับที่ 1</b>
+        &nbsp;&nbsp; (สำหรับผู้ถูกหักภาษี ณ ที่จ่าย ใช้แนบพร้อมกับแบบแสดงรายการภาษี)
+        <br>
+        <b>ฉบับที่ 2</b>
+        &nbsp;&nbsp; (สำหรับผู้ถูกหักภาษี ณ ที่จ่าย เก็บไว้เป็นหลักฐาน)
+    </div>
+
+    <header class="header">
+        <div class="document-no">
+            เล่มที่ <span class="dots"></span><br>
+            เลขที่ <b>WT2020100003</b>
+        </div>
+
+        <h1>หนังสือรับรองการหักภาษี ณ ที่จ่าย</h1>
+        <h2>ตามมาตรา 50 ทวิ แห่งประมวลรัษฎากร</h2>
+    </header>
+
+    <!-- ผู้มีหน้าที่หักภาษี -->
+    <section class="box">
+
+        <div class="two-col">
+            <div>
+                <div class="field-row">
+                    <span class="field-label">ผู้มีหน้าที่หักภาษี ณ ที่จ่าย :</span>
+                    <span class="fill-line">บริษัท Tanaij Digital Platform</span>
+                </div>
+            </div>
+
+            <div>
+                <div class="tax-row">
+                    <span class="tax-label">เลขประจำตัวผู้เสียภาษีอากร (13 หลัก)*</span>
+                    <div class="tax-id">
+                        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                        <span>6</span><span>7</span><span>8</span><span>9</span><span>0</span>
+                        <span>1</span><span>2</span><span>3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <span class="field-label">ชื่อ</span>
+            <span class="fill-line">บริษัท Tanaij Digital Platform</span>
+        </div>
+
+        <div class="field-row">
+            <span class="field-label">ที่อยู่</span>
+            <span class="fill-line">
+                41 หมู่ 11 ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 10520
+            </span>
+        </div>
+
+    </section>
+
+    <!-- ผู้ถูกหักภาษี -->
+    <section class="box">
+
+        <div class="two-col">
+            <div>
+                <div class="field-row">
+                    <span class="field-label">ผู้ถูกหักภาษี ณ ที่จ่าย :</span>
+                    <span class="fill-line"></span>
+                </div>
+            </div>
+
+            <div>
+                <div class="tax-row">
+                    <span class="tax-label">เลขประจำตัวผู้เสียภาษีอากร</span>
+                    <div class="tax-id">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <span class="field-label">ชื่อ</span>
+            <span class="fill-line"></span>
+        </div>
+
+        <div class="field-row">
+            <span class="field-label">ที่อยู่</span>
+            <span class="fill-line"></span>
+        </div>
+
+        <div class="select-row">
+            <span class="field-label">ลำดับที่</span>
+
+            <span class="checkbox">
+                <span class="check"></span>(1) ภ.ง.ด.1
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(2) ภ.ง.ด.1ก
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(3) ภ.ง.ด.1ก พิเศษ
+            </span>
+
+            <span class="checkbox">
+                <span class="check">✓</span>(4) ภ.ง.ด.3
+            </span>
+
+            <br>
+
+            <span class="checkbox">
+                <span class="check"></span>(5) ภ.ง.ด.2ก
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(6) ภ.ง.ด.3ก
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(7) ภ.ง.ด.53
+            </span>
+        </div>
+
+    </section>
+
+    <!-- ตารางรายการเงินได้ -->
+    <table class="section-table">
+
+        <colgroup>
+            <col class="col-type">
+            <col class="col-date">
+            <col class="col-amount">
+            <col class="col-tax">
+        </colgroup>
+
+        <thead>
+            <tr>
+                <th>ประเภทเงินได้พึงประเมินที่จ่าย</th>
+                <th>วัน เดือน<br>หรือปีภาษีที่จ่าย</th>
+                <th>จำนวนเงินที่จ่าย</th>
+                <th>ภาษีที่หัก<br>และนำส่งไว้</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>
+                    <div class="type-list">
+                        1. เงินเดือน ค่าจ้าง เบี้ยเลี้ยง โบนัส ฯลฯ ตามมาตรา 40 (1)
+                    </div>
+                </td>
+                <td></td><td></td><td></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="type-list">
+                        2. ค่าธรรมเนียม ค่านายหน้า ฯลฯ ตามมาตรา 40 (2)
+                    </div>
+                </td>
+                <td></td><td></td><td></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="type-list">
+                        3. ค่าแห่งลิขสิทธิ์ ฯลฯ ตามมาตรา 40 (3)
+                    </div>
+                </td>
+                <td></td><td></td><td></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <div class="type-list">
+                        4. (ก) ดอกเบี้ย ฯลฯ ตามมาตรา 40 (4)(ก)
+                        <br>
+                        <span class="indent">(ข) เงินปันผล เงินส่วนแบ่งของกำไร ฯลฯ ตามมาตรา 40 (4)(ข)</span>
+                        <br>
+                        <span class="deep">(1) กรณีผู้ได้รับเงินเป็นผลได้จากบริษัทฯ</span>
+                        <br>
+                        <span class="deep">(1.1) อัตราร้อยละ 30 ของกำไรสุทธิ</span>
+                        <br>
+                        <span class="deep">(1.2) อัตราร้อยละ 25 ของกำไรสุทธิ</span>
+                        <br>
+                        <span class="deep">(1.3) อัตราร้อยละ 20 ของกำไรสุทธิ</span>
+                    </div>
+                </td>
+                <td></td><td></td><td></td>
+            </tr>
+
+            <tr>
+                <td class="big-income-cell">
+                    <div class="type-list">
+                        <b>(5) การจ่ายเงินได้ที่ต้องหักภาษี ณ ที่จ่าย</b>
+                        ตามคำสั่งกรมสรรพากรที่ออกตามมาตรา 3 เตรส เช่น รางวัล ส่วนลดหรือประโยชน์ใด ๆ
+                        เนื่องจากการส่งเสริมการขาย รางวัลในการประกวด การแข่งขัน การชิงโชค
+                        ค่าตอบแทนของนักแสดงสาธารณะ ค่าจ้างทำของ ค่าโฆษณา ค่าเช่า ค่าขนส่ง
+                        ค่าบริการ ค่าเบี้ยประกันวินาศภัย ฯลฯ
+                        <br><br>
+                        <b>6. อื่น ๆ (ระบุ)</b>
+                        ..............................................................
+                    </div>
+                </td>
+
+                <td class="center" style="vertical-align: bottom;">
+                    05/10/2020
+                </td>
+
+                <td class="money" style="vertical-align: bottom;">
+                    5,000.00
+                </td>
+
+                <td class="money" style="vertical-align: bottom;">
+                    150.00
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="total-label">
+                    รวมเงินที่จ่ายและภาษีที่หักนำส่ง
+                </td>
+                <td class="money"><b>5,000.00</b></td>
+                <td class="money"><b>150.00</b></td>
+            </tr>
+
+            <tr>
+                <td colspan="4">
+                    รวมเงินภาษีที่หักนำส่ง (ตัวอักษร)
+                    <span style="border-bottom:1px dotted #000;display:inline-block;width:105mm;">
+                        หนึ่งร้อยห้าสิบบาทถ้วน
+                    </span>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <!-- เงินที่จ่าย -->
+    <section class="payment-box">
+
+        <div>
+            <b>เงินที่จ่ายเข้า</b>
+            &nbsp;&nbsp;
+
+            <span class="checkbox">
+                <span class="check">✓</span>(1) หัก ณ ที่จ่าย
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(2) ออกให้ตลอดไป
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(3) ออกให้ครั้งเดียว
+            </span>
+
+            <span class="checkbox">
+                <span class="check"></span>(4) อื่น ๆ (ระบุ) ........................
+            </span>
+        </div>
+
+    </section>
+
+    <!-- เงินสมทบ -->
+    <section class="box">
+        เงินที่จ่ายเข้า
+        &nbsp;&nbsp;
+        กบข./กสจ./กองทุนสงเคราะห์ครูโรงเรียนเอกชน........................บาท
+        &nbsp;&nbsp;
+        กองทุนประกันสังคม........................บาท
+        &nbsp;&nbsp;
+        กองทุนสำรองเลี้ยงชีพ........................บาท
+    </section>
+
+    <!-- คำเตือน / ลงชื่อ -->
+    <section class="signature-area">
+
+        <div class="warning">
+            <div class="warning-title">คำเตือน</div>
+            ผู้มีหน้าที่ออกหนังสือรับรองการหักภาษี ณ ที่จ่าย
+            ฝ่าฝืนไม่ปฏิบัติตามมาตรา 50 ทวิ แห่งประมวลรัษฎากร
+            ต้องรับโทษทางอาญาตามมาตรา 35 แห่งประมวลรัษฎากร
+        </div>
+
+        <div class="certification">
+            <div class="signature-wrap">
+
+                ขอรับรองว่าข้อความและตัวเลขดังกล่าวข้างต้น
+                ถูกต้องตรงกับความจริงทุกประการ
+
+                <div class="signature-line"></div>
+
+                ลงชื่อ ............................................................... ผู้จ่ายเงิน
+
+                <div class="date-line">
+                    วันที่ ............ / ............ / ............ 2020
+                </div>
+
+                <div class="seal">
+                    ประทับตรา<br>
+                    นิติบุคคล<br>
+                    (ถ้ามี)
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- หมายเหตุ -->
+    <div class="notes">
+        <b>หมายเหตุ</b>
+        &nbsp;&nbsp;
+        เลขประจำตัวผู้เสียภาษีอากร (13 หลัก)* หมายถึง
+        <br>
+        &nbsp;&nbsp;1. กรณีบุคคลธรรมดา ให้ใช้เลขประจำตัวประชาชนของกรมการปกครอง
+        <br>
+        &nbsp;&nbsp;2. กรณีนิติบุคคล ให้ใช้เลขทะเบียนนิติบุคคลของกรมพัฒนาธุรกิจการค้า
+        <br>
+        &nbsp;&nbsp;3. กรณีอื่น ๆ นอกเหนือจาก 1 และ 2 ให้ใช้เลขประจำตัวผู้เสียภาษีอากร (13 หลัก) ของกรมสรรพากร
+    </div>
+
+</main>
+
+</body>
+</html>
