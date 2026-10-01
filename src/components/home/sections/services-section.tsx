@@ -4,10 +4,10 @@ import { ArrowRight, Package, ShieldCheck, Truck, MessagesSquare, FileText, Sett
 import { Link } from '@/i18n/navigation';
 
 const SERVICES = [
-  { key: 'sourcing', icon: Package, image: '/products/copper.jpg', href: '/products' },
-  { key: 'consulting', icon: ShieldCheck, image: '/news/news-iso.jpg', href: '/contact' },
-  { key: 'delivery', icon: Truck, image: '/cover/why-ksk-bg.jpg', href: '/contact' },
-  { key: 'assurance', icon: ShieldCheck, image: '/industries/manufacturing.jpg', href: '/contact' },
+  { key: 'sourcing', icon: Package, image: '/company-profile/copper-piping.png', href: '/products' },
+  { key: 'consulting', icon: ShieldCheck, image: '/company-profile/packaging-foam.png', href: '/contact' },
+  { key: 'delivery', icon: Truck, image: '/company-profile/labels.png', href: '/contact' },
+  { key: 'assurance', icon: ShieldCheck, image: '/company-profile/electrical-equipment.png', href: '/contact' },
 ] as const;
 const STEPS = [MessagesSquare, FileText, Settings, Truck];
 
@@ -63,7 +63,7 @@ export function ServicesSection() {
             </ol>
           </div>
           <aside className="relative isolate overflow-hidden rounded-xl bg-[#0c3670] px-8 py-10 text-white lg:py-11">
-            <Image src="/news/news-iso.jpg" alt="" fill sizes="(min-width: 1024px) 500px, 100vw" className="object-cover object-[65%_center]" />
+            <Image src="/company-profile/pneumatic-page.jpg" alt="" fill sizes="(min-width: 1024px) 500px, 100vw" className="object-cover object-[65%_center]" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#07316c] via-[#07316c]/85 to-[#07316c]/10" />
             <div className="relative max-w-[265px]">
               <h2 className="whitespace-pre-line text-[28px] font-bold leading-tight">{t('contactTitle')}</h2>

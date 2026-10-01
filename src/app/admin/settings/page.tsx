@@ -51,7 +51,7 @@ export default function SettingsPage() {
         <div className="flex-1">
           <p className="font-bold text-slate-900 text-lg">Kosoku</p>
           <p className="text-sm text-slate-500">123 ถ.รัชดา แขวงดินแดง เขตดินแดง กรุงเทพฯ 10400</p>
-          <p className="text-sm text-slate-500">โทร: 02-123-4567</p>
+          <p className="text-sm text-slate-500">โทร: 02-124-3156</p>
         </div>
         <Link href="/admin/settings/contact" className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 shrink-0">
           แก้ไข

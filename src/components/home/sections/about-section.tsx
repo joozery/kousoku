@@ -5,7 +5,9 @@ import { Link } from '@/i18n/navigation';
 
 const STATS = [Building2, Package, UsersRound, Globe2];
 const VALUES = [Gem, Settings, UsersRound, Truck];
-const YEARS = ['2013', '2016', '2020', '2023', 'present'];
+// The company profile records the business establishment in July 2025.
+// Keep the timeline anchored to verified information until more milestones are published.
+const YEARS = ['2025'];
 const buttonClass = 'inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-blue-700 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600';
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -51,7 +53,7 @@ export function AboutSection() {
 
       <section aria-label={p('valuesLabel')} className="relative isolate overflow-hidden bg-[#f0f7ff]">
         <div className="absolute inset-y-0 right-0 hidden w-[32%] lg:block">
-          <Image src="/news/news-iso.jpg" alt="" fill sizes="32vw" className="object-cover object-[65%_40%]" />
+          <Image src="/company-profile/packaging-foam.png" alt="" fill sizes="32vw" className="object-cover object-[65%_40%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#f0f7ff] via-[#f0f7ff]/25 to-transparent" />
         </div>
         <div className="relative mx-auto max-w-7xl px-6 py-8 lg:px-10 lg:py-9">
@@ -75,14 +77,14 @@ export function AboutSection() {
             <p className="mt-2 text-sm leading-relaxed text-[#5b6e91]">{p('historyIntro')}</p>
             <Link href="/contact" className={`mt-4 ${buttonClass}`}>{t('cta')}<ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
-          <ol className="relative grid gap-6 sm:grid-cols-5 sm:gap-3 sm:pt-3 sm:before:absolute sm:before:top-7 sm:before:right-3 sm:before:left-3 sm:before:h-px sm:before:bg-blue-400">
+          <ol className="relative grid gap-6 sm:grid-cols-[minmax(0,320px)] sm:gap-3 sm:pt-3">
             {YEARS.map((year, index) => (
               <li key={year} className="relative grid grid-cols-[2.5rem_1fr] gap-x-3 sm:block sm:text-center">
                 <div className="relative flex h-9 items-center justify-center">
-                  {index === 4 ? <span className="grid h-9 w-9 place-items-center rounded-full border border-blue-600 bg-white text-blue-600"><ArrowRight size={19} aria-hidden="true" /></span> : <span className="h-3.5 w-3.5 rounded-full bg-blue-700 ring-[6px] ring-blue-100" />}
+                  <span className="grid h-9 w-9 place-items-center rounded-full border border-blue-600 bg-white text-blue-600"><ArrowRight size={19} aria-hidden="true" /></span>
                 </div>
                 <div className="sm:mt-3">
-                  <p className="text-lg font-bold text-blue-700">{year === 'present' ? p('present') : year}</p>
+                  <p className="text-lg font-bold text-blue-700">{year}</p>
                   <h3 className="mt-1 text-[13px] font-bold text-[#071c70]">{p(`history.${index}.title`)}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-[#5b6e91]">{p(`history.${index}.description`)}</p>
                 </div>
@@ -95,7 +97,7 @@ export function AboutSection() {
       <section id="about-vision" aria-labelledby="vision-title" className="scroll-mt-24 bg-white pb-12 lg:pb-16">
         <div className="mx-auto grid max-w-7xl gap-7 px-6 lg:grid-cols-[1fr_1.2fr] lg:items-stretch lg:px-10">
           <div className="relative min-h-64 overflow-hidden rounded-lg lg:min-h-72">
-            <Image src="/cover/why-ksk-bg.jpg" alt={p('warehouseAlt')} fill sizes="(min-width: 1024px) 550px, 100vw" className="object-cover" />
+            <Image src="/company-profile/copper-piping-page.jpg" alt={p('warehouseAlt')} fill sizes="(min-width: 1024px) 550px, 100vw" className="object-cover" />
           </div>
           <div>
             <Eyebrow>OUR VISION</Eyebrow>

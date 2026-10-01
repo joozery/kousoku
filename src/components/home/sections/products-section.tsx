@@ -7,7 +7,7 @@ import { ArrowRight, ArrowLeft, Search, ShieldCheck, Package, Truck, Settings, B
 import { Link } from '@/i18n/navigation';
 import { PRODUCTS } from '@/lib/home-content';
 
-const IMAGES = ['/products/copper.jpg', '/products/steel-pipe.jpg', '/products/metal-supply.jpg', '/products/fittings.jpg'];
+const IMAGES = ['/company-profile/copper-piping.png', '/company-profile/packaging-foam.png', '/company-profile/labels.png', '/company-profile/electrical-equipment.png'];
 const COLORS = ['bg-orange-500', 'bg-blue-700', 'bg-slate-500', 'bg-sky-600'];
 const CATALOG = [
   { key: 'copperTube', category: 0, english: 'Copper Tube', image: IMAGES[0] },
@@ -23,6 +23,13 @@ const APPLICATIONS = [
   { key: 'construction', icon: Building2 }, { key: 'manufacturing', icon: Factory },
   { key: 'energy', icon: Zap }, { key: 'machinery', icon: Cog }, { key: 'infrastructure', icon: Landmark },
 ];
+const APPLICATION_IMAGES: Record<string, string> = {
+  construction: '/company-profile/packaging-foam.png',
+  manufacturing: '/company-profile/copper-piping.png',
+  energy: '/company-profile/electrical-equipment.png',
+  machinery: '/company-profile/pneumatic-page.jpg',
+  infrastructure: '/company-profile/packaging-foam.png',
+};
 const shell = 'mx-auto max-w-7xl px-6 lg:px-10';
 const card = 'overflow-hidden rounded-lg border border-slate-200/60 bg-white shadow-[0_3px_10px_rgba(15,45,85,0.06)]';
 const smallLink = 'inline-flex min-h-9 items-center justify-center gap-2 rounded-md border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600';
@@ -88,14 +95,14 @@ export function ProductsSection() {
       </section>
 
       <section className="relative isolate overflow-hidden bg-[#052449] text-white">
-        <Image src="/products/steel-pipe.jpg" alt="" fill sizes="100vw" className="object-cover object-right" />
+        <Image src="/company-profile/copper-piping-page.jpg" alt="" fill sizes="100vw" className="object-cover object-right" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#032248] via-[#032248]/95 to-[#032248]/15" />
         <div className={`relative py-12 lg:py-14 ${shell}`}><p className="text-[10px] font-bold tracking-[0.22em] text-sky-200">WHY CHOOSE US</p><h2 className="mt-3 text-2xl font-bold lg:text-3xl">{p('whyTitle')}</h2><div className="mt-7 grid max-w-2xl gap-6 sm:grid-cols-2">{BENEFITS.map((Icon, index) => <div key={index} className="flex items-center gap-4"><span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-500/20"><Icon size={28} strokeWidth={1.6} aria-hidden="true" /></span><div><h3 className="text-base font-bold">{p(`benefits.${index}.title`)}</h3><p className="mt-1 text-xs leading-relaxed text-blue-100">{p(`benefits.${index}.description`)}</p></div></div>)}</div></div>
       </section>
 
-      <section className={`py-11 lg:py-12 ${shell}`}><Heading eyebrow="APPLICATIONS" title={ti('title')} subtitle={p('applicationsIntro')} /><div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">{APPLICATIONS.map(({ key, icon: Icon }) => <Link href="/industries" key={key} className={`group transition-shadow hover:shadow-md ${card}`}><div className="relative aspect-[1.4/1]"><Image src={`/industries/${key}.jpg`} alt={ti(`items.${key}`)} fill sizes="(min-width: 1024px) 225px, (min-width: 640px) 50vw, 100vw" className="object-cover" /></div><div className="relative px-4 pb-4"><span className="-mt-5 mb-2 flex h-11 w-11 items-center justify-center rounded-full border border-blue-100 bg-white text-blue-600"><Icon size={23} aria-hidden="true" /></span><h3 className="text-sm font-bold group-hover:text-blue-600">{ti(`items.${key}`)}</h3><p className="mt-1 text-xs leading-relaxed text-[#7585a2]">{p(`applications.${key}`)}</p></div></Link>)}</div></section>
+      <section className={`py-11 lg:py-12 ${shell}`}><Heading eyebrow="APPLICATIONS" title={ti('title')} subtitle={p('applicationsIntro')} /><div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">{APPLICATIONS.map(({ key, icon: Icon }) => <Link href="/industries" key={key} className={`group transition-shadow hover:shadow-md ${card}`}><div className="relative aspect-[1.4/1]"><Image src={APPLICATION_IMAGES[key]} alt={ti(`items.${key}`)} fill sizes="(min-width: 1024px) 225px, (min-width: 640px) 50vw, 100vw" className="object-cover" /></div><div className="relative px-4 pb-4"><span className="-mt-5 mb-2 flex h-11 w-11 items-center justify-center rounded-full border border-blue-100 bg-white text-blue-600"><Icon size={23} aria-hidden="true" /></span><h3 className="text-sm font-bold group-hover:text-blue-600">{ti(`items.${key}`)}</h3><p className="mt-1 text-xs leading-relaxed text-[#7585a2]">{p(`applications.${key}`)}</p></div></Link>)}</div></section>
 
-      <section className="relative isolate overflow-hidden bg-blue-50"><Image src="/products/fittings.jpg" alt="" fill sizes="100vw" className="object-cover object-right" /><div className="absolute inset-0 bg-gradient-to-r from-[#eaf3ff] via-[#eaf3ff]/95 to-[#eaf3ff]/10" /><div className={`relative py-11 lg:py-12 ${shell}`}><h2 className="max-w-md whitespace-pre-line text-3xl font-bold leading-tight">{p('customTitle')}</h2><p className="mt-3 max-w-md text-sm leading-relaxed text-[#405980]">{p('customIntro')}</p><Link href="/contact" className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-blue-700 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-800">{tc('requestQuote')}<ArrowRight size={16} /></Link></div></section>
+      <section className="relative isolate overflow-hidden bg-blue-50"><Image src="/company-profile/packaging-foam.png" alt="" fill sizes="100vw" className="object-cover object-right" /><div className="absolute inset-0 bg-gradient-to-r from-[#eaf3ff] via-[#eaf3ff]/95 to-[#eaf3ff]/10" /><div className={`relative py-11 lg:py-12 ${shell}`}><h2 className="max-w-md whitespace-pre-line text-3xl font-bold leading-tight">{p('customTitle')}</h2><p className="mt-3 max-w-md text-sm leading-relaxed text-[#405980]">{p('customIntro')}</p><Link href="/contact" className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-full bg-blue-700 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-800">{tc('requestQuote')}<ArrowRight size={16} /></Link></div></section>
 
       <section className={`pt-11 pb-14 lg:pt-12 lg:pb-16 ${shell}`}><div className="flex flex-wrap items-end justify-between gap-4"><Heading eyebrow="KNOWLEDGE" title={p('knowledgeTitle')} /><Link href="/news" className={smallLink}>{p('allArticles')}<ArrowRight size={14} /></Link></div><div className="mt-6 grid gap-5 sm:grid-cols-3">{articles.map((article, index) => <Link href="/news" key={article.title} className={`group ${card}`}><div className="relative aspect-[2.35/1]"><Image src={article.image || IMAGES[index]} alt="" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover" /></div><div className="p-4"><h3 className="text-sm font-bold leading-relaxed group-hover:text-blue-600">{article.title}</h3><p className="mt-3 text-xs text-[#7585a2]">{article.date}</p></div></Link>)}</div></section>
 

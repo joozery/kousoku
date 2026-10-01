@@ -65,9 +65,9 @@ export const INDUSTRIES = [
 
 export const CONTACT_INFO = {
   address: '31 ชั้น 2 และ 3 ห้อง 208-01 ซอยสุขุมวิท 26 ถนนสุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110',
-  phone: '02-123-4567',
-  phoneHref: 'tel:021234567',
-  email: 'info@kousoku.co.th',
+  phone: '02-124-3156',
+  phoneHref: 'tel:021243156',
+  email: 'Noppawan@Kousoku.co.th',
   lineId: '@kousoku',
   lineUrl: 'https://line.me/ti/p/~kousoku',
   // TODO: ยังไม่มีลิงก์ Facebook เพจจริง — ใส่ URL เพจจริงตรงนี้เมื่อพร้อม

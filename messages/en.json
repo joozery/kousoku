@@ -29,7 +29,7 @@
     "facebook": "Chat on Facebook",
     "facebookDesc": "Chat on KOUSOKU page",
     "phone": "Call us",
-    "phoneDesc": "02-123-4567 (Office hours)",
+    "phoneDesc": "02-124-3156 (Office hours)",
     "recommended": "Recommended",
     "company": "KOUSOKU (THAILAND) CO., LTD."
   },
@@ -98,8 +98,8 @@
     "eyebrow": "About us",
     "title": "About Us",
     "companyName": "KOUSOKU (THAILAND) CO., LTD.",
-    "body": "KOUSOKU (Thailand) Co., Ltd. trades in copper, steel pipe, and quality metal materials, serving the needs of the construction, energy, and structural engineering industries. We are committed to delivering quality products and services, backed by experience and expertise, to be a business partner you can trust.",
-    "teaserBody": "KOUSOKU (Thailand) Co., Ltd. trades in copper, steel pipe, and quality metal materials, serving the needs of the construction, energy, and structural engineering industries.",
+    "body": "KOUSOKU (Thailand) Co., Ltd. provides one-stop solutions for copper piping, packaging, label printing, electrical equipment and pneumatics for automotive and electronic parts.",
+    "teaserBody": "One-stop copper piping, packaging, label printing, electrical and pneumatic solutions for industrial customers.",
     "cta": "Contact Us",
     "highlights": {
       "quality": "International Standards",
@@ -111,34 +111,34 @@
   "products": {
     "eyebrow": "Products",
     "title": "Our Products",
-    "subtitle": "A full range of quality products to meet every industry's needs.",
-    "teaserBody": "Copper, steel pipe, metal materials, and fittings — a full range of quality products to meet every industry's needs.",
+    "subtitle": "One-stop solutions for piping, packaging, printing and industrial equipment.",
+    "teaserBody": "Copper piping, paper and foam packaging, label printing, electrical equipment and pneumatics for industrial customers.",
     "viewAll": "View All Products",
     "viewMore": "Learn More",
     "items": {
       "copper": {
-        "name": "Copper",
-        "desc": "Copper pipes, copper sheets, copper rods, and accessories"
+        "name": "Copper piping",
+        "desc": "Pipe cutting, bending, brazing and automation for copper piping"
       },
       "steelPipe": {
-        "name": "Steel Pipe",
-        "desc": "Black steel pipe, galvanized steel pipe, stainless steel pipe, and accessories"
+        "name": "Packaging",
+        "desc": "Corrugated boxes, PS/EPE foam, vacuum trays and protective packaging"
       },
       "metalSupply": {
-        "name": "Metal Supply",
-        "desc": "Plates, steel sheets, angle steel, C-channel steel, and more"
+        "name": "Printers and labels",
+        "desc": "Barcode printers, labels, die-cut stickers and resin ribbons"
       },
       "fittingAccessories": {
-        "name": "Fitting & Accessories",
-        "desc": "Fittings, tees, flanges, and system accessories"
+        "name": "Electrical and pneumatic equipment",
+        "desc": "Power supplies, terminal blocks, controls and pneumatic equipment"
       }
     }
   },
   "services": {
     "eyebrow": "Why choose ksk",
     "title": "Why Choose KSK",
-    "tagline": "Your Trusted Metal Partner",
-    "teaserBody": "Your Trusted Metal Partner — quality products, fast delivery, professional team, competitive pricing.",
+    "tagline": "One-stop service for industrial customers",
+    "teaserBody": "One-stop copper piping, packaging, printing, electrical and pneumatic solutions.",
     "viewAll": "View All Services",
     "metricYears": "Years of Experience",
     "metricClients": "Clients Nationwide",
@@ -197,7 +197,7 @@
         "excerpt": "Copper prices have been rising steadily in global markets, directly affecting production costs for Thai manufacturers. This article analyzes key factors and strategies for operators.",
         "category": "Market Analysis",
         "readMin": 5,
-        "image": "/news/news-copper.jpg"
+        "image": "/company-profile/copper-piping.png"
       },
       {
         "date": "Aug 2, 2026",
@@ -205,7 +205,7 @@
         "excerpt": "We now offer high-grade 316L stainless steel pipes for food, pharmaceutical, and chemical industries, ready for immediate delivery.",
         "category": "Company News",
         "readMin": 3,
-        "image": "/news/news-stainless.jpg"
+        "image": "/company-profile/packaging-foam.png"
       },
       {
         "date": "Jun 14, 2026",
@@ -213,7 +213,7 @@
         "excerpt": "Choosing metals that meet ISO standards is critical for project safety and efficiency. This article explains what to verify before purchasing.",
         "category": "Knowledge",
         "readMin": 6,
-        "image": "/news/news-iso.jpg"
+        "image": "/company-profile/labels.png"
       }
     ]
   },
@@ -283,7 +283,7 @@
   },
   "servicesPage": {
     "title": "Our services",
-    "intro": "Complete support, from sourcing quality materials\nto meeting your needs at every step.",
+    "intro": "One-stop industrial solutions, from copper piping and packaging\nto printing, electrical and pneumatic equipment.",
     "details": "Learn more",
     "processTitle": "How we work",
     "processIntro": "Fast, accurate and professional service, tailored to your needs at every stage.",
@@ -291,20 +291,20 @@
     "contactIntro": "Our team is ready to advise you and help you choose the right products.",
     "cards": {
       "sourcing": {
-        "title": "Quality sourcing",
-        "description": "Carefully selected materials and equipment from leading local and international manufacturers, meeting international quality standards."
+        "title": "Copper piping",
+        "description": "Pipe processing, brazing and automation, with ISO 9001 and ISO 14001 factory standards."
       },
       "consulting": {
-        "title": "Expert consultation",
-        "description": "Our engineers and specialists offer technical advice to help you select the right material specifications for your application."
+        "title": "Industrial packaging",
+        "description": "Paper boxes, PS/EPE foam, vacuum trays and protective materials for automotive and electronic parts."
       },
       "delivery": {
-        "title": "Nationwide delivery",
-        "description": "Efficient logistics for fast, safe and on-time delivery throughout Bangkok and across Thailand."
+        "title": "Printing and labels",
+        "description": "Barcode printers, labels, die-cut stickers, screen printing and resin ribbons."
       },
       "assurance": {
-        "title": "Quality assurance",
-        "description": "Products are inspected against international quality standards and backed by warranties for confidence in every application."
+        "title": "Electrical and pneumatic equipment",
+        "description": "Power supplies, terminal blocks, controls, heat shrink, cable ties and pneumatic equipment."
       }
     },
     "steps": [
@@ -327,54 +327,54 @@
     ]
   },
   "aboutPage": {
-    "intro": "Your partner for metal materials, steel pipes, copper and fittings.\nComplete solutions for every industry.",
-    "tagline": "Your trusted metal materials partner",
-    "body": "KOUSOKU (Thailand) Co., Ltd. supplies a wide range of metal materials, steel pipes, copper and fittings. We combine quality products with prompt service and expert advice to meet the needs of customers across industries.",
+    "intro": "One-stop industrial solutions for copper piping, packaging,\nprinting and labels, electrical equipment and pneumatics.",
+    "tagline": "One-stop service for industrial customers",
+    "body": "KOUSOKU (Thailand) Co., Ltd. provides copper piping, packaging, label printing, electrical equipment and pneumatic solutions. Our services include pipe processing and brazing, paper and foam packaging, vacuum trays, die-cut stickers and industrial equipment for automotive and electronic parts.",
     "learnMore": "Discover more",
     "valuesLabel": "Our strengths",
     "stats": [
       {
-        "value": "10+",
-        "label": "Years of\nexperience"
+        "value": "2025",
+        "label": "Established\nJuly 2025"
       },
       {
-        "value": "5,000+",
-        "label": "Products"
+        "value": "1M",
+        "label": "Registered capital\nTHB"
       },
       {
-        "value": "1,000+",
-        "label": "Business clients"
+        "value": "5",
+        "label": "Core service\ngroups"
       },
       {
-        "value": "Nationwide",
-        "label": "Supporting\nevery industry"
+        "value": "ISO",
+        "label": "Factory standards\nISO 9001 & ISO 14001"
       }
     ],
     "values": [
       {
-        "title": "Quality products",
-        "description": "Selected to international standards"
+        "title": "One-stop solutions",
+        "description": "From copper piping to packaging"
       },
       {
-        "title": "Complete solutions",
-        "description": "Metal materials and fittings"
+        "title": "Industrial expertise",
+        "description": "For automotive and electronic parts"
       },
       {
-        "title": "Expert team",
-        "description": "Direct, professional advice"
+        "title": "Quality standards",
+        "description": "ISO 9001 and ISO 14001 factory standards"
       },
       {
-        "title": "Fast delivery",
-        "description": "Supporting projects of every size"
+        "title": "Made to specification",
+        "description": "Products adapted to your process"
       }
     ],
     "historyTitle": "Our journey",
-    "historyIntro": "Built on experience in metals and industrial materials, we continuously improve to be a partner our customers trust, growing together with Thai industry.",
+    "historyIntro": "Established in July 2025 with registered capital of THB 1,000,000, we develop one-stop services for industrial customers.",
     "present": "Today",
     "history": [
       {
         "title": "Company founded",
-        "description": "Started supplying metal materials and steel pipes."
+        "description": "Established in July 2025 with copper piping, packaging, printing, electrical and pneumatic services."
       },
       {
         "title": "Product expansion",
@@ -394,15 +394,15 @@
       }
     ],
     "visionTitle": "Our vision and mission",
-    "warehouseAlt": "Industrial metal materials and pipe warehouse",
+    "warehouseAlt": "Industrial packaging and copper piping solutions",
     "purpose": [
       {
         "title": "Vision",
-        "description": "To be a trusted national leader in metal materials and fittings, growing sustainably alongside Thai industry."
+        "description": "To be a trusted one-stop industrial solutions provider for copper piping, packaging, printing and factory equipment."
       },
       {
         "title": "Mission",
-        "description": "To supply quality products with fast service and professional advice, meeting the needs of customers in every industry."
+        "description": "To deliver solutions that fit each production process, supported by expertise in processing, packaging and industrial equipment."
       }
     ]
   },
@@ -454,32 +454,32 @@
     ],
     "catalog": {
       "copperTube": {
-        "name": "Copper tube",
-        "description": "Copper tubing for air conditioning, refrigeration and industrial applications. Contact our team to select the appropriate size and wall thickness."
+        "name": "Processed copper piping",
+        "description": "Cutting, bending, brazing and automation for copper piping, including made-to-specification work."
       },
       "galvanizedPipe": {
-        "name": "Galvanized steel pipe",
-        "description": "Zinc-coated steel pipe for piping and structural applications. Contact us to confirm available sizes and suitability for your project."
+        "name": "Paper and box packaging",
+        "description": "Corrugated boxes, die-cut boxes and large cartons for automotive and electronic parts."
       },
       "steelPlate": {
-        "name": "Steel plate",
-        "description": "Steel plates for structures, manufacturing and fabrication. Ask our team about grades, dimensions and thicknesses."
+        "name": "Foam and vacuum trays",
+        "description": "PS/EPE foam, PP/APET vacuum trays and protective materials for production and transport."
       },
       "steelAngle": {
-        "name": "Steel angle",
-        "description": "Angle steel for structures, supports and assemblies. Our team can help you select dimensions and specifications for your application."
+        "name": "Industrial films and bags",
+        "description": "Stretch film, PE sheet, HDPE/LDPE, anti-static and VCI packaging, plus pallet cover bags."
       },
       "flange": {
-        "name": "Flange",
-        "description": "Flanges for connecting pipes and equipment. Contact us to select the material, size and standard required for your system."
+        "name": "Printers and ribbons",
+        "description": "Barcode printers, labels, stickers, die-cut work and Wax/Wax-Resin/Resin ribbons."
       },
       "steelPipe": {
-        "name": "Steel pipe",
-        "description": "Steel pipes for structural and industrial applications. Ask our team about types, sizes, wall thicknesses and delivery."
+        "name": "Custom labels and printing",
+        "description": "Label rolls, sticker sheets, screen printing, void labels, soft emblems and custom die-cut work."
       },
       "fittings": {
-        "name": "Pipe fittings",
-        "description": "Fittings, elbows and tees for piping systems. Contact us to choose the right material, size and connection type."
+        "name": "Electrical and pneumatic equipment",
+        "description": "Power supplies, terminal blocks, controls, heat shrink, cable ties and pneumatic equipment."
       }
     }
   },
@@ -572,13 +572,13 @@
         "date": "",
         "title": "Choosing the right steel plate for your application",
         "excerpt": "Consider the grade, thickness, dimensions and operating environment alongside your project specifications. Structural and fabrication work may require different properties. Review material documentation and consult the responsible engineer before ordering.",
-        "image": "/products/metal-supply.jpg"
+        "image": "/company-profile/electrical-equipment.png"
       },
       {
         "date": "",
         "title": "Selecting fittings and flanges for your piping system",
         "excerpt": "Fittings and flanges must match the dimensions, materials and standards of your piping system. Check the fluid, temperature, pressure and connection type against the system specifications. Our team can help confirm product information and source materials to your requirements.",
-        "image": "/products/fittings.jpg"
+        "image": "/company-profile/pneumatic-page.jpg"
       }
     ]
   },

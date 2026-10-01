@@ -5,10 +5,10 @@ import { Link } from '@/i18n/navigation';
 type ProductItem = { name: string; desc: string };
 
 const PRODUCT_META: Record<string, { image: string; accent: string; accentLight: string }> = {
-  copper:            { image: '/products/copper.jpg',      accent: 'bg-amber-600',  accentLight: 'bg-amber-50 text-amber-700 border-amber-200' },
-  steelPipe:         { image: '/products/steel-pipe.jpg',  accent: 'bg-blue-800',   accentLight: 'bg-blue-50 text-blue-700 border-blue-200' },
-  metalSupply:       { image: '/products/metal-supply.jpg',accent: 'bg-slate-700',  accentLight: 'bg-slate-50 text-slate-700 border-slate-200' },
-  fittingAccessories:{ image: '/products/fittings.jpg',    accent: 'bg-sky-700',    accentLight: 'bg-sky-50 text-sky-700 border-sky-200' },
+  copper:            { image: '/company-profile/copper-piping.png',      accent: 'bg-amber-600',  accentLight: 'bg-amber-50 text-amber-700 border-amber-200' },
+  steelPipe:         { image: '/company-profile/packaging-foam.png',     accent: 'bg-blue-800',   accentLight: 'bg-blue-50 text-blue-700 border-blue-200' },
+  metalSupply:       { image: '/company-profile/labels.png',             accent: 'bg-slate-700',  accentLight: 'bg-slate-50 text-slate-700 border-slate-200' },
+  fittingAccessories:{ image: '/company-profile/electrical-equipment.png', accent: 'bg-sky-700',  accentLight: 'bg-sky-50 text-sky-700 border-sky-200' },
 };
 
 export function ProductsTeaser() {

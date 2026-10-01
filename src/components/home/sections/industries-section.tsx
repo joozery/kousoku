@@ -6,6 +6,14 @@ import { INDUSTRIES } from '@/lib/home-content';
 
 const HIGHLIGHTS = [Gem, Settings, Truck, Headset];
 const METRICS = [BriefcaseBusiness, Package, UsersRound, Globe2];
+const INDUSTRY_IMAGES: Record<string, string> = {
+  construction: '/company-profile/packaging-foam.png',
+  manufacturing: '/company-profile/copper-piping.png',
+  energy: '/company-profile/electrical-equipment.png',
+  automotive: '/company-profile/labels.png',
+  machinery: '/company-profile/pneumatic-page.jpg',
+  infrastructure: '/company-profile/packaging-foam.png',
+};
 const shell = 'mx-auto max-w-7xl px-6 lg:px-10';
 
 export function IndustriesSection() {
@@ -16,7 +24,7 @@ export function IndustriesSection() {
   return (
     <main className="bg-[#f8fafc] text-[#102654]">
       <section className="relative isolate overflow-hidden bg-[#062647] text-white">
-        <Image src="/industries/energy.jpg" alt="" fill preload sizes="100vw" className="object-cover object-[center_48%]" />
+        <Image src="/company-profile/electrical-equipment.png" alt="" fill preload sizes="100vw" className="object-cover object-[center_48%]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#022144]/95 via-[#022144]/65 to-[#022144]/10" />
         <div className={`relative py-12 lg:py-14 ${shell}`}>
           <p className="text-xs font-semibold tracking-[0.25em] text-sky-200">OUR INDUSTRIES</p>
@@ -56,7 +64,7 @@ export function IndustriesSection() {
           {INDUSTRIES.map(({ key, code, icon: Icon }) => (
             <Link href="/contact" key={key} id={key} aria-label={`${t(`items.${key}`)} — ${p('consult')}`} className="group flex scroll-mt-24 flex-col overflow-hidden rounded-lg border border-blue-100/50 bg-white shadow-[0_3px_12px_rgba(15,45,85,0.05)] transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600">
               <div className="relative aspect-[1.75/1] overflow-hidden">
-                <Image src={`/industries/${key}.jpg`} alt={t(`items.${key}`)} fill sizes="(min-width: 1280px) 385px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
+                <Image src={INDUSTRY_IMAGES[key]} alt={t(`items.${key}`)} fill sizes="(min-width: 1280px) 385px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105" />
               </div>
               <div className="relative flex flex-1 flex-col px-6 pb-6">
                 <span className="-mt-7 mb-2 flex h-14 w-14 items-center justify-center rounded-full border border-blue-50 bg-white text-blue-600 shadow-sm"><Icon size={29} strokeWidth={1.7} aria-hidden="true" /></span>
@@ -73,7 +81,7 @@ export function IndustriesSection() {
       </section>
 
       <section aria-labelledby="industries-cta" className="relative isolate overflow-hidden bg-[#062648] text-white">
-        <Image src="/products/steel-pipe.jpg" alt="" fill sizes="100vw" className="object-cover object-[right_55%]" />
+        <Image src="/company-profile/copper-piping-page.jpg" alt="" fill sizes="100vw" className="object-cover object-[right_55%]" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#032246] via-[#032246]/90 to-[#032246]/10" />
         <div className={`relative py-10 lg:py-12 ${shell}`}>
           <p className="text-[10px] font-semibold tracking-[0.23em] text-sky-200">LET’S BUILD TOGETHER</p>
